@@ -1,0 +1,41 @@
+{
+	"name": "vscode-fxpw-ai-chat",
+	"displayName": "vscode-fxpw-ai-chat",
+	"description": "ai chat for vs code",
+	"publisher": "fxpw",
+	"version": "1.0.0",
+	"icon": "images/icon.jpg",
+	"engines": {
+		"vscode": "^1.85.0"
+	},
+	"categories": [
+		"Themes"
+	],
+	"main": "./extension.js",
+	"activationEvents":[
+		"onStartupFinished"
+	],
+	"contributes": {
+		// "themes": [
+		// 	{
+		// 		"label": "fxpw Dark Modern",
+		// 		"uiTheme": "vs-dark",
+		// 		"path": "./themes/fxpw_dark.json"
+		// 	}
+		// ]
+	},
+	"repository": {
+		// "type": "git",
+		// "url": "https://github.com/fxpw/vscode-fxpw-theme.git"
+	},
+
+	"devDependencies": {
+		"@types/vscode": "^1.85.0",
+		"@types/mocha": "^10.0.6",
+		"@types/node": "18.x",
+		"eslint": "^8.54.0",
+		"typescript": "^5.3.2",
+		"@vscode/test-cli": "^0.0.4",
+		"@vscode/test-electron": "^2.3.8"
+	}
+}

@@ -1,0 +1,5 @@
+.vscode
+tools
+# test
+node_modules
+*.vsix
