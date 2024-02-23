@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 0.0.9
+
+fix logic
+
 ### 0.0.8
 
 fix params
