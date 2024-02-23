@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-ai-chat",
 	"description": "vscode-fxpw-ai-chat",
 	"publisher": "fxpw",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"engines": {
 		"vscode": "^1.86.0"
 	},
@@ -58,7 +58,7 @@
 			"properties": {
 				"vscode-fxpw-ai-chat.proxyIP": {
 					"type": "string",
-					"default": "166.1.11.24",
+					"default": "",
 					"description": "Proxy IP Address"
 				},
 				"vscode-fxpw-ai-chat.proxyPortHttps": {

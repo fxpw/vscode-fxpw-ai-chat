@@ -3,11 +3,15 @@
 Simple openai requests whit proxy support
 If you have troubles whit cloudflate disable vscode proxy
 
-## Features
+# Features
 
 More things whit openai
 
-## Release Notes
+# Release Notes
+
+### 0.0.8
+
+fix params
 
 ### 0.0.1-0.0.7
 
