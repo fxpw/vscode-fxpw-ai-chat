@@ -1,41 +1,129 @@
 {
 	"name": "vscode-fxpw-ai-chat",
 	"displayName": "vscode-fxpw-ai-chat",
-	"description": "ai chat for vs code",
+	"description": "vscode-fxpw-ai-chat",
 	"publisher": "fxpw",
-	"version": "1.0.0",
-	"icon": "images/icon.jpg",
+	"version": "0.0.7",
 	"engines": {
-		"vscode": "^1.85.0"
+		"vscode": "^1.86.0"
 	},
 	"categories": [
-		"Themes"
+		"Other"
 	],
-	"main": "./extension.js",
-	"activationEvents":[
+	"activationEvents": [
 		"onStartupFinished"
 	],
+	"main": "./src/extension.js",
+	"icon": "images/icon.jpg",
 	"contributes": {
-		// "themes": [
-		// 	{
-		// 		"label": "fxpw Dark Modern",
-		// 		"uiTheme": "vs-dark",
-		// 		"path": "./themes/fxpw_dark.json"
-		// 	}
-		// ]
+		"commands": [{
+			"command": "vscode-fxpw-ai-chat.openSettings",
+			"title": "Open vscode-fxpw-ai-chat Settings",
+			"icon": {
+				"dark": "images/setting.png",
+				"light": "images/setting.png"
+				
+				
+			}
+		}],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "vscode-fxpw-ai-chat-conatainer",
+					"title": "AI CHAT",
+					"icon": "images/icon_to_site_bar.png"
+				}
+			]
+		},
+		"views": {
+			"vscode-fxpw-ai-chat-conatainer": [
+				{
+					"type": "webview",
+					"id": "vscode-fxpw-ai-chat-view",
+					"name": "vscode-fxpw-ai-chat"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"when": "view == vscode-fxpw-ai-chat-view",
+					"command": "vscode-fxpw-ai-chat.openSettings",
+					"group": "navigation"
+				}
+			]
+		},
+		"configuration": {
+			"title": "vscode-fxpw-ai-chat-properties",
+			"properties": {
+				"vscode-fxpw-ai-chat.proxyIP": {
+					"type": "string",
+					"default": "166.1.11.24",
+					"description": "Proxy IP Address"
+				},
+				"vscode-fxpw-ai-chat.proxyPortHttps": {
+					"type": "string",
+					"default": "",
+					"description": "Proxy HTTPS Port"
+				},
+				"vscode-fxpw-ai-chat.proxyLogin": {
+					"type": "string",
+					"default": "",
+					"description": "Proxy Login"
+				},
+				"vscode-fxpw-ai-chat.proxyPassword": {
+					"type": "string",
+					"default": "",
+					"description": "Proxy Password"
+				},
+				"vscode-fxpw-ai-chat.openAIKey": {
+					"type": "string",
+					"default": "",
+					"description": "OpenAI API Key"
+				},
+				"vscode-fxpw-ai-chat.openAIModel": {
+					"type": "string",
+					"default": "gpt-3.5-turbo-0613",
+					"enum": [
+						"gpt-4",
+						"gpt-4-0613",
+						"gpt-4-32k",
+						"gpt-4-32k-0613",
+						"gpt-3.5-turbo",
+						"gpt-3.5-turbo-0613",
+						"gpt-3.5-turbo-0125",
+						"gpt-3.5-turbo-1106",
+						"gpt-3.5-turbo-16k",
+						"gpt-3.5-turbo-16k-0613"
+					],
+
+					"description": "OpenAI Model"
+				}
+			}
+		}
 	},
 	"repository": {
-		// "type": "git",
-		// "url": "https://github.com/fxpw/vscode-fxpw-theme.git"
+		"type": "git",
+		"url": "https://github.com/fxpw/vscode-fxpw-ai-chat.git"
 	},
-
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "vscode-test"
+	},
 	"devDependencies": {
-		"@types/vscode": "^1.85.0",
 		"@types/mocha": "^10.0.6",
-		"@types/node": "18.x",
-		"eslint": "^8.54.0",
-		"typescript": "^5.3.2",
+		"@types/node": "20.11.19",
+		"@types/vscode": "^1.86.0",
 		"@vscode/test-cli": "^0.0.4",
-		"@vscode/test-electron": "^2.3.8"
+		"@vscode/test-electron": "^2.3.9",
+		"eslint": "^8.56.0",
+		"typescript": "^5.3.3"
+	},
+	"dependencies": {
+		"axios": "^1.6.7",
+		"https-proxy-agent": "^7.0.4",
+		"markdown-it": "^14.0.0",
+		"node-fetch": "^3.3.2"
 	}
 }

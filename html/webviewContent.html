@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>OpenAI Query</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 20px;
+			color: var(--vscode-editor-foreground);
+			background-color: var(--vscode-editor-background);
+		}
+		h1 {
+			color: var(--vscode-textLink-foreground);
+			text-align: center;
+		}
+		textarea {
+			font-family: inherit;
+			font-size: var(--vscode-editor-font-size);
+			width: 100%;
+			height: auto;
+			min-height: 100px;
+			margin-top: 10px;
+			padding: 10px;
+			box-sizing: border-box;
+			background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
+			color: var(--vscode-input-foreground); /* Цвет текста ввода */
+			border-radius: 5px;
+			border: 1px solid var(--vscode-textInput-border);
+			resize: none; /* Пользователь не сможет изменять размер */
+		}
+		button {
+			display: block;
+			width: 100%;
+			padding: 10px;
+			margin-top: 10px;
+			/* color: #fff; */
+			/* background-color: #0078d4; */
+			background-color: var(--vscode-button-background);
+			color: var(--vscode-button-foreground);
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 18px;
+		}
+		button:hover {
+			/* background-color: #005a9c; */
+			background-color: var(--vscode-button-hoverBackground);
+		}
+		button:disabled {
+			background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
+   			color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
+			cursor: not-allowed;
+			border: none;
+		}
+
+		.response {
+			background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
+			border: 1px solid var(--vscode-dropdown-border);
+			border-radius: 5px;
+			padding: 10px;
+			margin-top: 10px;
+			white-space: pre-wrap; /* Для сохранения форматирования */
+		}
+		.copy-btn {
+			width: max-content; /* Ограничиваем ширину содержимым */
+    		max-width: 100%; /* Убедитесь, что кнопка не выходит за пределы родительского блока */
+			cursor: pointer;
+			background-color: var(--vscode-button-background);
+			color: var(--vscode-button-foreground);
+			border: none;
+			border-radius: 3px;
+			padding: 5px 10px;
+			font-size: 12px;
+			position: absolute;
+			top: -10px;
+			right: 0px; /* Перемещаем кнопку в правый верхний угол */
+		}
+		pre {
+			position: relative;
+			background-color: var(--vscode-editor-background); /* Сделайте фон как у редактора для единообразия */
+			color: var(--vscode-editor-foreground); /* Цвет текста как в редакторе */
+			border-radius: 6px; /* Скругление углов для визуального соответствия остальным элементам */
+			margin-top: 10px; /* Отступ сверху для разделения элементов */
+		}
+		/* code {
+			border-radius: 6px;
+		} */
+	</style>
+</head>
+<body>
+	<h1>Send requst to OpenAI</h1>
+	<textarea id="queryInput" placeholder="Enter your request"></textarea>
+	<button id="sendQuery">Send</button>
+	<div id="response" class="response"></div>
+
+	<script>
+		let vscode = acquireVsCodeApi();
+		let intervalid = 0;
+		let sendQueryButton = document.getElementById('sendQuery');
+
+		function intervalChangeSendQueryText(){
+			sendQueryButton.textContent = 'Process...';
+			sendQueryButton.disabled = true;
+			let dots = 3; // Количество точек в анимации
+			// Функция для обновления текста кнопки
+			const updateButtonText = () => {
+				let text = 'Process' + '.'.repeat(dots);
+				sendQueryButton.textContent = text;
+				dots = (dots + 1) % 4; // Циклично изменяем количество точек от 0 до 3
+			};
+
+			// Начальное обновление текста
+			updateButtonText();
+			// Запускаем интервал для анимации текста кнопки
+			intervalId = setInterval(updateButtonText, 900);
+		}
+
+		function sendQueryButtonOnClick(){
+			intervalChangeSendQueryText();
+
+			let query = document.getElementById('queryInput').value;
+			vscode.postMessage({
+				command: 'queryOpenAI',
+				text: query
+			});
+		}
+
+		sendQueryButton.addEventListener('click', () => {
+			sendQueryButtonOnClick();
+		});
+
+		window.addEventListener('message', event => {
+			let message = event.data;
+			switch (message.command) {
+				case 'response':
+				let responseElement = document.getElementById('response');
+					if(message.response.trim() !== '') { // Проверяем, не пуст ли ответ
+						responseElement.innerHTML = message.response;
+						responseElement.querySelectorAll('pre code').forEach((block) => {
+							hljs.highlightElement(block);
+							document.querySelectorAll('pre code').forEach((block) => {
+							// Создаем кнопку копирования
+							let copyButton = document.createElement('button');
+							copyButton.textContent = 'copy';
+							copyButton.className = 'copy-btn';
+							copyButton.type = 'button';
+
+							// Добавляем функционал копирования для кнопки
+							copyButton.addEventListener('click', () => {
+								navigator.clipboard.writeText(block.textContent).then(() => {
+									btn.textContent = 'done!';
+									setTimeout(() => copyButton.textContent = 'copy', 2000); // Сброс надписи на кнопке через 2 секунды
+								}).catch(err => console.error('html/webviewContent.html error: ', err));
+							});
+
+							// Добавляем кнопку к блоку кода
+							block.parentNode.insertBefore(copyButton, block);
+						});
+						});
+						responseElement.style.display = 'block'; // Делаем элемент видимым
+					} else {
+						responseElement.style.display = 'none'; // Скрываем элемент, если текста нет
+					}
+					const sendButton = document.getElementById('sendQuery');
+					sendButton.textContent = 'Send';
+					sendButton.disabled = false;
+					clearInterval(intervalId); // Останавливаем анимацию
+					break;
+			}
+		});
+		document.addEventListener('DOMContentLoaded', function() {
+			hljs.highlightAll();
+			document.getElementById('response').style.display = 'none';
+		});
+
+		let queryInput = document.getElementById('queryInput');
+		queryInput.addEventListener('input', function() {
+			this.style.height = 'auto';
+			this.style.height = (this.scrollHeight) + 'px';
+		});
+		queryInput.addEventListener('keydown', function(event) {
+			// Проверяем, был ли нажат Enter без Shift
+			if (event.key === 'Enter' && !event.shiftKey) {
+				// Предотвращаем стандартное действие для Enter (создание новой строки)
+				event.preventDefault();
+				sendQueryButtonOnClick();
+			}
+		});
+	</script>
+</body>
+</html>
