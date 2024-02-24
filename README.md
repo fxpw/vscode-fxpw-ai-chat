@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 0.0.10
+
+change styles
+
 ### 0.0.9
 
 fix logic

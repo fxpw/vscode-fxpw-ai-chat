@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
-
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js/styles/vs2015.min.css">
+	<!-- <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/core.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<!-- Подключаем необходимые языки -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ini.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scss.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/shell.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/n1ql.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>OpenAI Query</title>
+	<!-- <title>OpenAI Query</title> -->
 	<style>
 		body {
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -78,18 +98,33 @@
 			font-size: 12px;
 			position: absolute;
 			top: -10px;
-			right: 0px; /* Перемещаем кнопку в правый верхний угол */
+			right: 0px; /* Перемещаем кнопку в пра%вый верхний угол */
 		}
 		pre {
 			position: relative;
-			background-color: var(--vscode-editor-background); /* Сделайте фон как у редактора для единообразия */
-			color: var(--vscode-editor-foreground); /* Цвет текста как в редакторе */
-			border-radius: 6px; /* Скругление углов для визуального соответствия остальным элементам */
-			margin-top: 10px; /* Отступ сверху для разделения элементов */
-		}
-		/* code {
+			/* background-color: var(--vscode-editor-background);
+			color: var(--vscode-editor-foreground);
 			border-radius: 6px;
-		} */
+			margin-top: 10px; */
+		}
+		code {
+			font-family: var(--vscode-editor-font-family, 'Courier New', monospace);
+			background-color: var(--vscode-editor-background, #1e1e1e);
+			color: var(--vscode-editor-foreground, #d4d4d4);
+			border: 1px solid var(--vscode-editor-lineHighlightBackground, #2f2f2f);
+			border-left: 3px solid var(--vscode-editorCursor-foreground, #d4d4d4);
+			/* page-break-inside: avoid; */
+			font-size: var(--vscode-editor-font-size, 14px);
+			line-height: var(--vscode-editor-lineHeight, 1.5);
+			/* margin-bottom: 1em; */
+			/* max-width: 100%; */
+			/* overflow: auto; */
+			/* display: block; */
+			/* padding: 0.5em 1em; */
+			/* word-wrap: normal; */
+			/* white-space: pre-wrap; */
+			/* word-break: break-word; */
+		}
 	</style>
 </head>
 <body>
@@ -106,23 +141,18 @@
 		function intervalChangeSendQueryText(){
 			sendQueryButton.textContent = 'Process...';
 			sendQueryButton.disabled = true;
-			let dots = 3; // Количество точек в анимации
-			// Функция для обновления текста кнопки
+			let dots = 3;
 			const updateButtonText = () => {
 				let text = 'Process' + '.'.repeat(dots);
 				sendQueryButton.textContent = text;
 				dots = (dots + 1) % 4; // Циклично изменяем количество точек от 0 до 3
 			};
-
-			// Начальное обновление текста
 			updateButtonText();
-			// Запускаем интервал для анимации текста кнопки
 			intervalId = setInterval(updateButtonText, 900);
 		}
 
 		function sendQueryButtonOnClick(){
 			intervalChangeSendQueryText();
-
 			let query = document.getElementById('queryInput').value;
 			vscode.postMessage({
 				command: 'queryOpenAI',
@@ -138,58 +168,60 @@
 			let message = event.data;
 			switch (message.command) {
 				case 'response':
-				let responseElement = document.getElementById('response');
+					let responseElement = document.getElementById('response');
 					if(message.response.trim() !== '') { // Проверяем, не пуст ли ответ
-						responseElement.innerHTML = message.response;
-						responseElement.querySelectorAll('pre code').forEach((block) => {
-							hljs.highlightElement(block);
-							document.querySelectorAll('pre code').forEach((block) => {
-							// Создаем кнопку копирования
-							let copyButton = document.createElement('button');
-							copyButton.textContent = 'copy';
-							copyButton.className = 'copy-btn';
-							copyButton.type = 'button';
-
-							// Добавляем функционал копирования для кнопки
-							copyButton.addEventListener('click', () => {
-								navigator.clipboard.writeText(block.textContent).then(() => {
-									btn.textContent = 'done!';
-									setTimeout(() => copyButton.textContent = 'copy', 2000); // Сброс надписи на кнопке через 2 секунды
-								}).catch(err => console.error('html/webviewContent.html error: ', err));
+						responseElement.innerHTML = marked.parse(message.response);
+						const codeBlocks = responseElement.querySelectorAll('pre code');
+						if (codeBlocks){
+							codeBlocks.forEach((block) => {
+								hljs.highlightElement(block);
+								let copyButton = document.createElement('button');
+								copyButton.textContent = 'copy';
+								copyButton.className = 'copy-btn';
+								copyButton.type = 'button';
+								copyButton.addEventListener('click', () => {
+									navigator.clipboard.writeText(block.textContent).then(() => {
+										btn.textContent = 'done!';
+										setTimeout(() => copyButton.textContent = 'copy', 2000);
+									}).catch(err => console.error('html/webviewContent.html error: ', err));
+								});
+								block.parentNode.insertBefore(copyButton, block);
 							});
-
-							// Добавляем кнопку к блоку кода
-							block.parentNode.insertBefore(copyButton, block);
-						});
-						});
-						responseElement.style.display = 'block'; // Делаем элемент видимым
+						}
+						responseElement.style.display = 'block';
 					} else {
-						responseElement.style.display = 'none'; // Скрываем элемент, если текста нет
+						responseElement.style.display = 'none';
 					}
 					const sendButton = document.getElementById('sendQuery');
 					sendButton.textContent = 'Send';
 					sendButton.disabled = false;
-					clearInterval(intervalId); // Останавливаем анимацию
+					clearInterval(intervalId);
 					break;
 			}
 		});
-		document.addEventListener('DOMContentLoaded', function() {
-			hljs.highlightAll();
-			document.getElementById('response').style.display = 'none';
-		});
-
+		
 		let queryInput = document.getElementById('queryInput');
 		queryInput.addEventListener('input', function() {
 			this.style.height = 'auto';
 			this.style.height = (this.scrollHeight) + 'px';
 		});
+
 		queryInput.addEventListener('keydown', function(event) {
-			// Проверяем, был ли нажат Enter без Shift
-			if (event.key === 'Enter' && !event.shiftKey) {
-				// Предотвращаем стандартное действие для Enter (создание новой строки)
+			const sendButton = document.getElementById('sendQuery');
+			if (event.key === 'Enter' && !event.shiftKey && sendButton && !sendButton.disabled) {
 				event.preventDefault();
 				sendQueryButtonOnClick();
 			}
+		});
+
+		document.addEventListener('DOMContentLoaded', function() {
+			document.getElementById('response').style.display = 'none';
+			marked.setOptions({
+				highlight: function(code, lang) {
+					const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+					return hljs.highlight(code, { language }).value;
+				}
+			});
 		});
 	</script>
 </body>

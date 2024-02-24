@@ -1,9 +1,9 @@
 
 const vscode = require("vscode");
-const axios =  require('axios');
+// const axios =  require('axios');
 const https_proxy_agent = require("https-proxy-agent");
-const MarkdownIt = require('markdown-it'), md = new MarkdownIt();
-
+// const MarkdownIt = require('markdown-it'), md = new MarkdownIt();
+const openai_lib = require("openai");
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -19,54 +19,38 @@ async function getHtmlForWebview(webview, extensionUri) {
 		return `<!DOCTYPE html><html><body><p>Error loading content...</p></body></html>`;
 	}
 }
+let config = vscode.workspace.getConfiguration('vscode-fxpw-ai-chat');
+let PROXY_IP = config.get('proxyIP');
+let PROXY_PORT_HTTPS = config.get('proxyPortHttps');
+let PROXY_LOGIN = config.get('proxyLogin');
+let PROXY_PASSWORD = config.get('proxyPassword');
+let OPENAI_KEY = config.get('openAIKey');
+let OPENAI_MODEL = config.get('openAIModel');
+
+
+let options = {
+	headers: {
+		'Authorization': `Bearer ${OPENAI_KEY}`,
+		'Content-Type': 'application/json',
+	}
+};
+let proxyUrl = `http://${PROXY_LOGIN}:${PROXY_PASSWORD}@${PROXY_IP}:${PROXY_PORT_HTTPS}`;
+let agent = new https_proxy_agent.HttpsProxyAgent(proxyUrl);
+
+let openai = new openai_lib.OpenAI({
+	apiKey : OPENAI_KEY,
+	httpAgent:agent,
+});
 
 async function queryOpenAI(query) {
-	let config = vscode.workspace.getConfiguration('vscode-fxpw-ai-chat');
-	let PROXY_IP = config.get('proxyIP');
-	let PROXY_PORT_HTTPS = config.get('proxyPortHttps');
-	let PROXY_LOGIN = config.get('proxyLogin');
-	let PROXY_PASSWORD = config.get('proxyPassword');
-	let OPENAI_KEY = config.get('openAIKey');
-	let OPENAI_MODEL = config.get('openAIModel');
-	// let proxyUrl = `http://${PROXY_LOGIN}:${PROXY_PASSWORD}@${PROXY_IP}:${PROXY_PORT_HTTPS}`;
-	let options = {
-		headers: {
-			'Authorization': `Bearer ${OPENAI_KEY}`,
-			'Content-Type': 'application/json',
-		}
-	};
-	if (!OPENAI_KEY || !OPENAI_MODEL) {
-		vscode.commands.executeCommand('vscode-fxpw-ai-chat.openSettings').then(() => {
-			console.log('Settings opened');
-		}, (err) => {
-			console.error('Failed to open settings: ', err);
-		});
-		return "No OPENAI_KEY or OPENAI_MODEL set in the extension config";
-	}
-	// Проверяем, заданы ли все параметры прокси
-	if (PROXY_IP && PROXY_PORT_HTTPS && PROXY_LOGIN && PROXY_PASSWORD) {
-		let proxyUrl = `http://${PROXY_LOGIN}:${PROXY_PASSWORD}@${PROXY_IP}:${PROXY_PORT_HTTPS}`;
-		let agent = new https_proxy_agent.HttpsProxyAgent(proxyUrl);
-		options.httpsAgent = agent; // Используем прокси только если все параметры заданы
-	}
+	
+	const chatCompletion = await openai.chat.completions.create({
+		messages: [{ role: 'user', content: query }],
+		model: OPENAI_MODEL,
+	});
+	console.log(chatCompletion);
+	return chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content;
 
-	let requestUrl = `https://api.openai.com/v1/chat/completions`;
-	try {
-		const response = await axios.post(requestUrl, {
-			model: OPENAI_MODEL,
-			messages: [{"role": "user", "content": query}], // Исправлено на правильную структуру
-			temperature: 0.7 // Добавлен параметр temperature, если необходим
-		},options);
-		if (response.data.choices && response.data.choices.length > 0) {
-			return response.data.choices[0].message.content;
-		} else {
-			return 'No answer';
-		}
-	} catch (error) {
-		console.error('Error while requesting OpenAI:', error);
-		// throw new Error('An error occurred while contacting OpenAI.');
-		return 'Error while requesting OpenAI';
-	}
 }
 
 class OpenAIViewProvider {
@@ -90,13 +74,8 @@ class OpenAIViewProvider {
 		webviewView.webview.onDidReceiveMessage(async message => {
 			switch (message.command) {
 				case 'queryOpenAI':
-					// const response_text = await queryOpenAI(message.text);
-					// webviewView.webview.postMessage({ command: 'response', response: response_text });
 					const response_text = await queryOpenAI(message.text);
-					const markdownResponse = `${response_text}`;
-					const htmlResponse = md.render(markdownResponse);
-					// console.log(response_text);
-					webviewView.webview.postMessage({ command: 'response', response: htmlResponse });
+					webviewView.webview.postMessage({ command: 'response', response: response_text });
 					break;
 			}
 		});

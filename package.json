@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-ai-chat",
 	"description": "vscode-fxpw-ai-chat",
 	"publisher": "fxpw",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"engines": {
 		"vscode": "^1.86.0"
 	},
@@ -16,16 +16,16 @@
 	"main": "./src/extension.js",
 	"icon": "images/icon.jpg",
 	"contributes": {
-		"commands": [{
-			"command": "vscode-fxpw-ai-chat.openSettings",
-			"title": "Open vscode-fxpw-ai-chat Settings",
-			"icon": {
-				"dark": "images/setting.png",
-				"light": "images/setting.png"
-				
-				
+		"commands": [
+			{
+				"command": "vscode-fxpw-ai-chat.openSettings",
+				"title": "Open vscode-fxpw-ai-chat Settings",
+				"icon": {
+					"dark": "images/setting.png",
+					"light": "images/setting.png"
+				}
 			}
-		}],
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -96,7 +96,6 @@
 						"gpt-3.5-turbo-16k",
 						"gpt-3.5-turbo-16k-0613"
 					],
-
 					"description": "OpenAI Model"
 				}
 			}
@@ -124,6 +123,7 @@
 		"axios": "^1.6.7",
 		"https-proxy-agent": "^7.0.4",
 		"markdown-it": "^14.0.0",
-		"node-fetch": "^3.3.2"
+		"node-fetch": "^3.3.2",
+		"openai": "^4.28.0"
 	}
 }
