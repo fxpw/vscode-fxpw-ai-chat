@@ -1,0 +1,4 @@
+h1 {
+	color: var(--vscode-textLink-foreground);
+	text-align: center;
+}

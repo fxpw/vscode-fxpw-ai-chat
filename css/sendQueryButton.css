@@ -1,0 +1,24 @@
+.sendQueryButton {
+	display: block;
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	/* color: #fff; */
+	/* background-color: #0078d4; */
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 18px;
+}
+.sendQueryButton:hover {
+	/* background-color: #005a9c; */
+	background-color: var(--vscode-button-hoverBackground);
+}
+.sendQueryButton:disabled {
+	background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
+	   color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
+	cursor: not-allowed;
+	border: none;
+}

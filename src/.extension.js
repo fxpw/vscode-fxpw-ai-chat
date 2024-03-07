@@ -1,69 +1,47 @@
 
 const vscode = require("vscode");
 // const axios =  require('axios');
-const https_proxy_agent = require("https-proxy-agent");
+// const https_proxy_agent = require("https-proxy-agent");
 // const MarkdownIt = require('markdown-it'), md = new MarkdownIt();
-const openai_lib = require("openai");
+// const openai_lib = require("openai");
 const fs = require('fs').promises;
 const path = require('path');
 
-
+const {ExtensionData} = require("./ExtensionData.js");
+const {ExtensionSettings} = require("./ExtensionSettings.js");
+const {Chat} = require("./Chat.js");
 
 async function getHtmlForWebview(webview, extensionUri) {
 	const htmlFilePath = path.join(extensionUri.fsPath, "html", 'webviewContent.html');
+	const cssUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'css'));
+    // const jsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'js'));
 	try {
-		const htmlContent = await fs.readFile(htmlFilePath, { encoding: 'utf8' });
+		let htmlContent = await fs.readFile(htmlFilePath, { encoding: 'utf8' });
+		htmlContent = htmlContent.replace(/<link rel="stylesheet" href="css\//g, `<link rel="stylesheet" href="${cssUri}/`);
+        // htmlContent = htmlContent.replace(/<script src="js\//g, `<script src="${jsUri}/`);
 		return htmlContent;
 	} catch (error) {
 		console.error('Error reading HTML file:', error);
 		return `<!DOCTYPE html><html><body><p>Error loading content...</p></body></html>`;
 	}
 }
-let config = vscode.workspace.getConfiguration('vscode-fxpw-ai-chat');
-let PROXY_IP = config.get('proxyIP');
-let PROXY_PORT_HTTPS = config.get('proxyPortHttps');
-let PROXY_LOGIN = config.get('proxyLogin');
-let PROXY_PASSWORD = config.get('proxyPassword');
-let OPENAI_KEY = config.get('openAIKey');
-let OPENAI_MODEL = config.get('openAIModel');
-
-
-let options = {
-	headers: {
-		'Authorization': `Bearer ${OPENAI_KEY}`,
-		'Content-Type': 'application/json',
-	}
-};
-let proxyUrl = `http://${PROXY_LOGIN}:${PROXY_PASSWORD}@${PROXY_IP}:${PROXY_PORT_HTTPS}`;
-let agent = new https_proxy_agent.HttpsProxyAgent(proxyUrl);
-
-let openai = new openai_lib.OpenAI({
-	apiKey : OPENAI_KEY,
-	httpAgent:agent,
-});
-
-async function queryOpenAI(query) {
-	
-	const chatCompletion = await openai.chat.completions.create({
-		messages: [{ role: 'user', content: query }],
-		model: OPENAI_MODEL,
-	});
-	console.log(chatCompletion);
-	return chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content;
-
-}
 
 class OpenAIViewProvider {
-	constructor(extensionUri) {
-		this._extensionUri = extensionUri;
+	constructor(context) {
+		this._extensionUri = context.extensionUri;
 	}
 
 	resolveWebviewView(webviewView, context, token) {
 		webviewView.webview.options = {
-			enableScripts: true
+			enableScripts: true,
+			localResourceRoots: [
+				vscode.Uri.joinPath(this._extensionUri, 'css'),
+				vscode.Uri.joinPath(this._extensionUri, 'js'),
+				// Добавьте другие директории при необходимости
+			]
 		};
 
-		getHtmlForWebview(webviewView, this._extensionUri)
+		getHtmlForWebview(webviewView.webview, this._extensionUri)
 		.then(htmlContent => {
 			webviewView.webview.html = htmlContent;
 		})
@@ -74,7 +52,7 @@ class OpenAIViewProvider {
 		webviewView.webview.onDidReceiveMessage(async message => {
 			switch (message.command) {
 				case 'queryOpenAI':
-					const response_text = await queryOpenAI(message.text);
+					const response_text = await Chat.queryOpenAI(message.text);
 					webviewView.webview.postMessage({ command: 'response', response: response_text });
 					break;
 			}
@@ -83,24 +61,31 @@ class OpenAIViewProvider {
 }
 
 function activate(context) {
+	ExtensionData.Init(context);
+	ExtensionSettings.Init();
 	
 	let disposable = vscode.commands.registerCommand('vscode-fxpw-ai-chat.openSettings', function () {
 		vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-fxpw-ai-chat').then(() => {
-			console.log('Config open');
+			console.log('vscode-fxpw-ai-chat config open');
 		}, (err) => {
 			vscode.window.showErrorMessage('error: ' + err);
 		});
 	});
 	context.subscriptions.push(disposable);
 
-
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(
 			'vscode-fxpw-ai-chat-view',
-			new OpenAIViewProvider(context.extensionUri)
+			new OpenAIViewProvider(context)
 		)
 	);
-	
+
+	vscode.workspace.onDidChangeConfiguration(event => {
+        if (event.affectsConfiguration('vscode-fxpw-ai-chat')) {
+            ExtensionSettings.UpdateSettingsHandler();
+        }
+    });
+
 }
 
 

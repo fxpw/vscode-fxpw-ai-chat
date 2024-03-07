@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js/styles/vs2015.min.css">
 	<!-- <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/core.js"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js/styles/vs2015.min.css">
 	<!-- Подключаем необходимые языки -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
@@ -26,117 +26,37 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- <title>OpenAI Query</title> -->
-	<style>
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			margin: 20px;
-			color: var(--vscode-editor-foreground);
-			background-color: var(--vscode-editor-background);
-		}
-		h1 {
-			color: var(--vscode-textLink-foreground);
-			text-align: center;
-		}
-		textarea {
-			font-family: inherit;
-			font-size: var(--vscode-editor-font-size);
-			width: 100%;
-			height: auto;
-			min-height: 100px;
-			margin-top: 10px;
-			padding: 10px;
-			box-sizing: border-box;
-			background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
-			color: var(--vscode-input-foreground); /* Цвет текста ввода */
-			border-radius: 5px;
-			border: 1px solid var(--vscode-textInput-border);
-			resize: none; /* Пользователь не сможет изменять размер */
-		}
-		button {
-			display: block;
-			width: 100%;
-			padding: 10px;
-			margin-top: 10px;
-			/* color: #fff; */
-			/* background-color: #0078d4; */
-			background-color: var(--vscode-button-background);
-			color: var(--vscode-button-foreground);
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-			font-size: 18px;
-		}
-		button:hover {
-			/* background-color: #005a9c; */
-			background-color: var(--vscode-button-hoverBackground);
-		}
-		button:disabled {
-			background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
-   			color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
-			cursor: not-allowed;
-			border: none;
-		}
 
-		.response {
-			background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
-			border: 1px solid var(--vscode-dropdown-border);
-			border-radius: 5px;
-			padding: 10px;
-			margin-top: 10px;
-			white-space: pre-wrap; /* Для сохранения форматирования */
-		}
-		.copy-btn {
-			width: max-content; /* Ограничиваем ширину содержимым */
-    		max-width: 100%; /* Убедитесь, что кнопка не выходит за пределы родительского блока */
-			cursor: pointer;
-			background-color: var(--vscode-button-background);
-			color: var(--vscode-button-foreground);
-			border: none;
-			border-radius: 3px;
-			padding: 5px 10px;
-			font-size: 12px;
-			position: absolute;
-			top: -10px;
-			right: 0px; /* Перемещаем кнопку в пра%вый верхний угол */
-		}
-		pre {
-			position: relative;
-			/* background-color: var(--vscode-editor-background);
-			color: var(--vscode-editor-foreground);
-			border-radius: 6px;
-			margin-top: 10px; */
-		}
-		code {
-			font-family: var(--vscode-editor-font-family, 'Courier New', monospace);
-			background-color: var(--vscode-editor-background, #1e1e1e);
-			color: var(--vscode-editor-foreground, #d4d4d4);
-			border: 1px solid var(--vscode-editor-lineHighlightBackground, #2f2f2f);
-			border-left: 3px solid var(--vscode-editorCursor-foreground, #d4d4d4);
-			/* page-break-inside: avoid; */
-			font-size: var(--vscode-editor-font-size, 14px);
-			line-height: var(--vscode-editor-lineHeight, 1.5);
-			/* margin-bottom: 1em; */
-			/* max-width: 100%; */
-			/* overflow: auto; */
-			/* display: block; */
-			/* padding: 0.5em 1em; */
-			/* word-wrap: normal; */
-			/* white-space: pre-wrap; */
-			/* word-break: break-word; */
-		}
-	</style>
+	<link rel="stylesheet" href="css/body.css">
+	<link rel="stylesheet" href="css/code.css">
+	<link rel="stylesheet" href="css/copyButton.css">
+	<link rel="stylesheet" href="css/h1.css">
+	<link rel="stylesheet" href="css/queryInput.css">
+	<link rel="stylesheet" href="css/response.css">
+	<link rel="stylesheet" href="css/sendQueryButton.css">
+
 </head>
 <body>
-	<h1>Send requst to OpenAI</h1>
-	<textarea id="queryInput" placeholder="Enter your request"></textarea>
-	<button id="sendQuery">Send</button>
-	<div id="response" class="response"></div>
+
+	<h1>
+		Send requst to OpenAI
+	</h1>
+	
+	<textarea id="queryInput" class="queryInput" placeholder="Enter your request">
+	</textarea>
+
+	<button id="sendQueryButton" class="sendQueryButton">
+		Send
+	</button>
+
+	<div id="response" class="response">
+	</div>
+
 
 	<script>
 		let vscode = acquireVsCodeApi();
 		let intervalid = 0;
-		let sendQueryButton = document.getElementById('sendQuery');
+		let sendQueryButton = document.getElementById('sendQueryButton');
 
 		function intervalChangeSendQueryText(){
 			sendQueryButton.textContent = 'Process...';
@@ -145,7 +65,7 @@
 			const updateButtonText = () => {
 				let text = 'Process' + '.'.repeat(dots);
 				sendQueryButton.textContent = text;
-				dots = (dots + 1) % 4; // Циклично изменяем количество точек от 0 до 3
+				dots = (dots + 1) % 4;
 			};
 			updateButtonText();
 			intervalId = setInterval(updateButtonText, 900);
@@ -177,7 +97,7 @@
 								hljs.highlightElement(block);
 								let copyButton = document.createElement('button');
 								copyButton.textContent = 'copy';
-								copyButton.className = 'copy-btn';
+								copyButton.className = 'copyButton';
 								copyButton.type = 'button';
 								copyButton.addEventListener('click', () => {
 									navigator.clipboard.writeText(block.textContent).then(() => {
