@@ -13,6 +13,14 @@
 		},
 		"sourceType": "module"
 	},
+	"globals": {
+		"document": "readonly",
+		"window": "readonly",
+		"hljs": "readonly",
+		"navigator": "readonly",
+		"marked": "readonly",
+		"acquireVsCodeApi": "readonly"
+	},
 	"rules": {
 		"no-const-assign": "warn",
 		"no-this-before-super": "warn",

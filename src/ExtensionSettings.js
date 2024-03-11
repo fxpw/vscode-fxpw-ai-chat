@@ -7,23 +7,27 @@ class ExtensionSettings {
 	}
 
 	static get PROXY_IP() {
-		return this.config.get('proxyIP');
+		return ExtensionSettings.config.get('proxyIP');
 	};
 
 	static get PROXY_PORT_HTTPS() {
-		return this.config.get('proxyPortHttps');
+		return ExtensionSettings.config.get('proxyPortHttps');
 	};
 
 	static get PROXY_LOGIN() {
-		return this.config.get('proxyLogin');
+		return ExtensionSettings.config.get('proxyLogin');
 	};
 
 	static get PROXY_PASSWORD() {
-		return this.config.get('proxyPassword');
+		return ExtensionSettings.config.get('proxyPassword');
 	};
 
 	static get OPENAI_KEY() {
-		return this.config.get('openAIKey');
+		return ExtensionSettings.config.get('openAIKey');
+	};
+
+	static get OPENAI_MODEL() {
+		return ExtensionSettings.config.get('openAIModel');
 	};
 
 	static get PROXY_URL() {

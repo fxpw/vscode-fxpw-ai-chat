@@ -18,7 +18,7 @@
 }
 .sendQueryButton:disabled {
 	background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
-	   color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
+	color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
 	cursor: not-allowed;
 	border: none;
 }
