@@ -18,7 +18,7 @@ jobs:
           node-version: '20'
 
       - name: Set release number to package
-        run: sed -i 's|@runner_version@|${{ secrets.run_number}}|' package.json
+        run: sed -i 's|@VERSION_FROM_RUNNER@|${{ github.run_number}}|' package.json
 
       - name: Install Dependencies
         run: npm install
