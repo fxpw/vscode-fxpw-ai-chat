@@ -1,0 +1,43 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '20'
+
+      - name: Set release number to package
+        run: sed -i 's|@runner_version@|${{ secrets.run_number}}|' package.json
+
+      - name: Install Dependencies
+        run: npm install
+    
+      - name: Package Extension
+        run: vsce package
+    
+      - name: Publish Extension
+        run: vsce publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+    
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release 1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false

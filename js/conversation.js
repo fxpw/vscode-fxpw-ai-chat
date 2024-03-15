@@ -7,7 +7,7 @@ function scrollСhatHistoryContainerToBottom() {
 let intervalIdForConversationSendTextButton = 0;
 
 function intervalChangeSendQueryText(){
-	let conversationSendTextButton = document.createElement('conversationSendTextButton')
+	let conversationSendTextButton = document.getElementById('conversationSendTextButton')
 	conversationSendTextButton.textContent = 'Process...';
 	conversationSendTextButton.disabled = true;
 	let dots = 3;
@@ -23,15 +23,23 @@ function intervalChangeSendQueryText(){
 
 function conversationSendTextButtonOnClick(){
 	intervalChangeSendQueryText();
-	let query = document.getElementById('conversationTextToSendInput').value;
+	let conversationTextToSendInput = document.getElementById('conversationTextToSendInput');
+	let query = conversationTextToSendInput.value;
+	conversationTextToSendInput.value ="";
+	let chatHistoryElement = document.createElement('div');
+	chatHistoryElement.className = "chatHistoryElement userMargin";
+	chatHistoryElement.innerHTML = marked.parse(query);
+	let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+	chatHistoryContainer.appendChild(chatHistoryElement);
 	vscode.postMessage({
 		command: 'conversationSendTextButtonOnClickRequest',
 		text: query,
-		chat_id : CURRENT_CHAT_ID,
+		chatID : CURRENT_CHAT_ID,
 	});
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function createConversationBody(chatData) {
 	// Очищаем содержимое элемента body перед обновлением
 	let bodyElement = document.getElementById('body');
@@ -47,20 +55,20 @@ function createConversationBody(chatData) {
 	// chat history container elements
 	chatData.conversation.forEach(messageData => {
 		let chatHistoryElement = document.createElement('div');
-		if (messageData.from == "user") {
-			chatHistoryElement.className = "chatHistoryElement rightMargin";
+		if (messageData.role == "user") {
+			chatHistoryElement.className = "chatHistoryElement userMargin";
 		} else {
-			chatHistoryElement.className = "chatHistoryElement leftMargin";
+			chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 		}
 		// chatHistoryElement.textContent = messageData.message;
-		chatHistoryElement.innerHTML = marked.parse(messageData.message);
+		chatHistoryElement.innerHTML = marked.parse(messageData.content);
 		let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
 		if (codeBlocks){
 			codeBlocks.forEach((block) => {
 				hljs.highlightElement(block);
 				let copyButton = document.createElement('button');
 				copyButton.textContent = 'copy';
-				copyButton.className = 'copy-btn';
+				copyButton.className = 'copyButton';
 				copyButton.type = 'button';
 				copyButton.addEventListener('click', () => {
 					navigator.clipboard.writeText(block.textContent).then(() => {
@@ -103,6 +111,7 @@ function createConversationBody(chatData) {
 	scrollСhatHistoryContainerToBottom();
 }
 
+// eslint-disable-next-line no-unused-vars
 function conversationSendTextButtonOnClickResponse(message) {
 	let chatData = message.chatData;
 	// Очищаем содержимое элемента body перед обновлением
@@ -118,12 +127,30 @@ function conversationSendTextButtonOnClickResponse(message) {
 	chatHistoryContainer.innerHTML = "";
 	chatData.conversation.forEach(messageData => {
 		let chatHistoryElement = document.createElement('div');
-		if (messageData.from == "user") {
-			chatHistoryElement.className = "chatHistoryElement rightMargin";
+		if (messageData.role == "user") {
+			chatHistoryElement.className = "chatHistoryElement userMargin";
 		} else {
-			chatHistoryElement.className = "chatHistoryElement leftMargin";
+			chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 		}
-		chatHistoryElement.textContent = messageData.message;
+		// chatHistoryElement.textContent = messageData.message;
+		chatHistoryElement.innerHTML = marked.parse(messageData.content);
+		let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
+		if (codeBlocks){
+			codeBlocks.forEach((block) => {
+				hljs.highlightElement(block);
+				let copyButton = document.createElement('button');
+				copyButton.textContent = 'copy';
+				copyButton.className = 'copy-btn';
+				copyButton.type = 'button';
+				copyButton.addEventListener('click', () => {
+					navigator.clipboard.writeText(block.textContent).then(() => {
+						copyButton.textContent = 'done!';
+						setTimeout(() => copyButton.textContent = 'copy', 2000);
+					}).catch(err => console.error('js//conversation.js error: ', err));
+				});
+				block.parentNode.insertBefore(copyButton, block);
+			});
+		}
 		chatHistoryContainer.appendChild(chatHistoryElement);
 	});
 

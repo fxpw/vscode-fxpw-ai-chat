@@ -4,18 +4,20 @@ function toHomeButtonOnClick() {
 	vscode.postMessage({
 		command: 'toHomeButtonOnClickRequest',
 	});
+	CURRENT_CHAT_ID=-1;
+	IN_CHAT = false;
 }
 
+// eslint-disable-next-line no-unused-vars
 function goToHome() {
 	toHomeButtonOnClick();
-	console.log("js/toHomeButton.js");
+	// console.log("js/toHomeButton.js");
 }
 
-
-
+// eslint-disable-next-line no-unused-vars
 function toHomeButtonOnClickResponse(message) {
 	let chatsListData = message.chatsListData.reverse();
-	updateBody(chatsListData);
+	updateConversationsList(chatsListData);
 }
 
 toHomeButton.addEventListener('click', () => {

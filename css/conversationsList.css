@@ -1,0 +1,33 @@
+
+.conversationsListContainer{
+	margin-top: 10px;
+}
+
+.openConversationButton {
+    display: block; /* Устанавливаем блочный тип элемента */
+    padding: 10px; /* Подберите подходящий отступ */
+    margin-bottom: 10px; /* Добавляем отступ между кнопками */
+    width: 100%;
+    background-color: var(--vscode-dropdown-background); /* Цвет фона кнопки */
+    color: var(--vscode-button-foreground); /* Цвет текста кнопки */
+    border: none; /* Убираем границу кнопки */
+    border-radius: 5px; /* Задаем скругление углов */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+.openConversationButton:hover {
+    background-color: var(--vscode-button-hoverBackground); /* Изменяем цвет фона при наведении */
+}
+
+.openConversationButton .openConversationButtonTopText, .openConversationButton .openConversationButtonBottomText {
+    display: block; 
+    white-space: nowrap; /* Позволяем перенос строк */
+    overflow: hidden; /* Отменяем обрезание текста */
+    text-overflow: ellipsis; /* Убираем эффект многоточия для каждой строки */
+	text-align: left; /* Выравнивание текста по левому краю */
+}
+
+.openConversationButton .openConversationButtonBottomText {
+    font-size: var(--vscode-editor-font-size, 14px) - 2px; /* Меньший размер шрифта для второй строки */
+	color: var(--vscode-textPreformat-foreground); /* Цвет текста кнопки */
+}

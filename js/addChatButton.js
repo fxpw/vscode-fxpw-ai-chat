@@ -9,7 +9,7 @@ function addChatButtonOnClick(){
 
 function addChatButtonOnClickResponse(message){
 	let chatsListData = message.chatsListData.reverse();
-	updateBody(chatsListData);
+	updateConversationsList(chatsListData);
 }
 
 

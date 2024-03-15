@@ -8,7 +8,15 @@ const {ExtensionData} = require("./ExtensionData.js");
 
 class OpenAI{
 	// eslint-disable-next-line no-unused-vars
-	static async request(query) {
+	static async request(messageData) {
+		let newChatID = messageData.chatID;
+		await ExtensionData.setCurrentChatID(newChatID);
+		let conversationSendTextButtonOnClickData = {
+			"role":"user",
+			"content":messageData.text,
+		}
+		await ExtensionData.addDataToCurrentChat(conversationSendTextButtonOnClickData);
+		
 		let agent = false;
 		if(ExtensionSettings.PROXY_URL){
 			agent = new https_proxy_agent.HttpsProxyAgent(ExtensionSettings.PROXY_URL);
@@ -17,29 +25,37 @@ class OpenAI{
 			apiKey : ExtensionSettings.OPENAI_KEY,
 			httpAgent:agent ? agent : null,
 		});
+		let newChatData = await ExtensionData.getCurrentChatData();
 		const chatCompletion = await openai.chat.completions.create({
-			messages: [{ role: 'user', content: query }],
+			messages: newChatData.conversation,
 			model: ExtensionSettings.OPENAI_MODEL,
 		});
-		console.log(chatCompletion);
+		if(chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content){
+			let conversationAIData = {
+				"role":"assistant",
+				"content":chatCompletion.choices[0].message.content,
+			}
+			await ExtensionData.addDataToCurrentChat(conversationAIData);
+		}
+		// console.log(chatCompletion);
 		return chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content;
 	
 	}
 
-	static async getCurrentChatData(){
-		return await ExtensionData.cetCurrentChatData();
-	}
 	static async getChatsListData(){
 		return ExtensionData.chatsData;
 	}
-	static async getConversationDataForView(){
-
+	static async getCurrentChatData(){
+		return await ExtensionData.getCurrentChatData();
 	}
-	static async getConversationDataForRequest(){
-
+	static async deleteChatDataByID(messageData){
+		return await ExtensionData.deleteChatDataByID(messageData.chatID);
 	}
-	static async createNewChat(){
-		return await ExtensionData.createNewChat();
+	static async createNewChat(model){
+		return await ExtensionData.createNewChat(model);
+	}
+	static async setCurrentChatID(id){
+		return await ExtensionData.setCurrentChatID(id);
 	}
 }
 

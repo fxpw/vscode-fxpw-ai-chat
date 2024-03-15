@@ -6,23 +6,3 @@ body {
 	background-color: var(--vscode-editor-background);
 }
 
-.openConversationButton {
-	display: block; /* Устанавливаем блочный тип элемента */
-    padding: 10px; /* Подберите подходящий отступ */
-	margin-bottom: 10px; /* Добавляем отступ между кнопками */
-	width: 100%;
-    background-color: var(--vscode-button-background); /* Цвет фона кнопки */
-    color: #ffffff; /* Цвет текста кнопки */
-    border: none; /* Убираем границу кнопки */
-    border-radius: 5px; /* Задаем скругление углов */
-    cursor: pointer; /* Указатель при наведении */
-    font-size: 14px; /* Размер шрифта */
-	overflow: hidden; /* Обрезаем текст, который не помещается внутри кнопки */
-    white-space: nowrap; /* Запрещаем перенос текста на новую строку */
-    text-overflow: ellipsis; /* Показываем многоточие, если текст обрезан */
-}
-
-.openConversationButton:hover {
-    background-color: var(--vscode-button-hoverBackground); /* Изменяем цвет фона при наведении */
-}
-

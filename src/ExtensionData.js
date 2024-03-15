@@ -1,242 +1,119 @@
 // const vscode = require('vscode');
 
+// const { log } = require("console");
 
-function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
 
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters.charAt(randomIndex);
-    }
+// function generateRandomString(length) {
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     let result = '';
 
-    return result;
-}
+//     for (let i = 0; i < length; i++) {
+//         const randomIndex = Math.floor(Math.random() * characters.length);
+//         result += characters.charAt(randomIndex);
+//     }
+
+//     return result;
+// }
 
 class ExtensionData {
-	static #currentChatID = 0;
-	static #lastChatID = 0;
+	// static #currentChatID = -1;
+	// static #lastChatID = -1;
+	// static #iteratorForChatID = 0;
 	static #chatsData = [];
 	static #context = null;
 
 	static get currentChatID() {
-		return this.#currentChatID;
+		return this.#context.globalState.get('currentChatID', -1);
 	}
 
-	static set currentChatID(newParam) {
-		if (typeof newParam === 'number') {
-			this.#currentChatID = newParam;
-		} else {
-			console.error('newParam must be a number');
-		}
+	static async setCurrentChatID(newParam) {
+		// if (typeof newParam === 'number') {
+		// 	this.#currentChatID = newParam;
+		// } else {
+		// 	console.error('newParam must be a number');
+		// }
+		await this.#context.globalState.update('currentChatID', newParam);
 	}
 
-	static get lastChatID() {
-		return this.#lastChatID;
-	};
+	static get iteratorForChatID() {
+		return this.#context.globalState.get('iteratorForChatID', 0);
+	}
 
-	static set lastChatID(new_param) {
-		this.#lastChatID = new_param
-	};
+	static async addIteratorForChatID() {
+		let lastIterator = this.iteratorForChatID;
+		lastIterator++;
+		await this.#context.globalState.update('iteratorForChatID', lastIterator);
+	}
 
 	static get chatsData() {
 		return this.#chatsData;
 	};
 
-	static getChatsCount() {
-        return this.#chatsData.length;
-    }
-
-	static async createNewChat(){
-		let maxChats = ExtensionData.getChatsCount()
-		// console.log(maxChats,39);
-		let currentDate = new Date();
-		let timestamp = currentDate.getTime();
-		//create
-		let new_chat = {};
-		new_chat.conversation = [
-			{
-				"message":"first",
-				"from":"ai",
-			},
-			{
-				"message":"second",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412124",
-				"from":"user",
-			},
-			{
-				"message":"test412412",
-				"from":"ai",
-			},
-			{
-				"message":"prelast",
-				"from":"user",
-			},
-			{
-				"message":"last",
-				"from":"user",
-			},
-			// {
-			// 	"message":"test412412",
-			// 	"from":"ai",
-			// },
-			// {
-			// 	"message":"test412124",
-			// 	"from":"user",
-			// },
-			// {
-			// 	"message":"test412124",
-			// 	"from":"user",
-			// },
-			// {
-			// 	"message":"test412412",
-			// 	"from":"ai",
-			// },
-			// {
-			// 	"message":"test412124",
-			// 	"from":"user",
-			// },
-			// {
-			// 	"message":"test412412",
-			// 	"from":"ai",
-			// },
-			// {
-			// 	"message":"test412124",
-			// 	"from":"user",
-			// },
-		];
-		new_chat.name = generateRandomString(150);
-		new_chat.createAt = timestamp;
-		new_chat.id = maxChats;
-		new_chat.lastUpdate = timestamp;
-		new_chat.needRenameOnRequest = true; // when be first request that change to false and upgrade name
-
-		this.#chatsData.push(new_chat);
-
-		await ExtensionData.saveChatsData();
-	}
-
 	static async saveChatsData() {
 		await this.#context.globalState.update('chatsData', this.#chatsData);
 	};
 
+	static async createNewChat(model){
+		let currentDate = new Date();
+		let timestamp = currentDate.getTime();
+		let new_chat = {};
+		new_chat.conversation = [
+		];
+		new_chat.name = "click ME !";
+		new_chat.createAt = timestamp;
+		new_chat.id = this.iteratorForChatID;
+		new_chat.lastUpdate = timestamp;
+		new_chat.needRenameOnRequest = true; // when be first request that change to false and upgrade name
+		new_chat.model = model;
+
+		this.#chatsData.push(new_chat);
+		await this.addIteratorForChatID();
+		await this.saveChatsData();
+	}
+
 	static async addDataToCurrentChat(data){
-		let currentChatData = await ExtensionData.getCurrentChatData();
+		let currentChatData = await this.getCurrentChatData();
+		if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
+			currentChatData.needRenameOnRequest = false;
+			currentChatData.name = data.content;
+		}
 		currentChatData.conversation.push(data);
 		let currentDate = new Date();
 		let timestamp = currentDate.getTime();
 		currentChatData.lastUpdate = timestamp;
-		await ExtensionData.saveChatsData();
+		await this.saveChatsData();
+	}
+
+	static async deleteChatDataByID(chatID){
+		this.#chatsData.forEach((element, index) => {
+			if (element.id === chatID) {
+				this.#chatsData = this.#chatsData.filter((_, i) => i !== index);
+			}
+		});
+		await this.setCurrentChatID(-1);
+		await this.saveChatsData();
 	}
 
 	static async getCurrentChatData(){
-		return this.#chatsData[this.#currentChatID]
+		let dataToReturn = [];
+		this.#chatsData.forEach((element, index) => {
+			if (element.id === this.currentChatID) {
+				dataToReturn = this.#chatsData.filter((_, i) => i === index);
+			}
+		});
+		return dataToReturn[0];
 	}
 
-	
+	static async getChatDataByID(chatID){
+		let dataToReturn = [];
+		this.#chatsData.forEach((element, index) => {
+			if (element.id === chatID) {
+				dataToReturn = this.#chatsData.filter((_, i) => i === index);
+			}
+		});
+		return dataToReturn[0];
+	}
+
 	/**
 	 * @static
 	 * @async
@@ -244,12 +121,14 @@ class ExtensionData {
 	 */
 	static async Init(context) {
 		this.#context = context;
-		this.#chatsData = []
-		// this.#chatsData = this.#context.globalState.get('chatsData', []);
-		this.#currentChatID = 0;
-		// this.#currentChatID = this.#context.globalState.get('lastChatID', 0);
-		this.#lastChatID = 0;
-		this.#lastChatID = this.#context.globalState.get('lastChatID', 0);
+		this.#chatsData = this.#context.globalState.get('chatsData', []);
+		// this.#chatsData = []
+		// this.currentChatID = this.#context.globalState.get('currentChatID', -1);
+		// this.#currentChatID = 0;
+		// this.#lastChatID = this.#context.globalState.get('lastChatID', -1);
+		// this.#lastChatID = 0;
+		// this.#iteratorForChatID = this.#context.globalState.get('iteratorForChatID', 0);
+		// this.#iteratorForChatID = 0;
 	};
 
 }

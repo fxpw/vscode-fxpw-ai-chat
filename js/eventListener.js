@@ -1,7 +1,7 @@
 
 window.addEventListener('message', event => {
 	let message = event.data;
-	console.log(message.command);
+	// console.log(message.command);
 	switch (message.command) {
 		case 'toHomeButtonOnClickResponse':
 			toHomeButtonOnClickResponse(message);
@@ -9,13 +9,8 @@ window.addEventListener('message', event => {
 		case 'conversationSendTextButtonOnClickResponse':
 			conversationSendTextButtonOnClickResponse(message);
 			break;
-		case 'add_chat':
-			break;
-		case 'delete_chat':
-			break;
-		case 'update_chat':
-			break;
-		case 'update_home':
+		case 'deleteChatButtonOnClickResponse':
+			deleteChatButtonOnClickResponse(message);
 			break;
 		case 'addChatButtonOnClickResponse':
 			addChatButtonOnClickResponse(message);

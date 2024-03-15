@@ -19,6 +19,17 @@
 		"hljs": "readonly",
 		"navigator": "readonly",
 		"marked": "readonly",
+		"toHomeButtonOnClickResponse": "readonly",
+		"conversationSendTextButtonOnClickResponse": "readonly",
+		"deleteChatButtonOnClickResponse": "readonly",
+		"addChatButtonOnClickResponse": "readonly",
+		"createConversationBody": "readonly",
+		"createOpenConversationButton": "readonly",
+		"updateBody": "readonly",
+		"IN_CHAT": "readonly",
+		"vscode": "readonly",
+		"CURRENT_CHAT_ID": "readonly",
+		"goToHome": "readonly",
 		"acquireVsCodeApi": "readonly"
 	},
 	"rules": {
