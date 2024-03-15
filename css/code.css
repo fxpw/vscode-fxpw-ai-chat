@@ -23,3 +23,18 @@ code {
 	/* white-space: pre-wrap; */
 	/* word-break: break-word; */
 }
+
+.copyButton {
+	width: max-content;
+	max-width: 100%;
+	cursor: pointer;
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border: none;
+	border-radius: 3px;
+	padding: 5px 10px;
+	font-size: 12px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}

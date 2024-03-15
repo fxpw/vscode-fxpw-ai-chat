@@ -1,8 +1,0 @@
-.response {
-	background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
-	border: 1px solid var(--vscode-dropdown-border);
-	border-radius: 5px;
-	padding: 10px;
-	margin-top: 10px;
-	white-space: pre-wrap; /* Для сохранения форматирования */
-}

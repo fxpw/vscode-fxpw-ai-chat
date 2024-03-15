@@ -54,10 +54,163 @@ class ExtensionData {
 		let timestamp = currentDate.getTime();
 		//create
 		let new_chat = {};
-		new_chat.conversation = [];
+		new_chat.conversation = [
+			{
+				"message":"first",
+				"from":"ai",
+			},
+			{
+				"message":"second",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412124",
+				"from":"user",
+			},
+			{
+				"message":"test412412",
+				"from":"ai",
+			},
+			{
+				"message":"prelast",
+				"from":"user",
+			},
+			{
+				"message":"last",
+				"from":"user",
+			},
+			// {
+			// 	"message":"test412412",
+			// 	"from":"ai",
+			// },
+			// {
+			// 	"message":"test412124",
+			// 	"from":"user",
+			// },
+			// {
+			// 	"message":"test412124",
+			// 	"from":"user",
+			// },
+			// {
+			// 	"message":"test412412",
+			// 	"from":"ai",
+			// },
+			// {
+			// 	"message":"test412124",
+			// 	"from":"user",
+			// },
+			// {
+			// 	"message":"test412412",
+			// 	"from":"ai",
+			// },
+			// {
+			// 	"message":"test412124",
+			// 	"from":"user",
+			// },
+		];
 		new_chat.name = generateRandomString(150);
 		new_chat.createAt = timestamp;
-		new_chat.id = maxChats+1;
+		new_chat.id = maxChats;
 		new_chat.lastUpdate = timestamp;
 		new_chat.needRenameOnRequest = true; // when be first request that change to false and upgrade name
 
@@ -71,7 +224,7 @@ class ExtensionData {
 	};
 
 	static async addDataToCurrentChat(data){
-		let currentChatData = await ExtensionData.GetCurrentChatData();
+		let currentChatData = await ExtensionData.getCurrentChatData();
 		currentChatData.conversation.push(data);
 		let currentDate = new Date();
 		let timestamp = currentDate.getTime();
@@ -93,7 +246,9 @@ class ExtensionData {
 		this.#context = context;
 		this.#chatsData = []
 		// this.#chatsData = this.#context.globalState.get('chatsData', []);
-		this.#currentChatID = this.#context.globalState.get('lastChatID', 0);
+		this.#currentChatID = 0;
+		// this.#currentChatID = this.#context.globalState.get('lastChatID', 0);
+		this.#lastChatID = 0;
 		this.#lastChatID = this.#context.globalState.get('lastChatID', 0);
 	};
 

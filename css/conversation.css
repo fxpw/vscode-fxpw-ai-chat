@@ -1,0 +1,102 @@
+/* Стили для истории беседы */
+.conversationContainer {
+	/* padding: 20px; */
+	overflow-y: auto;
+	/* max-height: calc(100% - 10%); */
+	height: 85vh;
+	/* width: 85vw; */
+	/* border-bottom: 1px solid #e0e0e0; */
+	background-color: var(--vscode-editor-background);
+}
+
+/* Дополнительные стили для улучшения визуального восприятия */
+.chatHistoryContainer {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	overflow-y: auto;
+	max-height: calc(100% - 23%);
+	/* max-height: calc(100% - 10%); */
+	/* Пример ограничения высоты контейнера, чтобы включить скроллинг */
+}
+
+/* Общие стили для элементов истории чата */
+.chatHistoryElement {
+	padding: 10px 15px;
+	margin: 5px;
+	border-radius: 8px;
+	color: #333;
+	max-width: 80%;
+	box-sizing: border-box;
+	word-wrap: break-word; /* Переносит длинные слова на новую строку */
+	overflow-wrap: break-word; /* Дополнительное свойство для обеспечения переноса */
+}
+
+/* Стили для сообщений, отправленных пользователем */
+.rightMargin {
+	margin-left: auto;
+	background-color: #dcf8c6;
+	/* Светло-зеленый цвет фона, типичный для сообщений пользователя */
+}
+
+/* Стили для сообщений, полученных от других */
+.leftMargin {
+	margin-right: auto;
+	background-color: #f0f0f0;
+	/* Светлый цвет фона для входящих сообщений */
+}
+
+.conversationTextareaToSendInput {
+	font-family: inherit;
+	font-size: var(--vscode-editor-font-size);
+	width: 100%;
+	height: auto;
+	min-height: 100px;
+	margin-top: 10px;
+	padding: 10px;
+	box-sizing: border-box;
+	background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
+	color: var(--vscode-input-foreground); /* Цвет текста ввода */
+	border-radius: 5px;
+	border: 1px solid var(--vscode-textInput-border);
+	resize: none; /* Пользователь не сможет изменять размер */
+}
+
+.conversationSendTextButton {
+	display: block;
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	/* color: #fff; */
+	/* background-color: #0078d4; */
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 18px;
+}
+.conversationSendTextButton:hover {
+	/* background-color: #005a9c; */
+	background-color: var(--vscode-button-hoverBackground);
+}
+.conversationSendTextButton:disabled {
+	background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
+	color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
+	cursor: not-allowed;
+	border: none;
+}
+
+/* Улучшения для скроллбара */
+.chatHistoryContainer::-webkit-scrollbar {
+	width: 6px;
+}
+
+.chatHistoryContainer::-webkit-scrollbar-thumb {
+	background: var(--vscode-button-background);
+	border-radius: 4px;
+}
+
+.chatHistoryContainer::-webkit-scrollbar-thumb:hover {
+	background: var(--vscode-button-hoverBackground);
+}

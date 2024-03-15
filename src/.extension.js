@@ -55,9 +55,21 @@ class OpenAIViewProvider {
 			let chatsListData; // Declare once
 			console.log(message.command);
 			switch (message.command) {
-				case 'requestToOpenAIRequest':
-					let response_text_from_openai = await OpenAI.request(message.text);
-					webviewView.webview.postMessage({ command: 'requestToOpenAIResponse', chatData:{} });
+				case 'conversationSendTextButtonOnClickRequest':
+					// let response_text_from_openai = await OpenAI.request(message.text);
+					let newChatID = message.chat_id;
+					ExtensionData.currentChatID=newChatID;
+					let conversationSendTextButtonOnClickData = {
+						"from":"user",
+						"message":message.text,
+					}
+					await ExtensionData.addDataToCurrentChat(conversationSendTextButtonOnClickData);
+					let conversationAIData = {
+						"from":"ai",
+						"message":message.text+" responce",
+					}
+					await ExtensionData.addDataToCurrentChat(conversationAIData);
+					webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: await ExtensionData.getCurrentChatData() });
 					break;
 				case 'addChatButtonOnClickRequest':
 					await OpenAI.createNewChat();

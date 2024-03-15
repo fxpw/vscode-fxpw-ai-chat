@@ -6,7 +6,8 @@ window.addEventListener('message', event => {
 		case 'toHomeButtonOnClickResponse':
 			toHomeButtonOnClickResponse(message);
 			break;
-		case 'to_chat':
+		case 'conversationSendTextButtonOnClickResponse':
+			conversationSendTextButtonOnClickResponse(message);
 			break;
 		case 'add_chat':
 			break;

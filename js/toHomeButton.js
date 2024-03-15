@@ -1,31 +1,21 @@
 let toHomeButton = document.getElementById('toHomeButton');
 
-function toHomeButtonOnClick(){
+function toHomeButtonOnClick() {
 	vscode.postMessage({
 		command: 'toHomeButtonOnClickRequest',
 	});
 }
 
-function goToHome(){
+function goToHome() {
 	toHomeButtonOnClick();
 	console.log("js/toHomeButton.js");
 }
 
-function updateBodyAfterToHomeButtonOnClickResponse(chatsListData) {
-    let bodyElement = document.getElementById('body');
-
-    bodyElement.innerHTML = '';
-
-    chatsListData.forEach(function(chat) {
-		let button = createConversationButton(chat);
-        bodyElement.appendChild(button);
-    });
-}
 
 
-function toHomeButtonOnClickResponse(message){
+function toHomeButtonOnClickResponse(message) {
 	let chatsListData = message.chatsListData.reverse();
-	updateBodyAfterToHomeButtonOnClickResponse(chatsListData);
+	updateBody(chatsListData);
 }
 
 toHomeButton.addEventListener('click', () => {

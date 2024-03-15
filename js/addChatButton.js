@@ -6,21 +6,10 @@ function addChatButtonOnClick(){
 	});
 }
 
-function updateBodyAfterAddChatButtonOnClickResponse(chatsListData) {
-    var bodyElement = document.getElementById('body');
-
-    bodyElement.innerHTML = '';
-
-    chatsListData.forEach(function(chat) {
-        var button = createConversationButton(chat);
-        bodyElement.appendChild(button);
-    });
-}
-
 
 function addChatButtonOnClickResponse(message){
 	let chatsListData = message.chatsListData.reverse();
-	updateBodyAfterAddChatButtonOnClickResponse(chatsListData);
+	updateBody(chatsListData);
 }
 
 

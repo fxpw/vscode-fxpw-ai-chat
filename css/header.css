@@ -1,14 +1,14 @@
 .header {
     display: flex;
     align-items: center;
-    height: 30px;
+    height: 3vh;
     background-color: var(--vscode-editor-background);
-    padding: 5px;
+    /* padding: 5px; */
 }
 
 .headerButton {
-    width: 30px;
-    height: 30px;
+    width: 3vh;
+    height: 3vh;
     font-size: 14px;
     background-color: var(--vscode-dropdown-background);
     border-radius: 5px;
@@ -22,9 +22,4 @@
 	color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
 	cursor: pointer;
 	border: none;
-}
-
-.spacer {
-    flex-grow: 1;
-	margin-right: auto;
 }
