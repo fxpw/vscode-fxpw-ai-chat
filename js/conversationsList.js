@@ -12,25 +12,22 @@ function clickToOpenConversationButton(chatData){
 function createOpenConversationButton(chatData){
 	let openConversationButton = document.createElement('button');
 	openConversationButton.className = 'openConversationButton';
-	// openConversationButton.textContent = chatData.name;
 
 	let openConversationButtonTopText = document.createElement('span');
-	// console.log(chatData.conversation,chatData.conversation.length,chatData.conversation.length>0)
 	if (chatData.conversation.length>0){
 		openConversationButtonTopText.textContent = chatData.conversation[chatData.conversation.length-1].content;
 	}else{
 		openConversationButtonTopText.textContent = "Empty chat";
 	}
-    openConversationButtonTopText.className = 'openConversationButtonTopText'; // Можете добавлять класс, если необходимо стилизовать
+    openConversationButtonTopText.className = 'openConversationButtonTopText';
     openConversationButton.appendChild(openConversationButtonTopText);
 
-    // Добавление перевода строки, если необходимо
+
     openConversationButton.appendChild(document.createElement('br')); 
 
-    // Создание и добавление второй строки текста
     let openConversationButtonBottomText = document.createElement('span');
     openConversationButtonBottomText.textContent = chatData.model;
-    openConversationButtonBottomText.className = 'openConversationButtonBottomText'; // Можете добавлять класс, если хотите применять уникальные стили
+    openConversationButtonBottomText.className = 'openConversationButtonBottomText';
     openConversationButton.appendChild(openConversationButtonBottomText);
 
 	openConversationButton.addEventListener('click', function() {
@@ -40,6 +37,7 @@ function createOpenConversationButton(chatData){
 }
 
 
+// eslint-disable-next-line no-unused-vars
 function updateConversationsList(chatsListData) {
     let bodyElement = document.getElementById('body');
 

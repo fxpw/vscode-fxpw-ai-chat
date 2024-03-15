@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.2-1.0.4
+
+cleanup
+
 ### 1.0.1
 
 add logic for save chat data and reuse it in chats

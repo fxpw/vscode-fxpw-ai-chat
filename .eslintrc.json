@@ -26,6 +26,7 @@
 		"createConversationBody": "readonly",
 		"createOpenConversationButton": "readonly",
 		"updateBody": "readonly",
+		"updateConversationsList": "readonly",
 		"IN_CHAT": "readonly",
 		"vscode": "readonly",
 		"CURRENT_CHAT_ID": "readonly",

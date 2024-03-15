@@ -102,11 +102,11 @@ function createConversationBody(chatData) {
 	conversationSendTextButton.addEventListener('click', function () {
 		conversationSendTextButtonOnClick();
 	});
-	// Добавляем созданные элементы в контейнер беседы
+
 	conversationContainer.appendChild(chatHistoryContainer);
 	conversationContainer.appendChild(conversationTextToSendInput);
 	conversationContainer.appendChild(conversationSendTextButton);
-	// Добавляем контейнер беседы в элемент body
+
 	bodyElement.appendChild(conversationContainer);
 	scrollСhatHistoryContainerToBottom();
 }
@@ -114,14 +114,6 @@ function createConversationBody(chatData) {
 // eslint-disable-next-line no-unused-vars
 function conversationSendTextButtonOnClickResponse(message) {
 	let chatData = message.chatData;
-	// Очищаем содержимое элемента body перед обновлением
-	// let bodyElement = document.getElementById('body');
-	// bodyElement.innerHTML = '';
-
-	// Создаем элементы для беседы
-	// let conversationContainer = document.createElement('div');
-	// conversationContainer.id = 'conversationContainer';
-	// conversationContainer.className = 'conversationContainer';
 
 	let chatHistoryContainer = document.getElementById('chatHistoryContainer');
 	chatHistoryContainer.innerHTML = "";

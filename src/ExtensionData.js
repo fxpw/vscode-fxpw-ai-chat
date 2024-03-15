@@ -1,24 +1,5 @@
-// const vscode = require('vscode');
-
-// const { log } = require("console");
-
-
-// function generateRandomString(length) {
-//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//     let result = '';
-
-//     for (let i = 0; i < length; i++) {
-//         const randomIndex = Math.floor(Math.random() * characters.length);
-//         result += characters.charAt(randomIndex);
-//     }
-
-//     return result;
-// }
 
 class ExtensionData {
-	// static #currentChatID = -1;
-	// static #lastChatID = -1;
-	// static #iteratorForChatID = 0;
 	static #chatsData = [];
 	static #context = null;
 
@@ -27,11 +8,6 @@ class ExtensionData {
 	}
 
 	static async setCurrentChatID(newParam) {
-		// if (typeof newParam === 'number') {
-		// 	this.#currentChatID = newParam;
-		// } else {
-		// 	console.error('newParam must be a number');
-		// }
 		await this.#context.globalState.update('currentChatID', newParam);
 	}
 
@@ -63,7 +39,7 @@ class ExtensionData {
 		new_chat.createAt = timestamp;
 		new_chat.id = this.iteratorForChatID;
 		new_chat.lastUpdate = timestamp;
-		new_chat.needRenameOnRequest = true; // when be first request that change to false and upgrade name
+		new_chat.needRenameOnRequest = true;
 		new_chat.model = model;
 
 		this.#chatsData.push(new_chat);
@@ -123,12 +99,6 @@ class ExtensionData {
 		this.#context = context;
 		this.#chatsData = this.#context.globalState.get('chatsData', []);
 		// this.#chatsData = []
-		// this.currentChatID = this.#context.globalState.get('currentChatID', -1);
-		// this.#currentChatID = 0;
-		// this.#lastChatID = this.#context.globalState.get('lastChatID', -1);
-		// this.#lastChatID = 0;
-		// this.#iteratorForChatID = this.#context.globalState.get('iteratorForChatID', 0);
-		// this.#iteratorForChatID = 0;
 	};
 
 }

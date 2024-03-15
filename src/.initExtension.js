@@ -1,9 +1,5 @@
 
 const vscode = require("vscode");
-// const axios =  require('axios');
-// const https_proxy_agent = require("https-proxy-agent");
-// const MarkdownIt = require('markdown-it'), md = new MarkdownIt();
-// const openai_lib = require("openai");
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -19,7 +15,6 @@ async function getHtmlForWebview(webview, extensionUri) {
 		let htmlContent = await fs.readFile(homeFilePath, { encoding: 'utf8' });
 		htmlContent = htmlContent.replace(/<link rel="stylesheet" href="..\/css\//g, `<link rel="stylesheet" href="${cssUri}/`);
         htmlContent = htmlContent.replace(/<script src="..\/js\//g, `<script src="${jsUri}/`);
-		// console.log(jsUri);
 		return htmlContent;
 	} catch (error) {
 		console.error('Error reading HTML file:', error);
@@ -38,7 +33,6 @@ class OpenAIViewProvider {
 			localResourceRoots: [
 				vscode.Uri.joinPath(this._extensionUri, 'css'),
 				vscode.Uri.joinPath(this._extensionUri, 'js'),
-				// Добавьте другие директории при необходимости
 			]
 		};
 
@@ -81,7 +75,6 @@ class OpenAIViewProvider {
 function activate(context) {
 	try {
 		ExtensionData.Init(context);
-		ExtensionSettings.Init();
 		
 		let disposable = vscode.commands.registerCommand('vscode-fxpw-ai-chat.openSettings', function () {
 			vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-fxpw-ai-chat').then(() => {
@@ -107,8 +100,6 @@ function activate(context) {
 	} catch (error) {
 		console.error(91,error);
 	}
-	
-
 }
 
 

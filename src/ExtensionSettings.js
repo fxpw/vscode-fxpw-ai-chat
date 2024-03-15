@@ -1,6 +1,5 @@
 const vscode = require('vscode');
 
-
 class ExtensionSettings {
 	static get config() {
 		return vscode.workspace.getConfiguration('vscode-fxpw-ai-chat');
@@ -36,28 +35,8 @@ class ExtensionSettings {
 		}
 	};
 
-	static Init(){
-		
-	}
-
 	static UpdateSettingsHandler() {
-		// if (
-		// 	PROXY_IP != config.get('proxyIP') ||
-		// 	PROXY_PORT_HTTPS != config.get('proxyPortHttps') ||
-		// 	PROXY_LOGIN != config.get('proxyLogin') ||
-		// 	PROXY_PASSWORD != config.get('proxyPassword')
-		// ){
-		// 	PROXY_IP = config.get('proxyIP');
-		// 	PROXY_PORT_HTTPS = config.get('proxyPortHttps');
-		// 	PROXY_LOGIN = config.get('proxyLogin');
-		// 	PROXY_PASSWORD = config.get('proxyPassword');
-		// 	proxyUrl = `http://${PROXY_LOGIN}:${PROXY_PASSWORD}@${PROXY_IP}:${PROXY_PORT_HTTPS}`;
-		// 	agent.proxy=proxyUrl
-		// }
-		// if (OPENAI_KEY != config.get('openAIKey')){
-		// 	OPENAI_KEY = config.get('openAIKey');
-		// 	openai.apiKey = OPENAI_KEY
-		// }
+
 	}
 } 
 
