@@ -13,10 +13,13 @@
     border: none; /* Убираем границу кнопки */
     border-radius: 5px; /* Задаем скругление углов */
     cursor: pointer; /* Указатель при наведении */
+	--border-intensity: 0; /* Интенсивность подсветки границы */
+    --border-color: rgba(255, 255, 255, var(--border-intensity)); /* Цвет границы */
 }
 
 .openConversationButton:hover {
-    background-color: var(--vscode-button-hoverBackground); /* Изменяем цвет фона при наведении */
+    background-color: var(--vscode-button-hoverBackground);
+	/* border-color: var(--border-color); */
 }
 
 .openConversationButton .openConversationButtonTopText, .openConversationButton .openConversationButtonBottomText {

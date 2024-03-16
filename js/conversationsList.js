@@ -22,7 +22,6 @@ function createOpenConversationButton(chatData){
     openConversationButtonTopText.className = 'openConversationButtonTopText';
     openConversationButton.appendChild(openConversationButtonTopText);
 
-
     openConversationButton.appendChild(document.createElement('br')); 
 
     let openConversationButtonBottomText = document.createElement('span');
@@ -33,6 +32,22 @@ function createOpenConversationButton(chatData){
 	openConversationButton.addEventListener('click', function() {
 		clickToOpenConversationButton(chatData);
 	});
+	// openConversationButton.addEventListener('mousemove', function(e) {
+    //     const rect = e.target.getBoundingClientRect();
+    //     const x = e.clientX - rect.left; // X координата относительно кнопки
+    //     const y = e.clientY - rect.top; // Y координата относительно кнопки
+    //     const centerX = rect.width / 2;
+    //     const centerY = rect.height / 2;
+    //     const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+    //     const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2); // Максимальное расстояние от центра до угла
+    //     const intensity = 1 - Math.min(distance / maxDistance, 1); // Интенсивность от 0 до 1
+    //     openConversationButton.style.setProperty('--border-intensity', intensity.toFixed(2));
+    // });
+    
+    // // Возвращаем нормальный стиль когда курсор уходит с кнопки
+    // openConversationButton.addEventListener('mouseleave', function() {
+    //     openConversationButton.style.setProperty('--border-intensity', 0);
+    // });
 	return openConversationButton;
 }
 
