@@ -49,23 +49,28 @@ class OpenAIViewProvider {
 			switch (message.command) {
 				case 'conversationSendTextButtonOnClickRequest':
 					await OpenAI.request(message);
-					webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: await OpenAI.getCurrentChatData() });
+					if (OpenAI.getCurrentChat()>0){
+						webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: await OpenAI.getCurrentChatData() });
+					}else{
+						// chatsListData = await OpenAI.getChatsListData();
+						webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData : await OpenAI.getChatsListData() });
+					}
 					break;
 				case 'addChatButtonOnClickRequest':
 					await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
-					chatsListData = await OpenAI.getChatsListData();
-					webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData : chatsListData });
+					// chatsListData = await OpenAI.getChatsListData();
+					webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData : await OpenAI.getChatsListData() });
 					break;
 				case 'deleteChatButtonOnClickRequest':
 					await OpenAI.deleteChatDataByID(message);
-					chatsListData = await OpenAI.getChatsListData();
+					// chatsListData = await OpenAI.getChatsListData();
 					await OpenAI.setCurrentChatID(-1);
-					webviewView.webview.postMessage({ command: 'deleteChatButtonOnClickResponse', chatsListData : chatsListData });
+					webviewView.webview.postMessage({ command: 'deleteChatButtonOnClickResponse', chatsListData : await OpenAI.getChatsListData() });
 					break;
 				case 'toHomeButtonOnClickRequest':
 					chatsListData = await OpenAI.getChatsListData();
 					await OpenAI.setCurrentChatID(-1);
-					webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData : chatsListData });
+					webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData : await OpenAI.getChatsListData() });
 					break;
 			}
 		});
@@ -75,7 +80,6 @@ class OpenAIViewProvider {
 function activate(context) {
 	try {
 		ExtensionData.Init(context);
-		
 		let disposable = vscode.commands.registerCommand('vscode-fxpw-ai-chat.openSettings', function () {
 			vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-fxpw-ai-chat').then(() => {
 				// console.log('vscode-fxpw-ai-chat config open');

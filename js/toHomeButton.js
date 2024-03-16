@@ -16,8 +16,8 @@ function goToHome() {
 
 // eslint-disable-next-line no-unused-vars
 function toHomeButtonOnClickResponse(message) {
-	let chatsListData = message.chatsListData.reverse();
-	updateConversationsList(chatsListData);
+	let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
+	updateConversationsList(sortedChatsDesc);
 }
 
 toHomeButton.addEventListener('click', () => {

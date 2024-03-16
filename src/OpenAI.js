@@ -15,7 +15,7 @@ class OpenAI{
 			"role":"user",
 			"content":messageData.text,
 		}
-		await ExtensionData.addDataToCurrentChat(conversationSendTextButtonOnClickData);
+		await ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData,newChatID);
 		
 		let agent = false;
 		if(ExtensionSettings.PROXY_URL){
@@ -25,21 +25,26 @@ class OpenAI{
 			apiKey : ExtensionSettings.OPENAI_KEY,
 			httpAgent:agent ? agent : null,
 		});
-		let newChatData = await ExtensionData.getCurrentChatData();
-		const chatCompletion = await openai.chat.completions.create({
-			messages: newChatData.conversation,
-			model: ExtensionSettings.OPENAI_MODEL,
-		});
-		if(chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content){
+		let newChatData = await ExtensionData.getChatDataByID(newChatID);
+		try {
+			const chatCompletion = await openai.chat.completions.create({
+				messages: newChatData.conversation,
+				model: ExtensionSettings.OPENAI_MODEL,
+			});
+			if(chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content){
+				let conversationAIData = {
+					"role":"assistant",
+					"content":chatCompletion.choices[0].message.content,
+				}
+				await ExtensionData.addDataToChatById(conversationAIData,newChatID);
+			}
+		} catch (error) {
 			let conversationAIData = {
 				"role":"assistant",
-				"content":chatCompletion.choices[0].message.content,
+				"content":error,
 			}
-			await ExtensionData.addDataToCurrentChat(conversationAIData);
+			await ExtensionData.addDataToChatById(conversationAIData,newChatID);
 		}
-		// console.log(chatCompletion);
-		return chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content;
-	
 	}
 
 	static async getChatsListData(){
@@ -56,6 +61,9 @@ class OpenAI{
 	}
 	static async setCurrentChatID(id){
 		return await ExtensionData.setCurrentChatID(id);
+	}
+	static getCurrentChat(){
+		return ExtensionData.currentChatID;
 	}
 }
 

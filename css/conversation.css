@@ -27,28 +27,10 @@
 	margin: 5px;
 	border-radius: 8px;
 	/* color: #333; */
-	max-width: 90%;
+	max-width: 90%!important;
 	box-sizing: border-box;
 	word-wrap: break-word; /* Переносит длинные слова на новую строку */
 	overflow-wrap: break-word; /* Дополнительное свойство для обеспечения переноса */
-}
-
-/* Стили для сообщений, отправленных пользователем */
-.userMargin {
-	margin-left: auto;
-	background-color: var(--vscode-dropdown-background);
-	color: var(--vscode-button-foreground);
-	border-right: 2px solid var(--vscode-focusBorder); /* Добавление обводки справа */
-	/* Светло-зеленый цвет фона, типичный для сообщений пользователя */
-}
-
-/* Стили для сообщений, полученных от других */
-.nonuserMargin {
-	margin-right: auto;
-	background-color: var(--vscode-dropdown-background);
-	color: var(--vscode-button-foreground);
-	border-left: 2px solid var(--vscode-focusBorder); /* Добавление обводки справа */
-	/* Светлый цвет фона для входящих сообщений */
 }
 
 .conversationTextareaToSendInput {

@@ -29,7 +29,25 @@ function conversationSendTextButtonOnClick(){
 	let chatHistoryElement = document.createElement('div');
 	chatHistoryElement.className = "chatHistoryElement userMargin";
 	chatHistoryElement.innerHTML = marked.parse(query);
+	let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
+	if (codeBlocks){
+		codeBlocks.forEach((block) => {
+			hljs.highlightElement(block);
+			let copyButton = document.createElement('button');
+			copyButton.textContent = 'copy';
+			copyButton.className = 'copyButton';
+			copyButton.type = 'button';
+			copyButton.addEventListener('click', () => {
+				navigator.clipboard.writeText(block.textContent).then(() => {
+					copyButton.textContent = 'done!';
+					setTimeout(() => copyButton.textContent = 'copy', 2000);
+				}).catch(err => console.error('js//conversation.js error: ', err));
+			});
+			block.parentNode.insertBefore(copyButton, block);
+		});
+	}
 	let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+
 	chatHistoryContainer.appendChild(chatHistoryElement);
 	vscode.postMessage({
 		command: 'conversationSendTextButtonOnClickRequest',
@@ -113,6 +131,7 @@ function createConversationBody(chatData) {
 
 // eslint-disable-next-line no-unused-vars
 function conversationSendTextButtonOnClickResponse(message) {
+
 	let chatData = message.chatData;
 
 	let chatHistoryContainer = document.getElementById('chatHistoryContainer');
@@ -124,7 +143,6 @@ function conversationSendTextButtonOnClickResponse(message) {
 		} else {
 			chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 		}
-		// chatHistoryElement.textContent = messageData.message;
 		chatHistoryElement.innerHTML = marked.parse(messageData.content);
 		let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
 		if (codeBlocks){
@@ -132,7 +150,7 @@ function conversationSendTextButtonOnClickResponse(message) {
 				hljs.highlightElement(block);
 				let copyButton = document.createElement('button');
 				copyButton.textContent = 'copy';
-				copyButton.className = 'copy-btn';
+				copyButton.className = 'copyButton';
 				copyButton.type = 'button';
 				copyButton.addEventListener('click', () => {
 					navigator.clipboard.writeText(block.textContent).then(() => {

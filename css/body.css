@@ -6,3 +6,16 @@ body {
 	background-color: var(--vscode-editor-background);
 }
 
+/* Улучшения для скроллбара */
+body::-webkit-scrollbar {
+	width: 6px;
+}
+
+body::-webkit-scrollbar-thumb {
+	background: var(--vscode-button-background);
+	border-radius: 4px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+	background: var(--vscode-button-hoverBackground);
+}

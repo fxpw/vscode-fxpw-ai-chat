@@ -59,6 +59,18 @@ class ExtensionData {
 		currentChatData.lastUpdate = timestamp;
 		await this.saveChatsData();
 	}
+	static async addDataToChatById(data,chatID){
+		let currentChatData = await this.getChatDataByID(chatID);
+		if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
+			currentChatData.needRenameOnRequest = false;
+			currentChatData.name = data.content;
+		}
+		currentChatData.conversation.push(data);
+		let currentDate = new Date();
+		let timestamp = currentDate.getTime();
+		currentChatData.lastUpdate = timestamp;
+		await this.saveChatsData();
+	}
 
 	static async deleteChatDataByID(chatID){
 		this.#chatsData.forEach((element, index) => {

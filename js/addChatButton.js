@@ -8,8 +8,8 @@ function addChatButtonOnClick(){
 
 // eslint-disable-next-line no-unused-vars
 function addChatButtonOnClickResponse(message){
-	let chatsListData = message.chatsListData.reverse();
-	updateConversationsList(chatsListData);
+	let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
+	updateConversationsList(sortedChatsDesc);
 }
 
 addChatButton.addEventListener('click', () => {

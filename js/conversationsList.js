@@ -1,70 +1,57 @@
 
 
-function clickToOpenConversationButton(chatData){
+function clickToOpenConversationButton(chatData) {
 	IN_CHAT = true;
 	CURRENT_CHAT_ID = chatData.id;
 	// console.log(chatData);
 	createConversationBody(chatData);
 }
 
-
 // eslint-disable-next-line no-unused-vars
-function createOpenConversationButton(chatData){
+function createOpenConversationButton(chatData) {
 	let openConversationButton = document.createElement('button');
-	openConversationButton.className = 'openConversationButton';
-
+	if (chatData.conversation.length == 0 || chatData.conversation[chatData.conversation.length-1].role == "user") {
+		openConversationButton.className = "openConversationButton userMargin";
+	} else {
+		openConversationButton.className = "openConversationButton nonuserMargin";
+	}
 	let openConversationButtonTopText = document.createElement('span');
-	if (chatData.conversation.length>0){
-		openConversationButtonTopText.textContent = chatData.conversation[chatData.conversation.length-1].content;
-	}else{
+	if (chatData.conversation.length > 0) {
+		openConversationButtonTopText.textContent = chatData.conversation[chatData.conversation.length - 1].content;
+	} else {
 		openConversationButtonTopText.textContent = "Empty chat";
 	}
-    openConversationButtonTopText.className = 'openConversationButtonTopText';
-    openConversationButton.appendChild(openConversationButtonTopText);
+	openConversationButtonTopText.className = 'openConversationButtonTopText';
+	openConversationButton.appendChild(openConversationButtonTopText);
 
-    openConversationButton.appendChild(document.createElement('br')); 
+	openConversationButton.appendChild(document.createElement('br'));
 
-    let openConversationButtonBottomText = document.createElement('span');
-    openConversationButtonBottomText.textContent = chatData.model;
-    openConversationButtonBottomText.className = 'openConversationButtonBottomText';
-    openConversationButton.appendChild(openConversationButtonBottomText);
+	let openConversationButtonBottomText = document.createElement('span');
+	openConversationButtonBottomText.textContent = chatData.model;
+	openConversationButtonBottomText.className = 'openConversationButtonBottomText';
+	openConversationButton.appendChild(openConversationButtonBottomText);
 
-	openConversationButton.addEventListener('click', function() {
+	openConversationButton.addEventListener('click', function () {
 		clickToOpenConversationButton(chatData);
 	});
-	// openConversationButton.addEventListener('mousemove', function(e) {
-    //     const rect = e.target.getBoundingClientRect();
-    //     const x = e.clientX - rect.left; // X координата относительно кнопки
-    //     const y = e.clientY - rect.top; // Y координата относительно кнопки
-    //     const centerX = rect.width / 2;
-    //     const centerY = rect.height / 2;
-    //     const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-    //     const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2); // Максимальное расстояние от центра до угла
-    //     const intensity = 1 - Math.min(distance / maxDistance, 1); // Интенсивность от 0 до 1
-    //     openConversationButton.style.setProperty('--border-intensity', intensity.toFixed(2));
-    // });
-    
-    // // Возвращаем нормальный стиль когда курсор уходит с кнопки
-    // openConversationButton.addEventListener('mouseleave', function() {
-    //     openConversationButton.style.setProperty('--border-intensity', 0);
-    // });
 	return openConversationButton;
 }
 
 
 // eslint-disable-next-line no-unused-vars
 function updateConversationsList(chatsListData) {
-    let bodyElement = document.getElementById('body');
+	let bodyElement = document.getElementById('body');
 
-    bodyElement.innerHTML = '';
+	bodyElement.innerHTML = '';
 
 	let conversationsListContainer = document.createElement('div');
 	conversationsListContainer.id = 'conversationsListContainer';
 	conversationsListContainer.className = 'conversationsListContainer';
 
-    chatsListData.forEach(function(chat) {
+	chatsListData.forEach(function (chat) {
 		let button = createOpenConversationButton(chat);
-        conversationsListContainer.appendChild(button);
-    });
+		conversationsListContainer.appendChild(button);
+	});
+
 	bodyElement.appendChild(conversationsListContainer);
 }
