@@ -37,6 +37,7 @@ jobs:
 
       - name: Generate release notes
         uses: actions/github-script@v7
+        id: release_notes
         with:
           script: |
             
@@ -67,6 +68,7 @@ jobs:
               .filter(Boolean);
             
             const releaseNotes = pullRequests.map(prNumber => `- PR #${prNumber}`).join('\n');
+            console.log(releaseNotes);
             core.setOutput('release_notes', releaseNotes);
           github-token: ${{ secrets.GITHUB_TOKEN }}
     

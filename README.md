@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.8-1.0.12
+
+imporove autobuild and logic for chats
+
 ### 1.0.7
 
 add command from rmb, imporove logic for delete button
