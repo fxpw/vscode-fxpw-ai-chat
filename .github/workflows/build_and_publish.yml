@@ -39,9 +39,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const github = require('@actions/github');
-            const { context } = github;
-            const { repo: { owner, repo }, payload } = context;
+            
+            const { owner, repo } = context.repo;
             const tagName = payload.ref.replace('refs/tags/', '');
             
             const listReleases = await github.rest.repos.listReleases({ owner, repo });
