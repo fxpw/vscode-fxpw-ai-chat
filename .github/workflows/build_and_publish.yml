@@ -41,7 +41,7 @@ jobs:
           script: |
             
             const { owner, repo } = context.repo;
-            const tagName = payload.ref.replace('refs/tags/', '');
+            const tagName = context.payload.ref.replace('refs/tags/', '');
             
             const listReleases = await github.rest.repos.listReleases({ owner, repo });
             
