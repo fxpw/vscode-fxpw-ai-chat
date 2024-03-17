@@ -165,6 +165,11 @@ class ExtensionData {
 		await this.saveChatsData();
 	}
 
+	static async deleteAllChatsData(){
+		this.#chatsData = [];
+		await this.saveChatsData();
+	}
+
 	/**
 	 * @static
 	 * @async

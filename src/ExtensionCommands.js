@@ -40,6 +40,16 @@ class ExtensionCommands{
 			
 		});
 		context.subscriptions.push(WTFCodeNewChatCommand);
+
+		let deleteAllChatsData = vscode.commands.registerCommand('vscode-fxpw-ai-chat.deleteAllChatsData',async function () {
+			try {
+				await OpenAI.deleteAllChatsData();
+			} catch (error) {
+				console.error(error);
+			}
+			
+		});
+		context.subscriptions.push(deleteAllChatsData);
 	};
 }
 

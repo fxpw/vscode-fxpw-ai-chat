@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.15
+
+add command to delete chats, fix bug whit openai error block
+
 ### 1.0.8-1.0.14
 
 imporove autobuild and logic for chats

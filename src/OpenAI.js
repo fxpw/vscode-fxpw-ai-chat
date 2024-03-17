@@ -52,15 +52,14 @@ class OpenAI{
 				}
 				await ExtensionData.addDataToChatById(conversationAIData,messageData.chatID);
 			}
-			await ExtensionData.unblockChatByID(messageData.chatID);
 		} catch (error) {
 			let conversationAIData = {
 				"role":"assistant",
 				"content":error.message,
 			}
 			await ExtensionData.addDataToChatById(conversationAIData,messageData.chatID);
-			
 		} finally{
+			await ExtensionData.unblockChatByID(messageData.chatID);
 			if (webview && needPostUpdate){
 				try {
 					if (OpenAI.getCurrentChat()==messageData.chatID){
@@ -95,6 +94,13 @@ class OpenAI{
 	static async createNewChat(model){
 		try {
 			return await ExtensionData.createNewChat(model);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	static async deleteAllChatsData(){
+		try {
+			return await ExtensionData.deleteAllChatsData();
 		} catch (error) {
 			console.error(error);
 		}

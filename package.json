@@ -14,6 +14,7 @@
 		"onStartupFinished"
 	],
 	"main": "./src/.initExtension.js",
+	"browser": "./src/.initExtension.js",
 	"icon": "images/icon.jpg",
 	"contributes": {
 		"commands": [
@@ -28,6 +29,10 @@
 			{
 				"command": "vscode-fxpw-ai-chat.WTFCodeNewChat",
 				"title": "fxpw-ai-chat: Объясни(новый чат)"
+			},
+			{
+				"command": "vscode-fxpw-ai-chat.deleteAllChatsData",
+				"title": "fxpw-ai-chat: Удалить всю историю чатов"
 			}
 		],
 		"viewsContainers": {
