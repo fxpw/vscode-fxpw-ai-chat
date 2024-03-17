@@ -1,12 +1,17 @@
-let deleteChatButton = document.getElementById('deleteChatButton');
+
 
 function deleteChatButtonOnClick(){
-	if (CURRENT_CHAT_ID>=0){
-		vscode.postMessage({
-			command: 'deleteChatButtonOnClickRequest',
-			chatID: CURRENT_CHAT_ID,
-		});
+	try {
+		if (CURRENT_CHAT_ID>=0 &&!IS_CHAT_BLOCKED){
+			vscode.postMessage({
+				command: 'deleteChatButtonOnClickRequest',
+				chatID: CURRENT_CHAT_ID,
+			});
+		}
+	} catch (error) {
+		console.error(error);
 	}
+
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -15,7 +20,14 @@ function deleteChatButtonOnClickResponse(message){
 }
 
 
-deleteChatButton.addEventListener('click', () => {
-	deleteChatButtonOnClick();
-});
+try {
+	let deleteChatButton = document.getElementById('deleteChatButton');
+	deleteChatButton.addEventListener('click', () => {
+		deleteChatButtonOnClick();
+	});
+} catch (error) {
+	console.error(error);
+}
+
+
 

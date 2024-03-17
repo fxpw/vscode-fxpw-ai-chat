@@ -34,6 +34,42 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
     
+      - name: Generate release notes
+        id: release_notes
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const { repo: { owner, repo }, payload } = context
+            const tagName = payload.ref.replace('refs/tags/', '')
+            const listReleases = await github.repos.listReleases({
+              owner,
+              repo,
+            })
+            const thisRelease = listReleases.data.find(release => release.tag_name === tagName)
+            let previousRelease = listReleases.data[0] // assume the last release is the most recent
+            if (thisRelease) {
+              const thisIndex = listReleases.data.findIndex(release => release.id === thisRelease.id)
+              previousRelease = listReleases.data[thisIndex + 1]
+            }
+  
+            const comparison = await github.repos.compareCommits({
+              owner,
+              repo,
+              base: previousRelease.tag_name,
+              head: tagName,
+            })
+  
+            const pullRequests = comparison.data.commits
+              .map(commit => {
+                const match = commit.commit.message.match(/Merge pull request #(\d+)/)
+                return match ? match[1] : null
+              })
+              .filter(Boolean)
+  
+            const releaseNotes = pullRequests.map(prNumber => `- PR #${prNumber}`).join('\n')
+  
+            core.setOutput('release_notes', releaseNotes)
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.1.4
@@ -42,5 +78,6 @@ jobs:
         with:
           tag_name: ${{ github.run_number }}
           release_name: Release 1.0.${{ github.run_number }}
+          body: ${{ steps.release_notes.outputs.release_notes }}
           draft: false
           prerelease: false

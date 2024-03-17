@@ -1,18 +1,29 @@
-let addChatButton = document.getElementById('addChatButton');
 
 function addChatButtonOnClick(){
-	vscode.postMessage({
-		command: 'addChatButtonOnClickRequest',
-	});
+	try {
+		vscode.postMessage({
+			command: 'addChatButtonOnClickRequest',
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 // eslint-disable-next-line no-unused-vars
 function addChatButtonOnClickResponse(message){
-	let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
-	updateConversationsList(sortedChatsDesc);
+	try {
+		let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
+		updateConversationsList(sortedChatsDesc);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
-addChatButton.addEventListener('click', () => {
-	addChatButtonOnClick();
-});
-
+try {
+	let addChatButton = document.getElementById('addChatButton');
+	addChatButton.addEventListener('click', () => {
+		addChatButtonOnClick();
+	});
+} catch (error) {
+	console.error(error);
+}

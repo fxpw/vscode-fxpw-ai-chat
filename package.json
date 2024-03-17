@@ -24,6 +24,10 @@
 					"dark": "images/setting.png",
 					"light": "images/setting.png"
 				}
+			},
+			{
+				"command": "vscode-fxpw-ai-chat.WTFCodeNewChat",
+				"title": "fxpw-ai-chat: Объясни(новый чат)"
 			}
 		],
 		"viewsContainers": {
@@ -49,6 +53,13 @@
 				{
 					"when": "view == vscode-fxpw-ai-chat-view",
 					"command": "vscode-fxpw-ai-chat.openSettings",
+					"group": "navigation"
+				}
+			],
+			"editor/context": [
+				{
+					"when": "editorTextFocus",
+					"command": "vscode-fxpw-ai-chat.WTFCodeNewChat",
 					"group": "navigation"
 				}
 			]

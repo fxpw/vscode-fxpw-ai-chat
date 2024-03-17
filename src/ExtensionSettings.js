@@ -36,7 +36,19 @@ class ExtensionSettings {
 	};
 
 	static UpdateSettingsHandler() {
-
+		try {
+			
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	// eslint-disable-next-line no-unused-vars
+	static Init(context){
+		vscode.workspace.onDidChangeConfiguration(event => {
+			if (event.affectsConfiguration('vscode-fxpw-ai-chat')) {
+				ExtensionSettings.UpdateSettingsHandler();
+			}
+		});
 	}
 } 
 

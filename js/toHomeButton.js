@@ -1,26 +1,40 @@
-let toHomeButton = document.getElementById('toHomeButton');
+
 
 function toHomeButtonOnClick() {
-	vscode.postMessage({
-		command: 'toHomeButtonOnClickRequest',
-	});
-	CURRENT_CHAT_ID=-1;
-	IN_CHAT = false;
+	try {
+		vscode.postMessage({
+			command: 'toHomeButtonOnClickRequest',
+		});
+		CURRENT_CHAT_ID=-1;
+		IN_CHAT = false;
+		IS_CHAT_BLOCKED=false;
+	} catch (error) {
+		console.error(error);
+	}
+
 }
 
 // eslint-disable-next-line no-unused-vars
 function goToHome() {
 	toHomeButtonOnClick();
-	// console.log("js/toHomeButton.js");
 }
 
 // eslint-disable-next-line no-unused-vars
 function toHomeButtonOnClickResponse(message) {
-	let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
-	updateConversationsList(sortedChatsDesc);
+	try {
+		let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
+		updateConversationsList(sortedChatsDesc);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
-toHomeButton.addEventListener('click', () => {
-	toHomeButtonOnClick();
-});
+try {
+	let toHomeButton = document.getElementById('toHomeButton');
+	toHomeButton.addEventListener('click', () => {
+		toHomeButtonOnClick();
+	});
+} catch (error) {
+	console.error(error);
+}
 

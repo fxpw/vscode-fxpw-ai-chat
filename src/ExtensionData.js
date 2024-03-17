@@ -1,3 +1,4 @@
+const { assert } = require("console");
 
 class ExtensionData {
 	static #chatsData = [];
@@ -8,7 +9,11 @@ class ExtensionData {
 	}
 
 	static async setCurrentChatID(newParam) {
-		await this.#context.globalState.update('currentChatID', newParam);
+		try {
+			await this.#context.globalState.update('currentChatID', newParam);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	static get iteratorForChatID() {
@@ -16,9 +21,14 @@ class ExtensionData {
 	}
 
 	static async addIteratorForChatID() {
-		let lastIterator = this.iteratorForChatID;
-		lastIterator++;
-		await this.#context.globalState.update('iteratorForChatID', lastIterator);
+		try {
+			let lastIterator = this.iteratorForChatID;
+			lastIterator++;
+			await this.#context.globalState.update('iteratorForChatID', lastIterator);
+			
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	static get chatsData() {
@@ -26,80 +36,133 @@ class ExtensionData {
 	};
 
 	static async saveChatsData() {
-		await this.#context.globalState.update('chatsData', this.#chatsData);
+		try {
+			await this.#context.globalState.update('chatsData', this.#chatsData);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	static async createNewChat(model){
-		let currentDate = new Date();
-		let timestamp = currentDate.getTime();
-		let new_chat = {};
-		new_chat.conversation = [
-		];
-		new_chat.name = "click ME !";
-		new_chat.createAt = timestamp;
-		new_chat.id = this.iteratorForChatID;
-		new_chat.lastUpdate = timestamp;
-		new_chat.needRenameOnRequest = true;
-		new_chat.model = model;
+		try {
+			let currentDate = new Date();
+			let timestamp = currentDate.getTime();
+			let new_chat = {};
+			new_chat.conversation = [
+			];
+			new_chat.name = "click ME !";
+			new_chat.createAt = timestamp;
+			new_chat.id = this.iteratorForChatID;
+			new_chat.lastUpdate = timestamp;
+			new_chat.needRenameOnRequest = true;
+			new_chat.model = model;
+			new_chat.isBlocked=false;
 
-		this.#chatsData.push(new_chat);
-		await this.addIteratorForChatID();
-		await this.saveChatsData();
+			this.#chatsData.push(new_chat);
+			await this.addIteratorForChatID();
+			await this.saveChatsData();
+			return new_chat.id;
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	static async addDataToCurrentChat(data){
-		let currentChatData = await this.getCurrentChatData();
-		if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
-			currentChatData.needRenameOnRequest = false;
-			currentChatData.name = data.content;
+		try {
+			let currentChatData = await this.getCurrentChatData();
+			if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
+				currentChatData.needRenameOnRequest = false;
+				currentChatData.name = data.content;
+			}
+			currentChatData.conversation.push(data);
+			let currentDate = new Date();
+			let timestamp = currentDate.getTime();
+			currentChatData.lastUpdate = timestamp;
+			await this.saveChatsData();
+			
+		} catch (error) {
+			console.error(error);
 		}
-		currentChatData.conversation.push(data);
-		let currentDate = new Date();
-		let timestamp = currentDate.getTime();
-		currentChatData.lastUpdate = timestamp;
-		await this.saveChatsData();
 	}
 	static async addDataToChatById(data,chatID){
-		let currentChatData = await this.getChatDataByID(chatID);
-		if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
-			currentChatData.needRenameOnRequest = false;
-			currentChatData.name = data.content;
+		try {
+			assert(chatID>=0,"chatID<0");
+			let currentChatData = this.getChatDataByID(chatID);
+			if(currentChatData && currentChatData.needRenameOnRequest && data.role == "user" && data.content){
+				currentChatData.needRenameOnRequest = false;
+				currentChatData.name = data.content;
+			}
+			currentChatData.conversation.push(data);
+			let currentDate = new Date();
+			let timestamp = currentDate.getTime();
+			currentChatData.lastUpdate = timestamp;
+			await this.saveChatsData();
+		} catch (error) {
+			console.error(error);
 		}
-		currentChatData.conversation.push(data);
-		let currentDate = new Date();
-		let timestamp = currentDate.getTime();
-		currentChatData.lastUpdate = timestamp;
-		await this.saveChatsData();
 	}
 
 	static async deleteChatDataByID(chatID){
+		try {
+			assert(chatID>=0,"chatID<0");
+			this.#chatsData.forEach((element, index) => {
+				if (element.id === chatID ) {
+					if(!element.isBlocked){
+						this.#chatsData = this.#chatsData.filter((_, i) => i !== index);
+					}
+				};
+			});
+			await this.setCurrentChatID(-1);
+			await this.saveChatsData();
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	static getCurrentChatData(){
+		try {
+			let dataToReturn = [];
+			this.#chatsData.forEach((element, index) => {
+				if (element.id === this.currentChatID) {
+					dataToReturn = this.#chatsData.filter((_, i) => i === index);
+				}
+			});
+			return dataToReturn[0];
+		} catch (error) {
+			console.error(error);
+			return [];
+		}
+	}
+
+	static getChatDataByID(chatID){
+		try {
+			let dataToReturn = [];
+			this.#chatsData.forEach((element, index) => {
+				if (element.id === chatID) {
+					dataToReturn = this.#chatsData.filter((_, i) => i === index);
+				}
+			});
+			return dataToReturn[0];
+		} catch (error) {
+			console.error(error);
+			return [];
+		}
+	}
+	static async blockChatByID(chatID){
 		this.#chatsData.forEach((element, index) => {
 			if (element.id === chatID) {
-				this.#chatsData = this.#chatsData.filter((_, i) => i !== index);
+				element.isBlocked = true;
 			}
 		});
-		await this.setCurrentChatID(-1);
 		await this.saveChatsData();
 	}
-
-	static async getCurrentChatData(){
-		let dataToReturn = [];
-		this.#chatsData.forEach((element, index) => {
-			if (element.id === this.currentChatID) {
-				dataToReturn = this.#chatsData.filter((_, i) => i === index);
-			}
-		});
-		return dataToReturn[0];
-	}
-
-	static async getChatDataByID(chatID){
-		let dataToReturn = [];
+	static async unblockChatByID(chatID){
 		this.#chatsData.forEach((element, index) => {
 			if (element.id === chatID) {
-				dataToReturn = this.#chatsData.filter((_, i) => i === index);
+				element.isBlocked = false;
 			}
 		});
-		return dataToReturn[0];
+		await this.saveChatsData();
 	}
 
 	/**
@@ -107,7 +170,7 @@ class ExtensionData {
 	 * @async
 	 * @param {vscode.ExtensionContext} context
 	 */
-	static async Init(context) {
+	static Init(context) {
 		this.#context = context;
 		this.#chatsData = this.#context.globalState.get('chatsData', []);
 		// this.#chatsData = []

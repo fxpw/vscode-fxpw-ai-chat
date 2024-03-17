@@ -9,6 +9,10 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.7
+
+add command from rmb, imporove logic for delete button
+
 ### 1.0.5-1.0.6
 
 improve logic for send to many chats, add more styles
