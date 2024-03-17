@@ -14,7 +14,7 @@
 		"onStartupFinished"
 	],
 	"main": "./src/.initExtension.js",
-	"browser": "./web/main.js",
+	"browser": "./web/code.js",
 	"icon": "images/icon.jpg",
 	"contributes": {
 		"commands": [
