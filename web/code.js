@@ -1,4 +1,6 @@
+const vscode = require("vscode");
 const https_proxy_agent = require("https-proxy-agent");
+// import * as https_proxy_agent from 'https-proxy-agent';
 
 const openai_lib = require("openai");
 

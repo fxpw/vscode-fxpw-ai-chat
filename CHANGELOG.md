@@ -1,9 +1,41 @@
 # Change Log
 
-All notable changes to the "vscode-fxpw-ai-chat" extension will be documented in this file.
+### 1.0.15-1.0.16
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+add command to delete chats, fix bug whit openai error block
 
-## [Unreleased]
+### 1.0.8-1.0.14
 
-- Initial release
+imporove autobuild and logic for chats
+
+### 1.0.7
+
+add command from rmb, imporove logic for delete button
+
+### 1.0.5-1.0.6
+
+improve logic for send to many chats, add more styles
+
+### 1.0.2-1.0.4
+
+cleanup
+
+### 1.0.1
+
+add logic for save chat data and reuse it in chats
+
+### 0.0.10
+
+change styles
+
+### 0.0.9
+
+fix logic
+
+### 0.0.8
+
+fix params
+
+### 0.0.1-0.0.7
+
+Init and test things
