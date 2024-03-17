@@ -3,6 +3,7 @@ const {OpenAI} = require("./OpenAI.js");
 const {OpenAIViewProvider} = require("./OpenAIViewProvider.js");
 const {ExtensionSettings} = require("./ExtensionSettings.js");
 
+
 class ExtensionCommands{
 	static Init(context) {
 		let openSettingsCommand = vscode.commands.registerCommand('vscode-fxpw-ai-chat.openSettings', function () {
