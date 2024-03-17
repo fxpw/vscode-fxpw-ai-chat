@@ -9,7 +9,7 @@ More things whit openai
 
 # Release Notes
 
-### 1.0.8-1.0.12
+### 1.0.8-1.0.14
 
 imporove autobuild and logic for chats
 
