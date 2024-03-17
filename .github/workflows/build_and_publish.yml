@@ -33,43 +33,44 @@ jobs:
         run: vsce publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-    
+          steps:
+
       - name: Generate release notes
-        id: release_notes
         uses: actions/github-script@v7
         with:
           script: |
+            const github = require('@actions/github');
+            const { context } = github;
             const { repo: { owner, repo }, payload } = context;
             const tagName = payload.ref.replace('refs/tags/', '');
-      
-            const listReleases = await github.repos.listReleases({ owner, repo });
-      
+            
+            const listReleases = await github.rest.repos.listReleases({ owner, repo });
+            
             const thisRelease = listReleases.data.find(release => release.tag_name === tagName);
-            let previousRelease = listReleases.data[0]; // Initially assume the most recent release
+            let previousRelease = listReleases.data[0];
             if (thisRelease) {
-              // If the current release is found, update the previous release by finding the next one in the list
               const thisIndex = listReleases.data.findIndex(release => release.id === thisRelease.id);
-              previousRelease = listReleases.data[thisIndex + 1]; // thisIndex + 1 gets the previous release
+              previousRelease = listReleases.data[thisIndex + 1];
             }
-      
-            const comparison = await github.repos.compareCommits({
+            
+            const comparison = await github.rest.repos.compareCommits({
               owner,
               repo,
               base: previousRelease.tag_name,
               head: tagName,
             });
-      
+            
             const pullRequests = comparison.data.commits
               .map(commit => {
                 const match = commit.commit.message.match(/Merge pull request #(\d+)/);
-                return match ? match[1] : null; // Extract PR number if present
+                return match ? match[1] : null;
               })
-              .filter(Boolean); // Remove null values to keep only the PR numbers
-      
+              .filter(Boolean);
+            
             const releaseNotes = pullRequests.map(prNumber => `- PR #${prNumber}`).join('\n');
             core.setOutput('release_notes', releaseNotes);
-        
-
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+    
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.1.4
