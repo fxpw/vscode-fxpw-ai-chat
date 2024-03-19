@@ -1,17 +1,14 @@
 
 const https_proxy_agent = require("https-proxy-agent");
-// const MarkdownIt = require('markdown-it'), md = new MarkdownIt();
 const openai_lib = require("openai");
 const {ExtensionSettings} = require("./ExtensionSettings.js");
 // eslint-disable-next-line no-unused-vars
 const {ExtensionData} = require("./ExtensionData.js");
-// const {OpenAIViewProvider} = require("./OpenAIViewProvider.js");
 
 class OpenAI{
 	// eslint-disable-next-line no-unused-vars
 	static async request(messageData,webview,needPreUpdate,needPostUpdate) {
 		try {
-			// let newChatID = messageData.chatID;
 			await ExtensionData.setCurrentChatID(messageData.chatID);
 			let conversationSendTextButtonOnClickData = {
 				"role":"user",

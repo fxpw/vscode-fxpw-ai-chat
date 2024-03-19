@@ -40,6 +40,7 @@ class OpenAIViewProvider {
 			localResourceRoots: [
 				vscode.Uri.joinPath(OpenAIViewProvider._extensionUri, 'css'),
 				vscode.Uri.joinPath(OpenAIViewProvider._extensionUri, 'js'),
+				vscode.Uri.joinPath(OpenAIViewProvider._extensionUri, 'images'),
 			]
 		};
 
@@ -55,7 +56,7 @@ class OpenAIViewProvider {
 			try {
 				// let chatsListData; // Declare once
 				// let currentChatData; // Declare once
-				console.log(message);
+				// console.log(message);
 				switch (message.command) {
 					case 'conversationSendTextButtonOnClickRequest':
 						await OpenAI.request(message);
@@ -66,8 +67,8 @@ class OpenAIViewProvider {
 						}
 						break;
 					case 'addChatButtonOnClickRequest':
-						await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
-						webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData : OpenAI.getChatsListData() });
+						let newChatID = await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
+						webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData : OpenAI.getChatsListData(),newChatID:newChatID });
 						break;
 					case 'deleteChatButtonOnClickRequest':
 						await OpenAI.deleteChatDataByID(message);

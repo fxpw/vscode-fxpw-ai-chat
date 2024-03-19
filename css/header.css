@@ -16,6 +16,9 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--vscode-editor-foreground);
     text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .headerButton:hover {
 	background-color: var(--vscode-button-hoverBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */

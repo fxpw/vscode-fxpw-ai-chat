@@ -2,10 +2,11 @@
 window.addEventListener('message', async event => {
 	try {
 		let message = event.data;
-		console.log(message);
+		// console.log(message);
 		switch (message.command) {
 			case 'toHomeButtonOnClickResponse':
 				toHomeButtonOnClickResponse(message);
+				updateHeader();
 				break;
 			case 'conversationSendTextButtonOnClickResponse':
 				conversationSendTextButtonOnClickResponse(message);
@@ -19,12 +20,15 @@ window.addEventListener('message', async event => {
 			case 'loadViewOnLoadResponse':
 				if (message.currentChatID == -1){
 					goToHome();
+					updateHeader();
 				}else{
 					clickToOpenConversationButton(message.currentChatID);
+					updateHeader();
 				}
 				break;
 			case 'clickToOpenConversationButtonResponse':
-				createConversationBody(message)
+				createConversationBody(message);
+				updateHeader();
 				break;
 			default:
 				console.error(message);

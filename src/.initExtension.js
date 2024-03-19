@@ -1,7 +1,4 @@
 
-const vscode = require("vscode");
-
-
 const {ExtensionData} = require("./ExtensionData.js");
 const {ExtensionSettings} = require("./ExtensionSettings.js");
 const {ExtensionCommands} = require("./ExtensionCommands.js");

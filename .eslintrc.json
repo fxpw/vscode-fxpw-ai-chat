@@ -30,6 +30,7 @@
 		"getCurrentChatIDRequest": "readonly",
 		"clickToOpenConversationButton": "readonly",
 		"loadViewOnLoadRequest": "readonly",
+		"updateHeader": "readonly",
 		"IN_CHAT": "readonly",
 		"vscode": "readonly",
 		"CURRENT_CHAT_ID": "readonly",

@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-ai-chat",
 	"description": "vscode-fxpw-ai-chat",
 	"publisher": "fxpw",
-	"version": "1.0.@VERSION_FROM_RUNNER@",
+	"version": "1.0.17",
 	"engines": {
 		"vscode": "^1.86.0"
 	},
@@ -13,7 +13,8 @@
 	"activationEvents": [
 		"onStartupFinished"
 	],
-	"main": "./src/.initExtension.js",
+	"main": "./out/initExtension.js",
+	"browser": "./out/web/extension.js",
 	"icon": "images/icon.jpg",
 	"contributes": {
 		"commands": [
@@ -124,6 +125,7 @@
 	"scripts": {
 		"lint": "eslint .",
 		"pretest": "npm run lint",
+		"compile-web": "webpack",
 		"test": "vscode-test"
 	},
 	"devDependencies": {
@@ -133,9 +135,13 @@
 		"@vscode/test-cli": "^0.0.4",
 		"@vscode/test-electron": "^2.3.9",
 		"eslint": "^8.56.0",
-		"typescript": "^5.3.3"
+		"ts-loader": "^9.5.1",
+		"typescript": "^5.4.2",
+		"webpack": "^5.90.3",
+		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {
+		"browserify": "^17.0.0",
 		"https-proxy-agent": "^7.0.4",
 		"openai": "^4.28.0"
 	}
