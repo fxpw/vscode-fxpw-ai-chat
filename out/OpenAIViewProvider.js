@@ -2,18 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAIViewProvider = void 0;
 const vscode = require("vscode");
-const fs = require("fs/promises");
-const path = require("path");
+// import * as fs from 'fs/promises';
+// import * as path from 'path';
 const OpenAI_1 = require("./OpenAI");
 const ExtensionSettings_1 = require("./ExtensionSettings");
 async function getHtmlForWebview(webview, extensionUri) {
-    const homeFilePath = path.join(extensionUri.fsPath, "html", 'index.html');
+    const homeFilePath = vscode.Uri.joinPath(extensionUri, "html", 'index.html');
     const cssUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'css'));
     const jsUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'js'));
     try {
-        let htmlContent = await fs.readFile(homeFilePath, { encoding: 'utf8' });
-        htmlContent = htmlContent.replace(/<link rel="stylesheet" href="\.\.\/css\//g, `<link rel="stylesheet" href="${cssUri}/`);
-        htmlContent = htmlContent.replace(/<script src="\.\.\/js\//g, `<script src="${jsUri}/`);
+        const uint8ArrayContent = await vscode.workspace.fs.readFile(homeFilePath);
+        // let htmlContent: string = await vscode.workspace.fs.readFile(homeFilePath);
+        const decoder = new TextDecoder('utf-8');
+        let htmlContent = decoder.decode(uint8ArrayContent);
+        htmlContent = htmlContent.replace(/<link rel="stylesheet" href="\.\.\/css\//g, `<link rel="stylesheet" href="${cssUri.toString()}/`);
+        htmlContent = htmlContent.replace(/<script src="\.\.\/js\//g, `<script src="${jsUri.toString()}/`);
         return htmlContent;
     }
     catch (error) {

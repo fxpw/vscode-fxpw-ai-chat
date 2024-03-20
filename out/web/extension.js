@@ -334,6 +334,7 @@ class OpenAI {
                     messages: messagesForAPI,
                     model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
                 });
+                console.log(n++);
                 if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                     const conversationAIData = {
                         "role": "assistant",

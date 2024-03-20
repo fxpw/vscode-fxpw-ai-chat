@@ -143,6 +143,7 @@
 	"dependencies": {
 		"browserify": "^17.0.0",
 		"https-proxy-agent": "^7.0.4",
-		"openai": "^4.28.0"
+		"openai": "^4.28.0",
+		"uri-js": "^4.4.1"
 	}
 }

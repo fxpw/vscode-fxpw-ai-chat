@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
+// import * as url from 'url';
 import {HttpsProxyAgent} from "https-proxy-agent";
 import { OpenAI as OpenAILib } from "openai";
 import { ExtensionSettings } from "./ExtensionSettings";
 import { ExtensionData } from "./ExtensionData";
-import { URL } from 'url';
 interface MessageData {
     chatID: number;
     text: string;
@@ -19,17 +19,22 @@ class OpenAI {
             };
 
             let agent: HttpsProxyAgent<string> | false = false;
+			let n = 1;
+			// console.log(n++);
             if (ExtensionSettings.PROXY_URL) {
-                agent = new HttpsProxyAgent(ExtensionSettings.PROXY_URL);
+				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
+                agent = new HttpsProxyAgent(proxyUrl);
             }
+			// console.log(n++);
             const openai = new OpenAILib({
                 apiKey: ExtensionSettings.OPENAI_KEY,
                 httpAgent: agent || undefined,
             });
+			// console.log(n++);
             await ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
             const newChatData = ExtensionData.getChatDataByID(messageData.chatID);
             await ExtensionData.blockChatByID(messageData.chatID);
-
+			console.log(n++);
             // Примерное использование webview и needPreUpdate, needPostUpdate опущено для краткости
             // Заглушка для использования webview, примерная реализация
 			if (newChatData && newChatData.conversation){
@@ -41,6 +46,7 @@ class OpenAI {
 					messages: messagesForAPI,
 					model: ExtensionSettings.OPENAI_MODEL!,
 				});
+				console.log(n++);
 				if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
 					const conversationAIData = {
 						"role": "assistant",
@@ -51,6 +57,7 @@ class OpenAI {
 			}
 
         } catch (error) {
+			console.log(error);
             const conversationAIData = {
                 "role": "assistant",
                 "content": error instanceof Error ? error.message : "Unknown error",

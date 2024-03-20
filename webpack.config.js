@@ -11,7 +11,7 @@ const webExtensionConfig = {
   },
   output: {
     filename: '[name].js',
-    path: path.join(__dirname, './out'),
+    path: path.join(__dirname, './out/web'),
     libraryTarget: 'commonjs',
     devtoolModuleFilenameTemplate: '../../[resource-path]'
   },
@@ -48,6 +48,8 @@ const webExtensionConfig = {
 		util: require.resolve('util'),
 		vm: require.resolve('vm-browserify'),
 		zlib: require.resolve('browserify-zlib'),
+		net: false,
+		tls: false,
     }
   },
   module: {
