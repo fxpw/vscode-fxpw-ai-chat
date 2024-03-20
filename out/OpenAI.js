@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAI = void 0;
-const URL = require("url");
+// import * as url from 'url';
 const https_proxy_agent_1 = require("https-proxy-agent");
 const openai_1 = require("openai");
 const ExtensionSettings_1 = require("./ExtensionSettings");
@@ -16,23 +16,17 @@ class OpenAI {
             };
             let agent = false;
             let n = 1;
-            console.log(n++);
             if (ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
-                const proxyUrl = new URL.URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
                 agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
             }
-            console.log(n++);
             const openai = new openai_1.OpenAI({
                 apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
                 httpAgent: agent || undefined,
             });
-            console.log(n++);
             await ExtensionData_1.ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
             const newChatData = ExtensionData_1.ExtensionData.getChatDataByID(messageData.chatID);
             await ExtensionData_1.ExtensionData.blockChatByID(messageData.chatID);
-            console.log(n++);
-            // Примерное использование webview и needPreUpdate, needPostUpdate опущено для краткости
-            // Заглушка для использования webview, примерная реализация
             if (newChatData && newChatData.conversation) {
                 const messagesForAPI = newChatData.conversation.map((msg) => ({
                     role: msg.role === 'user' ? 'user' : 'assistant',
@@ -42,6 +36,7 @@ class OpenAI {
                     messages: messagesForAPI,
                     model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
                 });
+                console.log(n++);
                 if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                     const conversationAIData = {
                         "role": "assistant",
@@ -52,6 +47,7 @@ class OpenAI {
             }
         }
         catch (error) {
+            console.log(error);
             const conversationAIData = {
                 "role": "assistant",
                 "content": error instanceof Error ? error.message : "Unknown error",

@@ -308,23 +308,17 @@ class OpenAI {
             };
             let agent = false;
             let n = 1;
-            console.log(n++);
             if (ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
                 const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
                 agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
             }
-            console.log(n++);
             const openai = new openai_1.OpenAI({
                 apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
                 httpAgent: agent || undefined,
             });
-            console.log(n++);
             await ExtensionData_1.ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
             const newChatData = ExtensionData_1.ExtensionData.getChatDataByID(messageData.chatID);
             await ExtensionData_1.ExtensionData.blockChatByID(messageData.chatID);
-            console.log(n++);
-            // Примерное использование webview и needPreUpdate, needPostUpdate опущено для краткости
-            // Заглушка для использования webview, примерная реализация
             if (newChatData && newChatData.conversation) {
                 const messagesForAPI = newChatData.conversation.map((msg) => ({
                     role: msg.role === 'user' ? 'user' : 'assistant',
