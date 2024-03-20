@@ -3,7 +3,7 @@
 	"displayName": "vscode-fxpw-ai-chat",
 	"description": "vscode-fxpw-ai-chat",
 	"publisher": "fxpw",
-	"version": "1.0.17",
+	"version": "1.0.@VERSION_FROM_RUNNER@",
 	"engines": {
 		"vscode": "^1.86.0"
 	},
