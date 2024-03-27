@@ -9,6 +9,8 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.18-1.0.23
+
 ### 1.0.15-1.0.17
 
 add command to delete chats, fix bug whit openai error block
