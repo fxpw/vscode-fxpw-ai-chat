@@ -78,8 +78,8 @@
 					"description": "Proxy IP Address"
 				},
 				"vscode-fxpw-ai-chat.proxyPortHttps": {
-					"type": "string",
-					"default": "",
+					"type": "number",
+					"default": 50100,
 					"description": "Proxy HTTPS Port"
 				},
 				"vscode-fxpw-ai-chat.proxyLogin": {
