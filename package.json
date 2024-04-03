@@ -27,8 +27,16 @@
 				}
 			},
 			{
-				"command": "vscode-fxpw-ai-chat.WTFCodeNewChat",
-				"title": "fxpw-ai-chat: Объясни(новый чат)"
+				"command": "vscode-fxpw-ai-chat.explainCode",
+				"title": "fxpw-ai-chat: Объясни код"
+			},
+			{
+				"command": "vscode-fxpw-ai-chat.fixCode",
+				"title": "fxpw-ai-chat: Исправь код"
+			},
+			{
+				"command": "vscode-fxpw-ai-chat.finishCode",
+				"title": "fxpw-ai-chat: Допиши код"
 			},
 			{
 				"command": "vscode-fxpw-ai-chat.deleteAllChatsData",
@@ -64,7 +72,17 @@
 			"editor/context": [
 				{
 					"when": "editorTextFocus",
-					"command": "vscode-fxpw-ai-chat.WTFCodeNewChat",
+					"command": "vscode-fxpw-ai-chat.explainCode",
+					"group": "navigation"
+				},
+				{
+					"when": "editorTextFocus",
+					"command": "vscode-fxpw-ai-chat.fixCode",
+					"group": "navigation"
+				},
+				{
+					"when": "editorTextFocus",
+					"command": "vscode-fxpw-ai-chat.finishCode",
 					"group": "navigation"
 				}
 			]

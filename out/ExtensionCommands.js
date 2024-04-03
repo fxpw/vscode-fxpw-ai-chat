@@ -15,7 +15,7 @@ class ExtensionCommands {
             });
         });
         context.subscriptions.push(openSettingsCommand);
-        let WTFCodeNewChatCommand = vscode.commands.registerCommand('vscode-fxpw-ai-chat.WTFCodeNewChat', async () => {
+        let explainCode = vscode.commands.registerCommand('vscode-fxpw-ai-chat.explainCode', async () => {
             try {
                 const editor = vscode.window.activeTextEditor;
                 if (!editor) {
@@ -24,7 +24,7 @@ class ExtensionCommands {
                 }
                 const selection = editor.selection;
                 const text = editor.document.getText(selection);
-                let prompt = `Объясни: ${text}`;
+                let prompt = `Объясни:\n \`\`\`${text}\`\`\``;
                 let newChatID = await OpenAI_1.OpenAI.createNewChat(ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL);
                 let messageData = {
                     text: prompt,
@@ -37,7 +37,53 @@ class ExtensionCommands {
                 console.error(error);
             }
         });
-        context.subscriptions.push(WTFCodeNewChatCommand);
+        context.subscriptions.push(explainCode);
+        let fixCode = vscode.commands.registerCommand('vscode-fxpw-ai-chat.fixCode', async () => {
+            try {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showInformationMessage('Нет активного редактора');
+                    return;
+                }
+                const selection = editor.selection;
+                const text = editor.document.getText(selection);
+                let prompt = `Исправь:\n \`\`\`${text}\`\`\``;
+                let newChatID = await OpenAI_1.OpenAI.createNewChat(ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL);
+                let messageData = {
+                    text: prompt,
+                    chatID: newChatID,
+                };
+                await OpenAI_1.OpenAI.request(messageData, OpenAIViewProvider_1.OpenAIViewProvider._webviewView.webview, true, true);
+                vscode.window.showInformationMessage(`Запрос обработан:${prompt}`);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+        context.subscriptions.push(fixCode);
+        let finishCode = vscode.commands.registerCommand('vscode-fxpw-ai-chat.finishCode', async () => {
+            try {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showInformationMessage('Нет активного редактора');
+                    return;
+                }
+                const selection = editor.selection;
+                const text = editor.document.getText(selection);
+                let prompt = `Допиши код:\n \`\`\`${text}\`\`\``;
+                let newChatID = await OpenAI_1.OpenAI.createNewChat(ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL);
+                let messageData = {
+                    text: prompt,
+                    chatID: newChatID,
+                };
+                await OpenAI_1.OpenAI.request(messageData, OpenAIViewProvider_1.OpenAIViewProvider._webviewView.webview, true, true);
+                vscode.window.showInformationMessage(`Запрос обработан:${prompt}`);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+        context.subscriptions.push(finishCode);
         let deleteAllChatsData = vscode.commands.registerCommand('vscode-fxpw-ai-chat.deleteAllChatsData', async () => {
             try {
                 await OpenAI_1.OpenAI.deleteAllChatsData();

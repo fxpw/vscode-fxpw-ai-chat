@@ -248,7 +248,7 @@ class ExtensionCommands {
             });
         });
         context.subscriptions.push(openSettingsCommand);
-        let WTFCodeNewChatCommand = vscode.commands.registerCommand('vscode-fxpw-ai-chat.WTFCodeNewChat', async () => {
+        let WTFCodeNewChatCommand = vscode.commands.registerCommand('vscode-fxpw-ai-chat.explainCode', async () => {
             try {
                 const editor = vscode.window.activeTextEditor;
                 if (!editor) {
