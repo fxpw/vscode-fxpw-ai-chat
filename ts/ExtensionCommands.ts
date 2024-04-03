@@ -28,7 +28,7 @@ class ExtensionCommands{
                 const selection = editor.selection;
                 const text = editor.document.getText(selection);
 
-                let prompt = `Объясни:\n \`\`\`${text}\`\`\``;
+                let prompt = `Объясни:\n\n\`\`\`${text}\n\`\`\``;
                 let newChatID = await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
                 let messageData = {
                     text: prompt,
@@ -53,7 +53,7 @@ class ExtensionCommands{
                 const selection = editor.selection;
                 const text = editor.document.getText(selection);
 
-                let prompt = `Исправь:\n \`\`\`${text}\`\`\``;
+                let prompt = `Исправь:\n\n\`\`\`${text}\n\`\`\``;
                 let newChatID = await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
                 let messageData = {
                     text: prompt,
@@ -78,7 +78,7 @@ class ExtensionCommands{
                 const selection = editor.selection;
                 const text = editor.document.getText(selection);
 
-                let prompt = `Допиши код:\n \`\`\`${text}\`\`\``;
+                let prompt = `Допиши код:\n\n\`\`\`${text}\n\`\`\``;
                 let newChatID = await OpenAI.createNewChat(ExtensionSettings.OPENAI_MODEL);
                 let messageData = {
                     text: prompt,
