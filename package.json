@@ -141,10 +141,13 @@
 		"url": "https://github.com/fxpw/vscode-fxpw-ai-chat.git"
 	},
 	"scripts": {
-		"lint": "eslint .",
 		"pretest": "npm run lint",
 		"compile-web": "webpack",
-		"test": "vscode-test"
+		"test": "vscode-test",
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint \"src/**/*.ts\"",
+		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.6",
