@@ -33,8 +33,10 @@ class ExtensionSettings {
 
 	// Формирование URL-адреса прокси
 	static get PROXY_URL(): string | undefined {
-		if (this.PROXY_LOGIN && this.PROXY_PASSWORD && this.PROXY_IP && this.PROXY_PORT_HTTPS) {
+		if (this.PROXY_LOGIN!="" && this.PROXY_PASSWORD!="" && this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0) {
 			return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+		}else if (this.PROXY_IP && this.PROXY_PORT_HTTPS){
+			return `http://${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
 		}
 		return undefined;
 	}
