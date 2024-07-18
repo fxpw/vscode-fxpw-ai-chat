@@ -9,6 +9,11 @@ More things whit openai
 
 # Release Notes
 
+
+### 1.0.28-1.0.33
+
+add new gpt
+
 ### 1.0.18-1.0.28
 
 add new gpt
