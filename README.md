@@ -1,10 +1,10 @@
 # fxpw-ai-chat README
 
-> Proxy setting on extension settings or click on button(see screen)
-> ![1721400842506](images/README/1721400842506.png)
-
 > Openai text requests chats whit proxy support
 
+> Proxy setting on extension settings or click on button(see screen)
+
+![1721400842506](images/README/1721400842506.png)
 > If you have troubles whit cloudflate disable vscode proxy
 
 # Features
