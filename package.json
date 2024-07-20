@@ -24,8 +24,8 @@
 				"command": "vscode-fxpw-ai-chat.openSettings",
 				"title": "Open vscode-fxpw-ai-chat Settings",
 				"icon": {
-					"dark": "images/setting.png",
-					"light": "images/setting.png"
+					"dark": "images/dark_set.svg",
+					"light": "images/light_set.svg"
 				}
 			},
 			{

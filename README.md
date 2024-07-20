@@ -5,6 +5,7 @@
 > Proxy setting on extension settings or click on button(see screen)
 
 ![1721400842506](images/README/1721400842506.png)
+
 > If you have troubles whit cloudflate disable vscode proxy
 
 # Features
@@ -13,9 +14,9 @@ More things whit openai
 
 # Release Notes
 
-### 1.0.28-1.0.33
+### 1.0.28-1.0.34
 
-add new gpt
+add new gpt, update settings icon
 
 ### 1.0.18-1.0.28
 
