@@ -14,6 +14,10 @@ More things whit openai
 
 # Release Notes
 
+### 1.0.34-1.1.40
+
+add editor to input and save inputed text
+
 ### 1.0.28-1.0.34
 
 add new gpt, update settings icon
