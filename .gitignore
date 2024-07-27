@@ -3,3 +3,4 @@ tools
 # test
 node_modules
 *.vsix
+out

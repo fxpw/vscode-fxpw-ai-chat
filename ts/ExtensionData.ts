@@ -9,6 +9,7 @@ interface ChatData {
 	needRenameOnRequest: boolean;
 	model: string;
 	isBlocked: boolean;
+	inputText:string;
 }
 
 class ExtensionData {
@@ -68,6 +69,7 @@ class ExtensionData {
 				needRenameOnRequest: true,
 				model: model,
 				isBlocked: false,
+				inputText:"",
 			};
 
 			this.chatsData.push(new_chat);
@@ -112,6 +114,19 @@ class ExtensionData {
 			if (currentChatData) {
 				currentChatData.lastUpdate = timestamp;
 			}
+			await this.saveChatsData();
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	static async changeInputText(text:string, chatID: number): Promise<void> {
+		try {
+			//   assert(chatID >= 0, 'chatID<0');
+			let currentChatData = this.getChatDataByID(chatID);
+			if (currentChatData){
+				currentChatData.inputText=text;
+			}
+			
 			await this.saveChatsData();
 		} catch (error) {
 			console.error(error);

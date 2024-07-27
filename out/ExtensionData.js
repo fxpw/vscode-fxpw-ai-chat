@@ -53,6 +53,7 @@ class ExtensionData {
                 needRenameOnRequest: true,
                 model: model,
                 isBlocked: false,
+                inputText: "",
             };
             this.chatsData.push(new_chat);
             await this.addIteratorForChatID();
@@ -96,6 +97,19 @@ class ExtensionData {
             let timestamp = currentDate.getTime();
             if (currentChatData) {
                 currentChatData.lastUpdate = timestamp;
+            }
+            await this.saveChatsData();
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+    static async changeInputText(text, chatID) {
+        try {
+            //   assert(chatID >= 0, 'chatID<0');
+            let currentChatData = this.getChatDataByID(chatID);
+            if (currentChatData) {
+                currentChatData.inputText = text;
             }
             await this.saveChatsData();
         }

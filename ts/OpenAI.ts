@@ -89,6 +89,9 @@ class OpenAI {
 			console.error(error);
 		}
 	}
+	static async changeInputText(text:string,chatID:number){
+		await ExtensionData.changeInputText(text,chatID);
+	}
 	static async setCurrentChatID(id: number) {
 		try {
 			return await ExtensionData.setCurrentChatID(id);

@@ -91,6 +91,9 @@ class OpenAI {
             console.error(error);
         }
     }
+    static async changeInputText(text, chatID) {
+        await ExtensionData_1.ExtensionData.changeInputText(text, chatID);
+    }
     static async setCurrentChatID(id) {
         try {
             return await ExtensionData_1.ExtensionData.setCurrentChatID(id);

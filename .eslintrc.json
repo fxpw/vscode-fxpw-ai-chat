@@ -36,7 +36,8 @@
 		"CURRENT_CHAT_ID": "readonly",
 		"IS_CHAT_BLOCKED": "readonly",
 		"goToHome": "readonly",
-		"acquireVsCodeApi": "readonly"
+		"acquireVsCodeApi": "readonly",
+		"$": "readonly"
 	},
 	"rules": {
 		"no-const-assign": "warn",

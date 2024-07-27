@@ -1,6 +1,15 @@
 
 let intervalIdForConversationSendTextButton = 0;
+// function cleanHtml(html) {
+// 	return html.replace(/(<p>)+|(<\/p>)+/g, '<p>').replace(/(<p>\s*<\/p>)+/g, ''); // Убираем лишние <p>
+// }
 
+
+// function decodeHtml(html) {
+// 	let textArea = document.createElement('textarea');
+// 	textArea.innerHTML = html;
+// 	return textArea.value;
+// }
 
 function scrollСhatHistoryContainerToBottom() {
 	try {
@@ -12,12 +21,12 @@ function scrollСhatHistoryContainerToBottom() {
 
 }
 
-function intervalChangeSendQueryText(){
+function intervalChangeSendQueryText() {
 	try {
 		let conversationSendTextButton = document.getElementById('conversationSendTextButton')
 		conversationSendTextButton.textContent = 'Process...';
 		conversationSendTextButton.disabled = true;
-		IS_CHAT_BLOCKED=true;
+		IS_CHAT_BLOCKED = true;
 		let dots = 3;
 		const updateButtonText = () => {
 			let text = 'Process' + '.'.repeat(dots);
@@ -31,17 +40,18 @@ function intervalChangeSendQueryText(){
 	}
 }
 
-function conversationSendTextButtonOnClick(){
+function conversationSendTextButtonOnClick() {
 	try {
 		intervalChangeSendQueryText();
 		let conversationTextToSendInput = document.getElementById('conversationTextToSendInput');
 		let query = conversationTextToSendInput.value;
-		conversationTextToSendInput.value ="";
+		conversationTextToSendInput.value = "";
+		$('#conversationTextToSendInput').summernote('reset');
 		let chatHistoryElement = document.createElement('div');
 		chatHistoryElement.className = "chatHistoryElement userMargin";
 		chatHistoryElement.innerHTML = marked.parse(query);
 		let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
-		if (codeBlocks){
+		if (codeBlocks) {
 			codeBlocks.forEach((block) => {
 				hljs.highlightElement(block);
 				let copyButton = document.createElement('button');
@@ -63,19 +73,19 @@ function conversationSendTextButtonOnClick(){
 		vscode.postMessage({
 			command: 'conversationSendTextButtonOnClickRequest',
 			text: query,
-			chatID : CURRENT_CHAT_ID,
+			chatID: CURRENT_CHAT_ID,
 		});
 	} catch (error) {
 		console.error(error);
 	}
-	
+
 }
 
 
 // eslint-disable-next-line no-unused-vars
 function createConversationBody(message) {
 	try {
-		CURRENT_CHAT_ID=message.currentChatID;
+		CURRENT_CHAT_ID = message.currentChatID;
 		// Очищаем содержимое элемента body перед обновлением
 		let bodyElement = document.getElementById('body');
 		bodyElement.innerHTML = '';
@@ -98,7 +108,7 @@ function createConversationBody(message) {
 			// chatHistoryElement.textContent = messageData.message;
 			chatHistoryElement.innerHTML = marked.parse(messageData.content);
 			let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
-			if (codeBlocks){
+			if (codeBlocks) {
 				codeBlocks.forEach((block) => {
 					hljs.highlightElement(block);
 					let copyButton = document.createElement('button');
@@ -119,39 +129,92 @@ function createConversationBody(message) {
 		// input text area
 		let conversationTextToSendInput = document.createElement('textarea');
 		conversationTextToSendInput.id = 'conversationTextToSendInput';
-		conversationTextToSendInput.className = "conversationTextareaToSendInput";
-		conversationTextToSendInput.type = 'text';
-		conversationTextToSendInput.placeholder = 'Type your message...';
-		conversationTextToSendInput.addEventListener('keydown', function(event) {
-			let conversationSendTextButton = document.getElementById('conversationSendTextButton');
-			if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
-				event.preventDefault();
-				conversationSendTextButtonOnClick();
-			}
-		});
+		conversationTextToSendInput.className = "summernote"; // Добавляем класс summernote
+		// conversationTextToSendInput.placeholder = message.chatData.inputText;
+
+		// let conversationTextToSendInput = document.createElement('textarea');
+		// conversationTextToSendInput.id = 'conversationTextToSendInput';
+		// conversationTextToSendInput.className = "conversationTextareaToSendInput";
+		// conversationTextToSendInput.type = 'text';
+		// conversationTextToSendInput.placeholder = 'Type your message...';
+		// conversationTextToSendInput.addEventListener('keydown', function(event) {
+		// 	let conversationSendTextButton = document.getElementById('conversationSendTextButton');
+		// 	if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
+		// 		event.preventDefault();
+		// 		conversationSendTextButtonOnClick();
+		// 	}
+		// });
+
 		// send button
 		let conversationSendTextButton = document.createElement('button');
 		conversationSendTextButton.id = 'conversationSendTextButton';
 		conversationSendTextButton.className = "conversationSendTextButton";
 		conversationSendTextButton.textContent = 'Send';
-		IS_CHAT_BLOCKED=false;
+		IS_CHAT_BLOCKED = false;
 		conversationSendTextButton.addEventListener('click', function () {
 			conversationSendTextButtonOnClick();
 		});
-		
+
 
 		conversationContainer.appendChild(chatHistoryContainer);
 		conversationContainer.appendChild(conversationTextToSendInput);
 		conversationContainer.appendChild(conversationSendTextButton);
 		bodyElement.appendChild(conversationContainer);
+		
+
 		scrollСhatHistoryContainerToBottom();
-		if (message.chatData.isBlocked){
+		if (message.chatData.isBlocked) {
 			intervalChangeSendQueryText();
 		}
+		$('#conversationTextToSendInput').each(function () {
+			if (!$(this).hasClass('summernote-initialized')) {
+				$("#conversationTextToSendInput").summernote({
+					tabsize: 3,
+					height: 100,
+
+					toolbar: [
+						// ['style', ['style']],
+						['font', ['bold', 'italic', 'underline', 'clear']],
+						['fontname', ['fontname']],
+						['fontsize', ['fontsize']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph']],
+						// ['height', ['height']],
+						// ['table', ['table']],
+						// ['insert', ['link', 'picture', 'video']],
+						// ['view', ['fullscreen', 'codeview', 'help']]
+					],
+					fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
+					callbacks: {
+						onKeyup: function (event) {
+							// console.log('Key is released:', event.keyCode);
+							let conversationSendTextButton = document.getElementById('conversationSendTextButton');
+							if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
+								event.preventDefault();
+								conversationSendTextButtonOnClick();
+							}
+						},
+						onChange: function (contents, $editable) {
+							let text = $editable.text();
+							// console.log(text);
+							let chatID = CURRENT_CHAT_ID;
+							vscode.postMessage({
+								command: 'changeInputTextRequest',
+								chatID: chatID,
+								inputText: text,
+							});
+
+						},
+
+					}
+				});
+				$('#conversationTextToSendInput').summernote('insertText', message.chatData.inputText);
+			}
+		})
 	} catch (error) {
 		console.error(error);
 	}
-	
+
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -169,7 +232,7 @@ function conversationSendTextButtonOnClickResponse(message) {
 			}
 			chatHistoryElement.innerHTML = marked.parse(messageData.content);
 			let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
-			if (codeBlocks){
+			if (codeBlocks) {
 				codeBlocks.forEach((block) => {
 					hljs.highlightElement(block);
 					let copyButton = document.createElement('button');
@@ -190,13 +253,13 @@ function conversationSendTextButtonOnClickResponse(message) {
 		const conversationSendTextButton = document.getElementById('conversationSendTextButton');
 		conversationSendTextButton.textContent = 'Send';
 		conversationSendTextButton.disabled = false;
-		IS_CHAT_BLOCKED=false;
+		IS_CHAT_BLOCKED = false;
 		clearInterval(intervalIdForConversationSendTextButton);
-		if (message.chatData.isBlocked){
+		if (message.chatData.isBlocked) {
 			intervalChangeSendQueryText();
 		}
 	} catch (error) {
 		console.error(error);
 	}
-	
+
 }

@@ -95,6 +95,11 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 						await OpenAI.setCurrentChatID(message.chatID);
 						webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
 						break;
+					case 'changeInputTextRequest':
+						// await OpenAI.setCurrentChatID(message.chatID);
+						await OpenAI.changeInputText(message.inputText,message.chatID);
+						// webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+						break;
 					default:
 						console.error(message);
 						break;

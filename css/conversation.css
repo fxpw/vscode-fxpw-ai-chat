@@ -16,7 +16,7 @@
 	flex-direction: column;
 	padding: 10px;
 	overflow-y: auto;
-	max-height: calc(100% - 23%);
+	max-height: calc(100% - 27%);
 	/* max-height: calc(100% - 10%); */
 	/* Пример ограничения высоты контейнера, чтобы включить скроллинг */
 }
@@ -27,26 +27,28 @@
 	margin: 5px;
 	border-radius: 8px;
 	/* color: #333; */
-	max-width: 90%!important;
+	max-width: 90% !important;
 	box-sizing: border-box;
-	word-wrap: break-word; /* Переносит длинные слова на новую строку */
-	overflow-wrap: break-word; /* Дополнительное свойство для обеспечения переноса */
+	word-wrap: break-word;
+	/* Переносит длинные слова на новую строку */
+	overflow-wrap: break-word;
+	/* Дополнительное свойство для обеспечения переноса */
 }
 
 /* Стили для сообщений, отправленных пользователем */
 .userMargin {
-	margin-left: auto!important;
+	margin-left: auto !important;
 	background-color: var(--vscode-dropdown-background);
 	color: var(--vscode-button-foreground);
-	border-right: 2px solid var(--vscode-focusBorder)!important;
+	border-right: 2px solid var(--vscode-focusBorder) !important;
 }
 
 /* Стили для сообщений, полученных от других */
 .nonuserMargin {
-	margin-right: auto!important;
+	margin-right: auto !important;
 	background-color: var(--vscode-dropdown-background);
 	color: var(--vscode-button-foreground);
-	border-left: 2px solid var(--vscode-focusBorder)!important;
+	border-left: 2px solid var(--vscode-focusBorder) !important;
 }
 
 .conversationTextareaToSendInput {
@@ -58,11 +60,14 @@
 	margin-top: 10px;
 	padding: 10px;
 	box-sizing: border-box;
-	background-color: var(--vscode-dropdown-background); /* Цвет фона выпадающего списка может подойти для блока ответа */
-	color: var(--vscode-input-foreground); /* Цвет текста ввода */
+	background-color: var(--vscode-dropdown-background);
+	/* Цвет фона выпадающего списка может подойти для блока ответа */
+	color: var(--vscode-input-foreground);
+	/* Цвет текста ввода */
 	border-radius: 5px;
 	border: 1px solid var(--vscode-textInput-border);
-	resize: none; /* Пользователь не сможет изменять размер */
+	resize: none;
+	/* Пользователь не сможет изменять размер */
 }
 
 .conversationSendTextButton {
@@ -79,13 +84,17 @@
 	cursor: pointer;
 	font-size: 18px;
 }
+
 .conversationSendTextButton:hover {
 	/* background-color: #005a9c; */
 	background-color: var(--vscode-button-hoverBackground);
 }
+
 .conversationSendTextButton:disabled {
-	background-color: var(--vscode-button-secondaryBackground); /* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
-	color: var(--vscode-button-secondaryForeground); /* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
+	background-color: var(--vscode-button-secondaryBackground);
+	/* Используйте вторичный цвет фона кнопок для отключенного состояния, если доступно */
+	color: var(--vscode-button-secondaryForeground);
+	/* Используйте вторичный цвет текста кнопок для отключенного состояния, если доступно */
 	cursor: not-allowed;
 	border: none;
 }
@@ -103,3 +112,42 @@
 .chatHistoryContainer::-webkit-scrollbar-thumb:hover {
 	background: var(--vscode-button-hoverBackground);
 }
+
+
+.note-editor {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+
+.note-editable {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+
+.note-toolbar{
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+.note-toolbar .btn {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+
+.note-toolbar .btn:hover {
+	background-color: var(--vscode-dropdown-background)!important;
+}
+
+.note-select {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+
+.note-select option {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+}
+
+/* .note-btn {
+	background-color: var(--vscode-dropdown-background)!important;
+	color: var(--vscode-button-foreground)!important;
+} */

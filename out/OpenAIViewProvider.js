@@ -89,6 +89,11 @@ class OpenAIViewProvider {
                         await OpenAI_1.OpenAI.setCurrentChatID(message.chatID);
                         webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData(), currentChatID: OpenAI_1.OpenAI.getCurrentChat() });
                         break;
+                    case 'changeInputTextRequest':
+                        // await OpenAI.setCurrentChatID(message.chatID);
+                        await OpenAI_1.OpenAI.changeInputText(message.inputText, message.chatID);
+                        // webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+                        break;
                     default:
                         console.error(message);
                         break;
