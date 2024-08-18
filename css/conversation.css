@@ -17,6 +17,7 @@
 	padding: 10px;
 	overflow-y: auto;
 	max-height: calc(100% - 27%);
+	height: 58vh;
 	/* max-height: calc(100% - 10%); */
 	/* Пример ограничения высоты контейнера, чтобы включить скроллинг */
 }

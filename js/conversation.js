@@ -170,21 +170,21 @@ function createConversationBody(message) {
 			if (!$(this).hasClass('summernote-initialized')) {
 				$("#conversationTextToSendInput").summernote({
 					tabsize: 3,
-					height: 100,
-
+					height: 130,
+					// airMode: true,
 					toolbar: [
 						// ['style', ['style']],
 						['font', ['bold', 'italic', 'underline', 'clear']],
-						['fontname', ['fontname']],
-						['fontsize', ['fontsize']],
-						['color', ['color']],
-						['para', ['ul', 'ol', 'paragraph']],
+						// ['fontname', ['fontname']],
+						// ['fontsize', ['fontsize']],
+						// ['color', ['color']],
+						['para', ['ul', 'ol']],
 						// ['height', ['height']],
 						// ['table', ['table']],
 						// ['insert', ['link', 'picture', 'video']],
 						// ['view', ['fullscreen', 'codeview', 'help']]
 					],
-					fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
+					// fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
 					callbacks: {
 						onKeyup: function (event) {
 							// console.log('Key is released:', event.keyCode);
