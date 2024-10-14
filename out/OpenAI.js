@@ -6,6 +6,7 @@ const https_proxy_agent_1 = require("https-proxy-agent");
 const openai_1 = require("openai");
 const ExtensionSettings_1 = require("./ExtensionSettings");
 const ExtensionData_1 = require("./ExtensionData");
+const socks_proxy_agent_1 = require("socks-proxy-agent");
 class OpenAI {
     static async request(messageData, webview = undefined, needPreUpdate = false, needPostUpdate = false) {
         try {
@@ -15,10 +16,13 @@ class OpenAI {
                 "content": messageData.text,
             };
             let agent = false;
-            let n = 1;
-            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+            if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
                 const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
                 agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+            }
+            else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+                const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
             }
             const openai = new openai_1.OpenAI({
                 apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,

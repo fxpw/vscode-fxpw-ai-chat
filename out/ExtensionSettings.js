@@ -26,13 +26,21 @@ class ExtensionSettings {
     static get OPENAI_MODEL() {
         return this.config.get('openAIModel') ?? "";
     }
+    static get USE_SOCKS5() {
+        return this.config.get('useSOCKS5') ?? false;
+    }
     // Формирование URL-адреса прокси
     static get PROXY_URL() {
-        if (this.PROXY_LOGIN != "" && this.PROXY_PASSWORD != "" && this.PROXY_IP != "" && this.PROXY_PORT_HTTPS != 0) {
-            return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+        if (!this.USE_SOCKS5) {
+            if (this.PROXY_LOGIN != "" && this.PROXY_PASSWORD != "" && this.PROXY_IP != "" && this.PROXY_PORT_HTTPS != 0) {
+                return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+            }
+            else if (this.PROXY_IP != "" && this.PROXY_PORT_HTTPS != 0) {
+                return `http://${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+            }
         }
-        else if (this.PROXY_IP != "" && this.PROXY_PORT_HTTPS != 0) {
-            return `http://${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+        else {
+            return `socks5h://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
         }
         return undefined;
     }

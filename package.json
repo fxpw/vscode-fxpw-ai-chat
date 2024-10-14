@@ -100,7 +100,7 @@
 				"vscode-fxpw-ai-chat.proxyPortHttps": {
 					"type": "number",
 					"default": 50100,
-					"description": "Proxy HTTPS Port"
+					"description": "Proxy Port"
 				},
 				"vscode-fxpw-ai-chat.proxyLogin": {
 					"type": "string",
@@ -130,6 +130,11 @@
 						"gpt-3.5-turbo"
 					],
 					"description": "OpenAI Model"
+				},
+				"vscode-fxpw-ai-chat.useSOCKS5": {
+					"type": "boolean",
+					"default": false,
+					"description": "use socks 5"
 				}
 			}
 		}
@@ -161,9 +166,11 @@
 	},
 	"license": "SEE LICENSE IN LICENSE",
 	"dependencies": {
+		"axios": "^1.7.7",
 		"browserify": "^17.0.0",
 		"https-proxy-agent": "^7.0.4",
 		"openai": "^4.28.0",
+		"socks-proxy-agent": "^8.0.4",
 		"uri-js": "^4.4.1"
 	}
 }

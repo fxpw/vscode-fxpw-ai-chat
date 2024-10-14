@@ -4,6 +4,7 @@ import { HttpsProxyAgent } from "https-proxy-agent";
 import { OpenAI as OpenAILib } from "openai";
 import { ExtensionSettings } from "./ExtensionSettings";
 import { ExtensionData } from "./ExtensionData";
+import { SocksProxyAgent } from 'socks-proxy-agent';
 interface MessageData {
 	chatID: number;
 	text: string;
@@ -17,11 +18,13 @@ class OpenAI {
 				"role": "user",
 				"content": messageData.text,
 			};
-			let agent: HttpsProxyAgent<string> | false = false;
-			let n = 1;
-			if (ExtensionSettings.PROXY_URL) {
+			let agent: HttpsProxyAgent<string> | SocksProxyAgent | false = false;
+			if (!ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
 				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
 				agent = new HttpsProxyAgent(proxyUrl);
+			} else if (ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
+				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
+				agent = new SocksProxyAgent(proxyUrl);
 			}
 			const openai = new OpenAILib({
 				apiKey: ExtensionSettings.OPENAI_KEY,
@@ -89,8 +92,8 @@ class OpenAI {
 			console.error(error);
 		}
 	}
-	static async changeInputText(text:string,chatID:number){
-		await ExtensionData.changeInputText(text,chatID);
+	static async changeInputText(text: string, chatID: number) {
+		await ExtensionData.changeInputText(text, chatID);
 	}
 	static async setCurrentChatID(id: number) {
 		try {
