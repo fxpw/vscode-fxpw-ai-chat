@@ -41,9 +41,12 @@ window.addEventListener('message', async event => {
 
 document.addEventListener('DOMContentLoaded', function() {
 	try {
+		hljs.registerLanguage("vue", window.hljsDefineVue);
+		hljs.initHighlightingOnLoad();
 		marked.setOptions({
 			highlight: function(code, lang) {
-				let language = hljs.getLanguage(lang) ? lang : 'plaintext';
+				let language = hljs.getLanguage(lang) ? lang : 'markdown';
+
 				return hljs.highlight(code, { language }).value;
 			}
 		});
