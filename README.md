@@ -4,7 +4,7 @@
 
 > Proxy setting on extension settings or click on button(see screen)
 
-![1721400842506](images/README/1721400842506.png)
+![1737930904526](image/README/1737930904526.png)
 
 > If you have troubles whit cloudflate disable vscode proxy
 
@@ -13,6 +13,12 @@
 More things whit openai
 
 # Release Notes
+
+### 1.0.40-1.1.47
+
+add auto create commit feature whit api vscode.git
+
+### 1.0.15-1.0.16
 
 ### 1.0.34-1.1.40
 
