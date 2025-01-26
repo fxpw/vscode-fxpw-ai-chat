@@ -15,6 +15,51 @@ class ExtensionCommands {
             });
         });
         context.subscriptions.push(openSettingsCommand);
+        let generateCommit = vscode.commands.registerCommand('vscode-fxpw-ai-chat.generateCommit', async () => {
+            try {
+                const gitExtension = vscode.extensions.getExtension('vscode.git');
+                if (gitExtension?.exports) {
+                    const api = gitExtension.exports.getAPI(1);
+                    if (api?.repositories.length > 0) {
+                        // get git changes for request
+                        let changes = await api.repositories[0].diff();
+                        let diffMessage = `create git commit message whit that diff where @@@start of diff@@@@ = start diff message and @@@end of diff@@@ = end of diff message, look at each file and write changes via ->\\n- change 1\\n- change 2<- , carefull look of diff, its may contain spaces, give me answer in json in that example {"answer":"@your_answer@"}:@@@start of diff@@@@${changes}@@@end of diff`;
+                        let answerJSON = await OpenAI_1.OpenAI.commitRequest(diffMessage);
+                        if (answerJSON == null) {
+                            api.repositories[0].inputBox.value = "cant get answer from openai";
+                            return;
+                        }
+                        const jsonRegex = /```json\s*(.+?)\s*```/;
+                        const match = answerJSON.match(jsonRegex);
+                        if (match && match[1]) {
+                            const jsonString = match[1];
+                            try {
+                                const responseObject = JSON.parse(jsonString);
+                                const answer = responseObject.answer;
+                                api.repositories[0].inputBox.value = answer;
+                                return;
+                            }
+                            catch (error) {
+                                api.repositories[0].inputBox.value = answerJSON;
+                            }
+                        }
+                        api.repositories[0].inputBox.value = answerJSON;
+                        // const responseObject = JSON.parse(answerJSON);
+                        // api.repositories[0].inputBox.value = responseObject.answer?responseObject.answer:answerJSON;
+                    }
+                    else {
+                        console.error('No repositories found in the Git extension.');
+                    }
+                }
+                else {
+                    console.error('Git extension not available or not loaded.');
+                }
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+        context.subscriptions.push(generateCommit);
         let explainCode = vscode.commands.registerCommand('vscode-fxpw-ai-chat.explainCode', async () => {
             try {
                 const editor = vscode.window.activeTextEditor;

@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.0.16-1.1.47
+
+add auto create commit feature whit api vscode.git
+
 ### 1.0.15-1.0.16
 
 add command to delete chats, fix bug whit openai error block

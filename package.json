@@ -18,6 +18,9 @@
 	"main": "./out/initExtension.js",
 	"browser": "./out/web/extension.js",
 	"icon": "images/icon.jpg",
+	"extensionDependencies": [
+		"vscode.git"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -27,6 +30,11 @@
 					"dark": "images/dark_set.svg",
 					"light": "images/light_set.svg"
 				}
+			},
+			{
+				"command": "vscode-fxpw-ai-chat.generateCommit",
+				"title": "Create commit for git",
+				"icon": "$(sparkle)"
 			},
 			{
 				"command": "vscode-fxpw-ai-chat.explainCode",
@@ -68,6 +76,11 @@
 				{
 					"when": "view == vscode-fxpw-ai-chat-view",
 					"command": "vscode-fxpw-ai-chat.openSettings",
+					"group": "navigation"
+				},
+				{
+					"when": "view == vscode-fxpw-ai-chat-view",
+					"command": "vscode-fxpw-ai-chat.generateCommit",
 					"group": "navigation"
 				}
 			],
@@ -155,7 +168,7 @@
 	"devDependencies": {
 		"@types/mocha": "^10.0.6",
 		"@types/node": "20.11.19",
-		"@types/vscode": "^1.86.0",
+		"@types/vscode": "^1.96.0",
 		"@vscode/test-cli": "^0.0.4",
 		"@vscode/test-electron": "^2.3.9",
 		"eslint": "^8.56.0",

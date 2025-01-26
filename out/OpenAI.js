@@ -61,6 +61,36 @@ class OpenAI {
             await ExtensionData_1.ExtensionData.unblockChatByID(messageData.chatID);
         }
     }
+    static async commitRequest(diffMessage) {
+        let agent = false;
+        if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+            const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+            agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+        }
+        else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+            const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+            agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+        }
+        const messageForAPI = {
+            role: 'user',
+            content: diffMessage,
+        };
+        const messagesForAPI = [messageForAPI].map((msg) => ({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content,
+        }));
+        const openai = new openai_1.OpenAI({
+            apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
+            httpAgent: agent || undefined,
+        });
+        const chatCompletion = await openai.chat.completions.create({
+            messages: messagesForAPI,
+            model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+        });
+        return chatCompletion.choices && chatCompletion.choices.length > 0
+            && chatCompletion.choices[0].message.content ? chatCompletion.choices[0].message.content
+            : null;
+    }
     static getChatsListData() {
         return ExtensionData_1.ExtensionData.chatsData;
     }

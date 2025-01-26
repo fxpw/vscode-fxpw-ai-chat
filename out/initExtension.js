@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activate = void 0;
+exports.activate = activate;
 const ExtensionData_1 = require("./ExtensionData");
 const ExtensionSettings_1 = require("./ExtensionSettings");
 const ExtensionCommands_1 = require("./ExtensionCommands");
@@ -11,7 +11,7 @@ function activate(context) {
         ExtensionSettings_1.ExtensionSettings.Init(context);
         ExtensionCommands_1.ExtensionCommands.Init(context);
         OpenAIViewProvider_1.OpenAIViewProvider.Init(context);
-        console.log('vscode-fxpw-ai-chat loaded');
+        console.log('vscode-fxpw-ai-chat loaded 1.1.223412');
     }
     catch (error) {
         if (error instanceof Error) {
@@ -22,5 +22,4 @@ function activate(context) {
         }
     }
 }
-exports.activate = activate;
 //# sourceMappingURL=initExtension.js.map
