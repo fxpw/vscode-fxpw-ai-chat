@@ -25,6 +25,7 @@ class OpenAI {
                 agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
             }
             const openai = new openai_1.OpenAI({
+                baseURL: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat" ? "https://api.deepseek.com" : null,
                 apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
                 httpAgent: agent || undefined,
             });
