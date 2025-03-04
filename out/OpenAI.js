@@ -40,6 +40,8 @@ class OpenAI {
                 const chatCompletion = await openai.chat.completions.create({
                     messages: messagesForAPI,
                     model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+                }, {
+                    timeout: 1000 * 10,
                 });
                 if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                     const conversationAIData = {

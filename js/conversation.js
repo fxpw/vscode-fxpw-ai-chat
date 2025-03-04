@@ -11,6 +11,7 @@ let intervalIdForConversationSendTextButton = 0;
 // 	return textArea.value;
 // }
 
+let editor = null;
 function scrollСhatHistoryContainerToBottom() {
 	try {
 		const chatHistoryContainer = document.getElementById('chatHistoryContainer');
@@ -44,9 +45,10 @@ function conversationSendTextButtonOnClick() {
 	try {
 		intervalChangeSendQueryText();
 		let conversationTextToSendInput = document.getElementById('conversationTextToSendInput');
-		let query = conversationTextToSendInput.value;
-		conversationTextToSendInput.value = "";
-		$('#conversationTextToSendInput').summernote('reset');
+		// let query = conversationTextToSendInput.value;
+		let query = editor.value();
+		editor.value("");
+		// $('#conversationTextToSendInput').summernote('reset');
 		let chatHistoryElement = document.createElement('div');
 		chatHistoryElement.className = "chatHistoryElement userMargin";
 		chatHistoryElement.innerHTML = marked.parse(query);
@@ -129,7 +131,7 @@ function createConversationBody(message) {
 		// input text area
 		let conversationTextToSendInput = document.createElement('textarea');
 		conversationTextToSendInput.id = 'conversationTextToSendInput';
-		conversationTextToSendInput.className = "summernote"; // Добавляем класс summernote
+		// conversationTextToSendInput.className = "summernote"; // Добавляем класс summernote
 		// conversationTextToSendInput.placeholder = message.chatData.inputText;
 
 		// let conversationTextToSendInput = document.createElement('textarea');
@@ -160,57 +162,115 @@ function createConversationBody(message) {
 		conversationContainer.appendChild(conversationTextToSendInput);
 		conversationContainer.appendChild(conversationSendTextButton);
 		bodyElement.appendChild(conversationContainer);
-		
+
 
 		scrollСhatHistoryContainerToBottom();
 		if (message.chatData.isBlocked) {
 			intervalChangeSendQueryText();
 		}
-		$('#conversationTextToSendInput').each(function () {
-			if (!$(this).hasClass('summernote-initialized')) {
-				$("#conversationTextToSendInput").summernote({
-					tabsize: 3,
-					height: 130,
-					// airMode: true,
-					toolbar: [
-						// ['style', ['style']],
-						['font', ['bold', 'italic', 'underline', 'clear']],
-						// ['fontname', ['fontname']],
-						// ['fontsize', ['fontsize']],
-						// ['color', ['color']],
-						['para', ['ul', 'ol']],
-						// ['height', ['height']],
-						// ['table', ['table']],
-						// ['insert', ['link', 'picture', 'video']],
-						// ['view', ['fullscreen', 'codeview', 'help']]
-					],
-					// fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
-					callbacks: {
-						onKeyup: function (event) {
-							// console.log('Key is released:', event.keyCode);
-							let conversationSendTextButton = document.getElementById('conversationSendTextButton');
-							if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
-								event.preventDefault();
-								conversationSendTextButtonOnClick();
-							}
-						},
-						onChange: function (contents, $editable) {
-							let text = $editable.text();
-							// console.log(text);
-							let chatID = CURRENT_CHAT_ID;
-							vscode.postMessage({
-								command: 'changeInputTextRequest',
-								chatID: chatID,
-								inputText: text,
-							});
+		// $('#conversationTextToSendInput').each(function () {
+		// 	if (!$(this).hasClass('summernote-initialized')) {
+		// 		$("#conversationTextToSendInput").summernote({
+		// 			tabsize: 3,
+		// 			height: 130,
+		// 			// airMode: true,
+		// 			toolbar: [
+		// 				// ['style', ['style']],
+		// 				['font', ['bold', 'italic', 'underline', 'clear']],
+		// 				// ['fontname', ['fontname']],
+		// 				// ['fontsize', ['fontsize']],
+		// 				// ['color', ['color']],
+		// 				['para', ['ul', 'ol']],
+		// 				// ['height', ['height']],
+		// 				// ['table', ['table']],
+		// 				// ['insert', ['link', 'picture', 'video']],
+		// 				// ['view', ['fullscreen', 'codeview', 'help']]
+		// 			],
+		// 			// fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
+		// 			callbacks: {
+		// 				onKeyup: function (event) {
+		// 					// console.log('Key is released:', event.keyCode);
+		// 					let conversationSendTextButton = document.getElementById('conversationSendTextButton');
+		// 					if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
+		// 						event.preventDefault();
+		// 						conversationSendTextButtonOnClick();
+		// 					}
+		// 				},
+		// 				onChange: function (contents, $editable) {
+		// 					let text = $editable.text();
+		// 					// console.log(text);
+		// 					let chatID = CURRENT_CHAT_ID;
+		// 					vscode.postMessage({
+		// 						command: 'changeInputTextRequest',
+		// 						chatID: chatID,
+		// 						inputText: text,
+		// 					});
 
-						},
+		// 				},
 
-					}
-				});
-				$('#conversationTextToSendInput').summernote('insertText', message.chatData.inputText);
-			}
-		})
+		// 			}
+		// 		});
+		// 		$('#conversationTextToSendInput').summernote('insertText', message.chatData.inputText);
+		// 	}
+		// })
+		// eslint-disable-next-line no-undef
+		editor = new EasyMDE({
+			element: $("#conversationTextToSendInput")[0],
+			autofocus: true,
+			toolbar: [
+				"bold",
+				"italic",
+				"heading",
+				"|",
+				"clean-block",
+				"|",
+				"quote",
+				"unordered-list",
+				"ordered-list",
+				"fullscreen",
+			],
+			// autosave: {
+			// 	enabled: true,
+			// 	// uniqueId: "MyUniqueID",
+			// 	delay: 1000,
+			// 	submit_delay: 5000,
+			// 	timeFormat: {
+			// 		locale: 'en-US',
+			// 		format: {
+			// 			year: 'numeric',
+			// 			month: 'long',
+			// 			day: '2-digit',
+			// 			hour: '2-digit',
+			// 			minute: '2-digit',
+			// 		},
+			// 	},
+			// 	text: "Autosaved: "
+			// },
+			// blockStyles: {
+			// 	bold: "__",
+			// 	italic: "_",
+			// },
+			// unorderedListStyle: "-",
+			// element: document.getElementById("MyID"),
+			// forceSync: true,
+			// hideIcons: ["guide", "heading"],
+			// indentWithTabs: false,
+			// initialValue: "Hello world!",
+			// insertTexts: {
+			// horizontalRule: ["", "\n\n-----\n\n"],
+			// image: ["![](http://", ")"],
+			// link: ["[", "](https://)"],
+			// table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+			// },
+			// lineWrapping: false,
+			minHeight: "100px",
+			maxHeight: "100px",
+			placeholder: "Type here...",
+			status: false,
+			tabSize: 4,
+		});
+
+
 	} catch (error) {
 		console.error(error);
 	}
