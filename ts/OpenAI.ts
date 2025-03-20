@@ -41,7 +41,7 @@ class OpenAI {
 				}));
 				const chatCompletion = await openai.chat.completions.create({
 					messages: messagesForAPI,
-					model: ExtensionSettings.OPENAI_MODEL!,
+					model: ExtensionSettings.OPENAI_MODEL,
 				},{
 					timeout:1000*30,
 				});
