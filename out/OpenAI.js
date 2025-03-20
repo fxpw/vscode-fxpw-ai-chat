@@ -15,14 +15,15 @@ class OpenAI {
                 "role": "user",
                 "content": messageData.text,
             };
-            let agent = false;
-            if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
-                const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
-            }
-            else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
-                const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+            let agent = undefined;
+            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+                let proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                    agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+                }
+                else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                    agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+                }
             }
             const openai = new openai_1.OpenAI({
                 baseURL: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat" ? "https://api.deepseek.com" : null,
@@ -41,7 +42,8 @@ class OpenAI {
                     messages: messagesForAPI,
                     model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
                 }, {
-                    timeout: 1000 * 10,
+                    httpAgent: agent || undefined,
+                    timeout: 1000 * 30,
                 });
                 if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                     const conversationAIData = {

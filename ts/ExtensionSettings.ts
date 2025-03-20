@@ -36,7 +36,7 @@ class ExtensionSettings {
 	}
 
 	// Формирование URL-адреса прокси
-	static get PROXY_URL(): string | undefined {
+	static get PROXY_URL(): string {
 		if(!this.USE_SOCKS5){
 			if (this.PROXY_LOGIN!="" && this.PROXY_PASSWORD!="" && this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0) {
 				return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
@@ -46,7 +46,7 @@ class ExtensionSettings {
 		}else{
 			return `socks5h://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
 		}
-		return undefined;
+		return "";
 	}
 
 	static UpdateSettingsHandler(): void {

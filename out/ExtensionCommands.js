@@ -138,6 +138,14 @@ class ExtensionCommands {
             }
         });
         context.subscriptions.push(deleteAllChatsData);
+        // let test = vscode.commands.registerCommand('vscode-fxpw-ai-chat.test', async () => {
+        // 	try {
+        // 		await OpenAI.deleteAllChatsData();
+        // 	} catch (error) {
+        // 		console.error(error);
+        // 	}
+        // });
+        // context.subscriptions.push(test);
     }
 }
 exports.ExtensionCommands = ExtensionCommands;

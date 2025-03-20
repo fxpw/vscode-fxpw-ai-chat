@@ -18,13 +18,14 @@ class OpenAI {
 				"role": "user",
 				"content": messageData.text,
 			};
-			let agent: HttpsProxyAgent<string> | SocksProxyAgent | false = false;
-			if (!ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
-				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-				agent = new HttpsProxyAgent(proxyUrl);
-			} else if (ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
-				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-				agent = new SocksProxyAgent(proxyUrl);
+			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
+			if (ExtensionSettings.PROXY_URL){
+				let proxyUrl = new URL(ExtensionSettings.PROXY_URL);
+				if (!ExtensionSettings.USE_SOCKS5) {
+					agent = new HttpsProxyAgent(proxyUrl);
+				} else if (ExtensionSettings.USE_SOCKS5) {
+					agent = new SocksProxyAgent(proxyUrl);
+				}
 			}
 			const openai = new OpenAILib({
 				baseURL:ExtensionSettings.OPENAI_MODEL=="deepseek-chat"?"https://api.deepseek.com":null,
@@ -43,6 +44,7 @@ class OpenAI {
 					messages: messagesForAPI,
 					model: ExtensionSettings.OPENAI_MODEL,
 				},{
+					httpAgent: agent || undefined,
 					timeout:1000*30,
 				});
 				if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {

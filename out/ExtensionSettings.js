@@ -42,7 +42,7 @@ class ExtensionSettings {
         else {
             return `socks5h://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
         }
-        return undefined;
+        return "";
     }
     static UpdateSettingsHandler() {
         try {
