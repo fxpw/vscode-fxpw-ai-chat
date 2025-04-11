@@ -10,7 +10,8 @@ export function activate(context: ExtensionContext): void {
         ExtensionSettings.Init(context);
         ExtensionCommands.Init(context);
         OpenAIViewProvider.Init(context);
-        console.log('vscode-fxpw-ai-chat loaded 1.1.223412');
+		const version = context.extension.packageJSON.version;
+		console.log(`vscode-fxpw-ai-chat version: ${version}`);
     } catch (error) {
         if (error instanceof Error) {
             console.error(91, error.message);
