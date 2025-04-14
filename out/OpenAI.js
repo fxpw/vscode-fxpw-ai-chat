@@ -16,7 +16,7 @@ class OpenAI {
                 "content": messageData.text,
             };
             let agent = undefined;
-            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
+            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
                 let proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
                 if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
                     agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
@@ -68,13 +68,17 @@ class OpenAI {
     }
     static async commitRequest(diffMessage) {
         let agent = false;
-        if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
-            const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-            agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
-        }
-        else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5 && ExtensionSettings_1.ExtensionSettings.PROXY_URL) {
-            const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-            agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+        if (ExtensionSettings_1.ExtensionSettings.USE_PROXY) {
+            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
+                if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                    const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                    agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+                }
+                else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                    const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                    agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+                }
+            }
         }
         const messageForAPI = {
             role: 'user',
