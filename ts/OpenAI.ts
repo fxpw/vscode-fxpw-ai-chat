@@ -19,7 +19,7 @@ class OpenAI {
 				"content": messageData.text,
 			};
 			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
-			if (ExtensionSettings.PROXY_URL){
+			if (ExtensionSettings.PROXY_URL!==""){
 				let proxyUrl = new URL(ExtensionSettings.PROXY_URL);
 				if (!ExtensionSettings.USE_SOCKS5) {
 					agent = new HttpsProxyAgent(proxyUrl);
@@ -68,12 +68,16 @@ class OpenAI {
 	}
 	static async commitRequest(diffMessage: string): Promise<string|null> {
 		let agent: HttpsProxyAgent<string> | SocksProxyAgent | false = false;
-		if (!ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
-			const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-			agent = new HttpsProxyAgent(proxyUrl);
-		} else if (ExtensionSettings.USE_SOCKS5 && ExtensionSettings.PROXY_URL) {
-			const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-			agent = new SocksProxyAgent(proxyUrl);
+		if(ExtensionSettings.USE_PROXY){
+			if(ExtensionSettings.PROXY_URL!==""){
+				if (!ExtensionSettings.USE_SOCKS5) {
+					const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
+					agent = new HttpsProxyAgent(proxyUrl);
+				} else if (ExtensionSettings.USE_SOCKS5) {
+					const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
+					agent = new SocksProxyAgent(proxyUrl);
+				}
+			}
 		}
 		const messageForAPI = {
 			role: 'user',

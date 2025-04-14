@@ -106,6 +106,16 @@
 		"configuration": {
 			"title": "vscode-fxpw-ai-chat-properties",
 			"properties": {
+				"vscode-fxpw-ai-chat.useProxy": {
+					"type": "boolean",
+					"default": true,
+					"description": "proxy enable"
+				},
+				"vscode-fxpw-ai-chat.useSOCKS5": {
+					"type": "boolean",
+					"default": false,
+					"description": "use socks5 (instead https)"
+				},
 				"vscode-fxpw-ai-chat.proxyIP": {
 					"type": "string",
 					"default": "",
@@ -142,11 +152,6 @@
 						"deepseek-chat"
 					],
 					"description": "OpenAI or DeepSeek Model"
-				},
-				"vscode-fxpw-ai-chat.useSOCKS5": {
-					"type": "boolean",
-					"default": false,
-					"description": "use socks 5"
 				}
 			}
 		}

@@ -34,17 +34,22 @@ class ExtensionSettings {
 	static get USE_SOCKS5(): boolean {
 		return this.config.get<boolean>('useSOCKS5') ?? false;
 	}
+	static get USE_PROXY(): boolean {
+		return this.config.get<boolean>('useProxy') ?? false;
+	}
 
 	// Формирование URL-адреса прокси
 	static get PROXY_URL(): string {
-		if(!this.USE_SOCKS5){
-			if (this.PROXY_LOGIN!="" && this.PROXY_PASSWORD!="" && this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0) {
-				return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
-			}else if (this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0){
-				return `http://${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+		if(this.USE_PROXY){
+			if(!this.USE_SOCKS5){
+				if (this.PROXY_LOGIN!="" && this.PROXY_PASSWORD!="" && this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0) {
+					return `http://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+				}else if (this.PROXY_IP!="" && this.PROXY_PORT_HTTPS!=0){
+					return `http://${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
+				}
+			}else{
+				return `socks5h://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
 			}
-		}else{
-			return `socks5h://${this.PROXY_LOGIN}:${this.PROXY_PASSWORD}@${this.PROXY_IP}:${this.PROXY_PORT_HTTPS}`;
 		}
 		return "";
 	}
