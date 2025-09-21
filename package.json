@@ -157,6 +157,7 @@
 						"gpt-5-nano-2025-08-07",
 						"gpt-5-mini-2025-08-07",
 						"gpt-5-2025-08-07",
+						"alibaba/tongyi-deepresearch-30b-a3b",
 						"deepseek-chat"
 					],
 					"description": "OpenAI or DeepSeek Model"

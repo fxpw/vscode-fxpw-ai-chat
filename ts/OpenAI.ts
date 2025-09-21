@@ -19,7 +19,7 @@ class OpenAI {
 				"content": messageData.text,
 			};
 			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
-			if (ExtensionSettings.PROXY_URL!==""){
+			if (ExtensionSettings.PROXY_URL !== "") {
 				let proxyUrl = new URL(ExtensionSettings.PROXY_URL);
 				if (!ExtensionSettings.USE_SOCKS5) {
 					agent = new HttpsProxyAgent(proxyUrl);
@@ -27,8 +27,14 @@ class OpenAI {
 					agent = new SocksProxyAgent(proxyUrl);
 				}
 			}
+			let baseurl: string | null = null;
+			if (ExtensionSettings.OPENAI_MODEL == "deepseek-chat"){
+				baseurl = "https://api.deepseek.com";
+			}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
+				baseurl = "https://openrouter.ai/api/v1";
+			}
 			const openai = new OpenAILib({
-				baseURL:ExtensionSettings.OPENAI_MODEL=="deepseek-chat"?"https://api.deepseek.com":null,
+				baseURL: baseurl,
 				apiKey: ExtensionSettings.OPENAI_KEY,
 				httpAgent: agent || undefined,
 			});
@@ -43,9 +49,9 @@ class OpenAI {
 				const chatCompletion = await openai.chat.completions.create({
 					messages: messagesForAPI,
 					model: ExtensionSettings.OPENAI_MODEL,
-				},{
+				}, {
 					httpAgent: agent || undefined,
-					timeout:1000*30,
+					timeout: 1000 * 30,
 				});
 				if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
 					const conversationAIData = {
@@ -66,10 +72,10 @@ class OpenAI {
 			await ExtensionData.unblockChatByID(messageData.chatID);
 		}
 	}
-	static async commitRequest(diffMessage: string): Promise<string|null> {
+	static async commitRequest(diffMessage: string): Promise<string | null> {
 		let agent: HttpsProxyAgent<string> | SocksProxyAgent | false = false;
-		if(ExtensionSettings.USE_PROXY){
-			if(ExtensionSettings.PROXY_URL!==""){
+		if (ExtensionSettings.USE_PROXY) {
+			if (ExtensionSettings.PROXY_URL !== "") {
 				if (!ExtensionSettings.USE_SOCKS5) {
 					const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
 					agent = new HttpsProxyAgent(proxyUrl);
