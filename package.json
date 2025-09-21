@@ -139,7 +139,7 @@
 				"vscode-fxpw-ai-chat.openAIKey": {
 					"type": "string",
 					"default": "",
-					"description": "OpenAI or DeepSeek API Key"
+					"description": "API Key"
 				},
 				"vscode-fxpw-ai-chat.openAIModel": {
 					"type": "string",
@@ -160,7 +160,7 @@
 						"alibaba/tongyi-deepresearch-30b-a3b",
 						"deepseek-chat"
 					],
-					"description": "OpenAI or DeepSeek Model"
+					"description": "Model"
 				}
 			}
 		}
