@@ -32,6 +32,8 @@ class OpenAI {
 				baseurl = "https://api.deepseek.com";
 			}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
 				baseurl = "https://openrouter.ai/api/v1";
+			}else if(ExtensionSettings.OPENAI_MODEL == "local/llama3_1_8b"){
+				baseurl = "http://localhost:11434/api/v1";
 			}
 			const openai = new OpenAILib({
 				baseURL: baseurl,
