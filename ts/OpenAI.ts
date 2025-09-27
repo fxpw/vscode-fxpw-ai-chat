@@ -32,8 +32,8 @@ class OpenAI {
 				baseurl = "https://api.deepseek.com";
 			}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
 				baseurl = "https://openrouter.ai/api/v1";
-			}else if(ExtensionSettings.OPENAI_MODEL == "local/llama3_1_8b"){
-				baseurl = "http://localhost:11434/api/v1";
+			}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"){
+				baseurl = "http://localhost:11434/v1";
 			}
 			const openai = new OpenAILib({
 				baseURL: baseurl,
@@ -53,7 +53,7 @@ class OpenAI {
 					model: ExtensionSettings.OPENAI_MODEL,
 				}, {
 					httpAgent: agent || undefined,
-					timeout: 1000 * 30,
+					timeout: ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"?undefined:1000 * 30,
 				});
 				if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
 					const conversationAIData = {

@@ -25,8 +25,18 @@ class OpenAI {
                     agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
                 }
             }
+            let baseurl = null;
+            if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat") {
+                baseurl = "https://api.deepseek.com";
+            }
+            else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b") {
+                baseurl = "https://openrouter.ai/api/v1";
+            }
+            else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M") {
+                baseurl = "http://localhost:11434/v1";
+            }
             const openai = new openai_1.OpenAI({
-                baseURL: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat" ? "https://api.deepseek.com" : null,
+                baseURL: baseurl,
                 apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
                 httpAgent: agent || undefined,
             });
@@ -43,7 +53,7 @@ class OpenAI {
                     model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
                 }, {
                     httpAgent: agent || undefined,
-                    timeout: 1000 * 30,
+                    timeout: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M" ? undefined : 1000 * 30,
                 });
                 if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                     const conversationAIData = {
