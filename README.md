@@ -6,7 +6,7 @@
 
 ![1737930904526](image/README/1737930904526.png)
 
-> If you have troubles whit cloudflate disable vscode proxy
+> If you have troubles whit cloudflare disable vscode proxy
 
 # Features
 
