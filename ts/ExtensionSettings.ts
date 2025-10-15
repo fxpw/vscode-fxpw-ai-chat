@@ -14,6 +14,9 @@ class ExtensionSettings {
 	static get PROXY_PORT_HTTPS(): number {
 		return this.config.get<number>('proxyPortHttps') ?? 0;
 	}
+	static get TIMEOUT(): number|undefined {
+		return this.config.get<number>('timeout') ?? undefined;
+	}
 
 	static get PROXY_LOGIN(): string {
 		return this.config.get<string>('proxyLogin') ?? "";

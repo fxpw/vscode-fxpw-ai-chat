@@ -53,7 +53,7 @@ class OpenAI {
 					model: ExtensionSettings.OPENAI_MODEL,
 				}, {
 					httpAgent: agent || undefined,
-					timeout: ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"?undefined:1000 * 30,
+					timeout: ExtensionSettings.TIMEOUT?ExtensionSettings.TIMEOUT*1000:undefined,
 				});
 				if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
 					const conversationAIData = {

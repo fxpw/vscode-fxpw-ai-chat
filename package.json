@@ -126,6 +126,11 @@
 					"default": 50100,
 					"description": "Proxy Port"
 				},
+				"vscode-fxpw-ai-chat.timeout": {
+					"type": "number",
+					"default": 0,
+					"description": "timeout in seconds"
+				},
 				"vscode-fxpw-ai-chat.proxyLogin": {
 					"type": "string",
 					"default": "",
