@@ -57,12 +57,15 @@ class OpenAIViewProvider {
                 // console.log(message);
                 switch (message.command) {
                     case 'conversationSendTextButtonOnClickRequest':
-                        await OpenAI_1.OpenAI.request(message);
-                        if (OpenAI_1.OpenAI.getCurrentChat() > 0) {
-                            webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: OpenAI_1.OpenAI.getCurrentChatData() });
-                        }
-                        else {
-                            webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData() });
+                        const wasStreaming = await OpenAI_1.OpenAI.request(message, webviewView.webview);
+                        if (!wasStreaming) {
+                            // Only send response if not streaming (streaming updates UI in real-time)
+                            if (OpenAI_1.OpenAI.getCurrentChat() > 0) {
+                                webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: OpenAI_1.OpenAI.getCurrentChatData() });
+                            }
+                            else {
+                                webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData() });
+                            }
                         }
                         break;
                     case 'addChatButtonOnClickRequest':
@@ -93,6 +96,14 @@ class OpenAIViewProvider {
                         // await OpenAI.setCurrentChatID(message.chatID);
                         await OpenAI_1.OpenAI.changeInputText(message.inputText, message.chatID);
                         // webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+                        break;
+                    case 'streamingMessageUpdate':
+                        // Forward streaming message to webview
+                        webviewView.webview.postMessage({
+                            command: 'streamingMessageUpdate',
+                            chatID: message.chatID,
+                            content: message.content
+                        });
                         break;
                     default:
                         console.error(message);

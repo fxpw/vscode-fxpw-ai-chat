@@ -14,6 +14,9 @@ class ExtensionSettings {
     static get PROXY_PORT_HTTPS() {
         return this.config.get('proxyPortHttps') ?? 0;
     }
+    static get TIMEOUT() {
+        return this.config.get('timeout') ?? undefined;
+    }
     static get PROXY_LOGIN() {
         return this.config.get('proxyLogin') ?? "";
     }
@@ -25,6 +28,12 @@ class ExtensionSettings {
     }
     static get OPENAI_MODEL() {
         return this.config.get('openAIModel') ?? "";
+    }
+    static get BASE_URL() {
+        return this.config.get('baseUrl') ?? "";
+    }
+    static get STREAMING() {
+        return this.config.get('streaming') ?? true;
     }
     static get USE_SOCKS5() {
         return this.config.get('useSOCKS5') ?? false;

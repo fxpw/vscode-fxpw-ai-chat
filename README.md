@@ -8,6 +8,26 @@
 
 > If you have troubles whit cloudflare disable vscode proxy
 
+## Ollama Setup
+
+For Ollama models, make sure Ollama is running and has OpenAI-compatible API enabled:
+
+```bash
+# Check if Ollama container is running
+docker ps | grep ollama
+
+# Check available models
+docker exec ollama-cpu ollama list
+
+# Pull a model if needed
+docker exec ollama-cpu ollama pull llama3.1:8b
+
+# Test API availability
+curl http://localhost:11434/api/tags
+```
+
+Default Ollama API URL: `http://localhost:11434/v1`
+
 # Features
 
 More things whit openai

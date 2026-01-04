@@ -229,7 +229,7 @@ function createConversationBody(message) {
 						conversationSendTextButtonOnClick();
 					},
 					className: "fa fa-paper-plane",
-					text: "📤",
+					// text: "📤",
 					title: "Send Message (Ctrl+Enter)"
 				}
 			],

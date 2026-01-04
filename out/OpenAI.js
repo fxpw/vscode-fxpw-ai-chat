@@ -25,19 +25,21 @@ class OpenAI {
                     agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
                 }
             }
-            let baseurl = null;
-            if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat") {
-                baseurl = "https://api.deepseek.com";
-            }
-            else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b") {
-                baseurl = "https://openrouter.ai/api/v1";
-            }
-            else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M") {
-                baseurl = "http://localhost:11434/v1";
+            let finalBaseurl = ExtensionSettings_1.ExtensionSettings.BASE_URL || null;
+            if (!finalBaseurl) {
+                if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat") {
+                    finalBaseurl = "https://api.deepseek.com";
+                }
+                else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b") {
+                    finalBaseurl = "https://openrouter.ai/api/v1";
+                }
+                else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b" || ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M") {
+                    finalBaseurl = "http://localhost:11434/v1";
+                }
             }
             const openai = new openai_1.OpenAI({
-                baseURL: baseurl,
-                apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY,
+                baseURL: finalBaseurl,
+                apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY || "ollama",
                 httpAgent: agent || undefined,
             });
             await ExtensionData_1.ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
@@ -48,19 +50,57 @@ class OpenAI {
                     role: msg.role === 'user' ? 'user' : 'assistant',
                     content: msg.content,
                 }));
-                const chatCompletion = await openai.chat.completions.create({
-                    messages: messagesForAPI,
-                    model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
-                }, {
-                    httpAgent: agent || undefined,
-                    timeout: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M" ? undefined : 1000 * 30,
-                });
-                if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
-                    const conversationAIData = {
-                        "role": "assistant",
-                        "content": chatCompletion.choices[0].message.content,
-                    };
-                    await ExtensionData_1.ExtensionData.addDataToChatById(conversationAIData, messageData.chatID);
+                if (ExtensionSettings_1.ExtensionSettings.STREAMING) {
+                    // Streaming mode
+                    let fullContent = '';
+                    const stream = await openai.chat.completions.create({
+                        messages: messagesForAPI,
+                        model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+                        stream: true,
+                    }, {
+                        httpAgent: agent || undefined,
+                        timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : undefined,
+                    });
+                    for await (const chunk of stream) {
+                        const content = chunk.choices[0]?.delta?.content || '';
+                        if (content) {
+                            fullContent += content;
+                            // Send streaming update to webview
+                            if (webview) {
+                                webview.postMessage({
+                                    command: 'streamingMessageUpdate',
+                                    chatID: messageData.chatID,
+                                    content: fullContent
+                                });
+                            }
+                        }
+                    }
+                    if (fullContent) {
+                        const conversationAIData = {
+                            "role": "assistant",
+                            "content": fullContent,
+                        };
+                        await ExtensionData_1.ExtensionData.addDataToChatById(conversationAIData, messageData.chatID);
+                    }
+                    return true; // Streaming was used
+                }
+                else {
+                    // Non-streaming mode (existing logic)
+                    const chatCompletion = await openai.chat.completions.create({
+                        messages: messagesForAPI,
+                        model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+                    }, {
+                        httpAgent: agent || undefined,
+                        timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : undefined,
+                    });
+                    if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
+                        const conversationAIData = {
+                            "role": "assistant",
+                            "content": chatCompletion.choices[0].message.content,
+                        };
+                        await ExtensionData_1.ExtensionData.addDataToChatById(conversationAIData, messageData.chatID);
+                    }
+                    return false; // Non-streaming mode
                 }
             }
         }
@@ -71,10 +111,12 @@ class OpenAI {
                 "content": error instanceof Error ? error.message : "Unknown error",
             };
             await ExtensionData_1.ExtensionData.addDataToChatById(conversationAIData, messageData.chatID);
+            return false; // Error occurred, treat as non-streaming
         }
         finally {
             await ExtensionData_1.ExtensionData.unblockChatByID(messageData.chatID);
         }
+        return false; // Fallback return
     }
     static async commitRequest(diffMessage) {
         let agent = false;

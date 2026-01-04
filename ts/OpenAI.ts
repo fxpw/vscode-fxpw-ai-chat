@@ -28,18 +28,20 @@ class OpenAI {
 				}
 			}
 			let finalBaseurl: string | null = ExtensionSettings.BASE_URL || null;
+
 			if (!finalBaseurl) {
 				if (ExtensionSettings.OPENAI_MODEL == "deepseek-chat"){
 					finalBaseurl = "https://api.deepseek.com";
 				}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
 					finalBaseurl = "https://openrouter.ai/api/v1";
-				}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b"){
+				}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b" || ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"){
 					finalBaseurl = "http://localhost:11434/v1";
 				}
 			}
+
 			const openai = new OpenAILib({
 				baseURL: finalBaseurl,
-				apiKey: ExtensionSettings.OPENAI_KEY,
+				apiKey: ExtensionSettings.OPENAI_KEY || "ollama",
 				httpAgent: agent || undefined,
 			});
 			await ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
@@ -193,5 +195,6 @@ class OpenAI {
 	}
 
 }
+
 
 export { OpenAI };

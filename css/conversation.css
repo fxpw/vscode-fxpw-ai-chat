@@ -150,7 +150,7 @@
 
 /* EasyMDE custom send button styles */
 .editor-toolbar .fa-paper-plane:before {
-	content: "📤";
+	/* content: "📤"; */
 	font-size: 14px;
 }
 
