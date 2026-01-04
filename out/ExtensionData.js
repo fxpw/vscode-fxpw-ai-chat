@@ -12,6 +12,14 @@ class ExtensionData {
         this.chatsDataFilePath = path.join(this.context.globalStorageUri.fsPath, 'chatsData.json');
         return this.chatsDataFilePath;
     }
+    static getModelsDataFilePath() {
+        if (!this.context)
+            return '';
+        if (this.modelsDataFilePath)
+            return this.modelsDataFilePath;
+        this.modelsDataFilePath = path.join(this.context.globalStorageUri.fsPath, 'modelsData.json');
+        return this.modelsDataFilePath;
+    }
     static get currentChatID() {
         return this.context?.globalState.get('currentChatID', -1) ?? -1;
     }
@@ -52,7 +60,19 @@ class ExtensionData {
             console.error('Error saving chats data:', error);
         }
     }
-    static async createNewChat(model) {
+    static async saveModelsData() {
+        try {
+            const filePath = this.getModelsDataFilePath();
+            if (filePath) {
+                await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+                await fs.promises.writeFile(filePath, JSON.stringify(this.modelsData, null, 2), 'utf8');
+            }
+        }
+        catch (error) {
+            console.error('Error saving models data:', error);
+        }
+    }
+    static async createNewChat(modelId) {
         try {
             let currentDate = new Date();
             let timestamp = currentDate.getTime();
@@ -63,7 +83,7 @@ class ExtensionData {
                 id: this.iteratorForChatID,
                 lastUpdate: timestamp,
                 needRenameOnRequest: true,
-                model: model,
+                modelId: modelId,
                 isBlocked: false,
                 inputText: "",
             };
@@ -183,10 +203,88 @@ class ExtensionData {
             console.error('Error loading chats data:', error);
             this.chatsData = [];
         }
+        // Load models data
+        try {
+            const modelsFilePath = this.getModelsDataFilePath();
+            if (modelsFilePath && fs.existsSync(modelsFilePath)) {
+                const data = await fs.promises.readFile(modelsFilePath, 'utf8');
+                this.modelsData = JSON.parse(data) || [];
+            }
+            else {
+                this.modelsData = [];
+            }
+        }
+        catch (error) {
+            console.error('Error loading models data:', error);
+            this.modelsData = [];
+        }
+    }
+    // Model management methods
+    static async createModel(modelConfig) {
+        try {
+            const currentDate = new Date();
+            const timestamp = currentDate.getTime();
+            const modelId = `model_${timestamp}_${Math.random().toString(36).substr(2, 9)}`;
+            const newModel = {
+                ...modelConfig,
+                id: modelId,
+                createAt: timestamp,
+                lastUpdate: timestamp,
+            };
+            this.modelsData.push(newModel);
+            await this.saveModelsData();
+            return newModel;
+        }
+        catch (error) {
+            console.error('Error creating model:', error);
+            throw error;
+        }
+    }
+    static getModelById(modelId) {
+        return this.modelsData.find(model => model.id === modelId);
+    }
+    static getAllModels() {
+        return this.modelsData;
+    }
+    static async updateModel(modelId, updates) {
+        try {
+            const modelIndex = this.modelsData.findIndex(model => model.id === modelId);
+            if (modelIndex === -1) {
+                return null;
+            }
+            this.modelsData[modelIndex] = {
+                ...this.modelsData[modelIndex],
+                ...updates,
+                lastUpdate: new Date().getTime(),
+            };
+            await this.saveModelsData();
+            return this.modelsData[modelIndex];
+        }
+        catch (error) {
+            console.error('Error updating model:', error);
+            return null;
+        }
+    }
+    static async deleteModel(modelId) {
+        try {
+            const initialLength = this.modelsData.length;
+            this.modelsData = this.modelsData.filter(model => model.id !== modelId);
+            const wasDeleted = this.modelsData.length < initialLength;
+            if (wasDeleted) {
+                await this.saveModelsData();
+            }
+            return wasDeleted;
+        }
+        catch (error) {
+            console.error('Error deleting model:', error);
+            return false;
+        }
     }
 }
 exports.ExtensionData = ExtensionData;
 ExtensionData.chatsData = [];
+ExtensionData.modelsData = [];
 ExtensionData.context = null;
 ExtensionData.chatsDataFilePath = '';
+ExtensionData.modelsDataFilePath = '';
 //# sourceMappingURL=ExtensionData.js.map

@@ -5,7 +5,6 @@ const vscode = require("vscode");
 // import * as fs from 'fs/promises';
 // import * as path from 'path';
 const OpenAI_1 = require("./OpenAI");
-const ExtensionSettings_1 = require("./ExtensionSettings");
 async function getHtmlForWebview(webview, extensionUri) {
     const homeFilePath = vscode.Uri.joinPath(extensionUri, "html", 'index.html');
     const cssUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'css'));
@@ -68,8 +67,8 @@ class OpenAIViewProvider {
                             }
                         }
                         break;
-                    case 'addChatButtonOnClickRequest':
-                        let newChatID = await OpenAI_1.OpenAI.createNewChat(ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL);
+                    case 'createChatWithModelRequest':
+                        let newChatID = await OpenAI_1.OpenAI.createNewChat(message.modelId);
                         webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData(), newChatID: newChatID });
                         break;
                     case 'deleteChatButtonOnClickRequest':
@@ -79,14 +78,23 @@ class OpenAIViewProvider {
                         break;
                     case 'toHomeButtonOnClickRequest':
                         await OpenAI_1.OpenAI.setCurrentChatID(-1);
-                        webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData() });
+                        webviewView.webview.postMessage({
+                            command: 'toHomeButtonOnClickResponse',
+                            chatsListData: OpenAI_1.OpenAI.getChatsListData(),
+                            modelsData: OpenAI_1.OpenAI.getAllModels()
+                        });
                         break;
                     case 'clickToOpenConversationButtonRequest':
                         await OpenAI_1.OpenAI.setCurrentChatID(message.chatID);
                         webviewView.webview.postMessage({ command: 'clickToOpenConversationButtonResponse', chatData: OpenAI_1.OpenAI.getCurrentChatData(), currentChatID: message.chatID });
                         break;
                     case 'loadViewOnLoadRequest':
-                        webviewView.webview.postMessage({ command: 'loadViewOnLoadResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData(), currentChatID: OpenAI_1.OpenAI.getCurrentChat() });
+                        webviewView.webview.postMessage({
+                            command: 'loadViewOnLoadResponse',
+                            chatsListData: OpenAI_1.OpenAI.getChatsListData(),
+                            currentChatID: OpenAI_1.OpenAI.getCurrentChat(),
+                            modelsData: OpenAI_1.OpenAI.getAllModels()
+                        });
                         break;
                     case 'doWTFCodeNewChatResponseOpenConversationButtonRequest':
                         await OpenAI_1.OpenAI.setCurrentChatID(message.chatID);
@@ -112,6 +120,48 @@ class OpenAIViewProvider {
                             chatID: message.chatID,
                             chatData: message.chatData
                         });
+                        break;
+                    case 'getModelsListRequest':
+                        webviewView.webview.postMessage({
+                            command: 'getModelsListResponse',
+                            models: OpenAI_1.OpenAI.getAllModels()
+                        });
+                        break;
+                    case 'createModelRequest':
+                        try {
+                            const newModel = await OpenAI_1.OpenAI.createModel(message.modelData);
+                            webviewView.webview.postMessage({
+                                command: 'createModelResponse',
+                                model: newModel
+                            });
+                        }
+                        catch (error) {
+                            console.error('Error creating model:', error);
+                        }
+                        break;
+                    case 'updateModelRequest':
+                        try {
+                            const updatedModel = await OpenAI_1.OpenAI.updateModel(message.modelId, message.modelData);
+                            webviewView.webview.postMessage({
+                                command: 'updateModelResponse',
+                                model: updatedModel
+                            });
+                        }
+                        catch (error) {
+                            console.error('Error updating model:', error);
+                        }
+                        break;
+                    case 'deleteModelRequest':
+                        try {
+                            const deleted = await OpenAI_1.OpenAI.deleteModel(message.modelId);
+                            webviewView.webview.postMessage({
+                                command: 'deleteModelResponse',
+                                success: deleted
+                            });
+                        }
+                        catch (error) {
+                            console.error('Error deleting model:', error);
+                        }
                         break;
                     default:
                         console.error(message);

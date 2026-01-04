@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { OpenAI as OpenAILib } from "openai";
 import { ExtensionSettings } from "./ExtensionSettings";
-import { ExtensionData } from "./ExtensionData";
+import { ExtensionData, ModelConfig } from "./ExtensionData";
 import { SocksProxyAgent } from 'socks-proxy-agent';
 interface MessageData {
 	chatID: number;
@@ -18,34 +18,58 @@ class OpenAI {
 				"role": "user",
 				"content": messageData.text,
 			};
-			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
-			if (ExtensionSettings.USE_PROXY && ExtensionSettings.PROXY_URL !== "") {
-				try {
-					let proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-					console.log(`Using configured proxy: ${proxyUrl.toString()}`);
 
-					if (!ExtensionSettings.USE_SOCKS5) {
-						// For Windows, try different proxy agent options
+			// Get chat data and model configuration
+			const chatData = ExtensionData.getChatDataByID(messageData.chatID);
+			if (!chatData) {
+				throw new Error('Chat data not found');
+			}
+
+			const modelConfig = ExtensionData.getModelById(chatData.modelId);
+			if (!modelConfig) {
+				throw new Error('Model configuration not found');
+			}
+
+			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
+			if (modelConfig.useProxy) {
+				try {
+					let proxyUrl: string;
+					if (!modelConfig.useSOCKS5) {
+						if (modelConfig.proxyLogin && modelConfig.proxyPassword && modelConfig.proxyIP && modelConfig.proxyPortHttps) {
+							proxyUrl = `http://${modelConfig.proxyLogin}:${modelConfig.proxyPassword}@${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+						} else if (modelConfig.proxyIP && modelConfig.proxyPortHttps) {
+							proxyUrl = `http://${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+						} else {
+							throw new Error('Invalid proxy configuration');
+						}
+					} else {
+						proxyUrl = `socks5h://${modelConfig.proxyLogin}:${modelConfig.proxyPassword}@${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+					}
+
+					const parsedProxyUrl = new URL(proxyUrl);
+					console.log(`Using model proxy: ${parsedProxyUrl.toString()}`);
+
+					if (!modelConfig.useSOCKS5) {
 						const agentOptions = {
-							rejectUnauthorized: false, // Allow self-signed certificates
-							timeout: ExtensionSettings.TIMEOUT ? ExtensionSettings.TIMEOUT * 1000 : 30000
+							rejectUnauthorized: false,
+							timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
 						};
-						agent = new HttpsProxyAgent(proxyUrl, agentOptions);
-					} else if (ExtensionSettings.USE_SOCKS5) {
-						agent = new SocksProxyAgent(proxyUrl);
+						agent = new HttpsProxyAgent(parsedProxyUrl, agentOptions);
+					} else {
+						agent = new SocksProxyAgent(parsedProxyUrl);
 					}
 				} catch (error) {
 					console.error('Proxy URL parsing error:', error);
 				}
 			} else {
-				// Try to use system proxy as fallback for Windows
+				// Try to use system proxy as fallback
 				const systemProxy = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
 				if (systemProxy) {
 					try {
 						console.log(`Using system proxy: ${systemProxy}`);
 						const agentOptions = {
 							rejectUnauthorized: false,
-							timeout: ExtensionSettings.TIMEOUT ? ExtensionSettings.TIMEOUT * 1000 : 30000
+							timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
 						};
 						agent = new HttpsProxyAgent(systemProxy, agentOptions);
 					} catch (error) {
@@ -59,41 +83,46 @@ class OpenAI {
 			} else {
 				console.log('No proxy agent configured');
 			}
-			let finalBaseurl: string | null = ExtensionSettings.BASE_URL || null;
 
+			let finalBaseurl: string | null = modelConfig.baseUrl || null;
+
+			// Auto-detect base URL if not provided
 			if (!finalBaseurl) {
-				if (ExtensionSettings.OPENAI_MODEL == "deepseek-chat"){
+				if (modelConfig.modelName === "deepseek-chat") {
 					finalBaseurl = "https://api.deepseek.com";
-				}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
+				} else if (modelConfig.modelName === "alibaba/tongyi-deepresearch-30b-a3b") {
 					finalBaseurl = "https://openrouter.ai/api/v1";
-				}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b" || ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"){
+				} else if (modelConfig.modelName === "llama3.1:8b" || modelConfig.modelName === "llama3.1:8b-instruct-q5_K_M") {
 					finalBaseurl = "http://localhost:11434/v1";
 				}
 			}
 
 			const openai = new OpenAILib({
 				baseURL: finalBaseurl,
-				apiKey: ExtensionSettings.OPENAI_KEY || "ollama",
+				apiKey: modelConfig.apiKey || "ollama",
 				httpAgent: agent || undefined,
 			});
+
 			await ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
 			const newChatData = ExtensionData.getChatDataByID(messageData.chatID);
 			await ExtensionData.blockChatByID(messageData.chatID);
+
 			if (newChatData && newChatData.conversation) {
 				const messagesForAPI: OpenAILib.Chat.Completions.ChatCompletionMessageParam[] = newChatData.conversation.map((msg) => ({
 					role: msg.role === 'user' ? 'user' : 'assistant',
 					content: msg.content,
 				}));
-				if (ExtensionSettings.STREAMING) {
+
+				if (modelConfig.streaming) {
 					// Streaming mode
 					let fullContent = '';
 					const stream = await openai.chat.completions.create({
 						messages: messagesForAPI,
-						model: ExtensionSettings.OPENAI_MODEL,
+						model: modelConfig.modelName,
 						stream: true,
 					}, {
 						httpAgent: agent || undefined,
-						timeout: ExtensionSettings.TIMEOUT?ExtensionSettings.TIMEOUT*1000:undefined,
+						timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : undefined,
 					});
 
 					for await (const chunk of stream) {
@@ -129,13 +158,13 @@ class OpenAI {
 					}
 					return true; // Streaming was used
 				} else {
-					// Non-streaming mode (existing logic)
+					// Non-streaming mode
 					const chatCompletion = await openai.chat.completions.create({
 						messages: messagesForAPI,
-						model: ExtensionSettings.OPENAI_MODEL,
+						model: modelConfig.modelName,
 					}, {
 						httpAgent: agent || undefined,
-						timeout: ExtensionSettings.TIMEOUT?ExtensionSettings.TIMEOUT*1000:undefined,
+						timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : undefined,
 					});
 					if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
 						const conversationAIData = {
@@ -216,9 +245,9 @@ class OpenAI {
 			console.error(error);
 		}
 	}
-	static async createNewChat(model: string): Promise<number> {
+	static async createNewChat(modelId: string): Promise<number> {
 		try {
-			return await ExtensionData.createNewChat(model);
+			return await ExtensionData.createNewChat(modelId);
 		} catch (error) {
 			console.error(error);
 			return -1;
@@ -240,6 +269,27 @@ class OpenAI {
 		} catch (error) {
 			console.error(error);
 		}
+	}
+
+	// Model management methods
+	static async createModel(modelConfig: Omit<ModelConfig, 'id' | 'createAt' | 'lastUpdate'>): Promise<ModelConfig> {
+		return await ExtensionData.createModel(modelConfig);
+	}
+
+	static getModelById(modelId: string): ModelConfig | undefined {
+		return ExtensionData.getModelById(modelId);
+	}
+
+	static getAllModels(): ModelConfig[] {
+		return ExtensionData.getAllModels();
+	}
+
+	static async updateModel(modelId: string, updates: Partial<ModelConfig>): Promise<ModelConfig | null> {
+		return await ExtensionData.updateModel(modelId, updates);
+	}
+
+	static async deleteModel(modelId: string): Promise<boolean> {
+		return await ExtensionData.deleteModel(modelId);
 	}
 
 }

@@ -1,0 +1,302 @@
+/* Models Manager Styles */
+
+.modelsManagerContainer {
+	padding: 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.modelsManagerHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	border-bottom: 1px solid var(--vscode-panel-border);
+	padding-bottom: 10px;
+}
+
+.modelsManagerHeader h2 {
+	margin: 0;
+	color: var(--vscode-foreground);
+}
+
+.closeButton {
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	color: var(--vscode-foreground);
+	padding: 0;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+}
+
+.closeButton:hover {
+	background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.modelsList {
+	margin-bottom: 20px;
+}
+
+.modelItem {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px;
+	border: 1px solid var(--vscode-panel-border);
+	border-radius: 6px;
+	margin-bottom: 10px;
+	background-color: var(--vscode-input-background);
+}
+
+.modelInfo {
+	flex: 1;
+}
+
+.modelName {
+	font-weight: bold;
+	font-size: 16px;
+	color: var(--vscode-foreground);
+	margin-bottom: 5px;
+}
+
+.modelDetails {
+	font-size: 12px;
+	color: var(--vscode-descriptionForeground);
+}
+
+.modelActions {
+	display: flex;
+	gap: 10px;
+}
+
+.editButton, .deleteButton {
+	padding: 6px 12px;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.editButton {
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+}
+
+.editButton:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.deleteButton {
+	background-color: var(--vscode-errorForeground);
+	color: var(--vscode-button-foreground);
+}
+
+.deleteButton:hover {
+	background-color: var(--vscode-inputValidation-errorBackground);
+}
+
+.addModelButton {
+	padding: 12px 24px;
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	width: 100%;
+}
+
+.addModelButton:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.emptyMessage {
+	text-align: center;
+	color: var(--vscode-descriptionForeground);
+	font-style: italic;
+	padding: 40px;
+}
+
+/* Dialog Styles */
+.modelDialog {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.dialogOverlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.dialogContent {
+	background-color: var(--vscode-quickInput-background);
+	border: 1px solid var(--vscode-panel-border);
+	border-radius: 6px;
+	padding: 20px;
+	max-width: 500px;
+	width: 90%;
+	max-height: 80vh;
+	overflow-y: auto;
+	position: relative;
+	z-index: 1001;
+}
+
+.dialogContent h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	color: var(--vscode-foreground);
+	border-bottom: 1px solid var(--vscode-panel-border);
+	padding-bottom: 10px;
+}
+
+.modelForm {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.formSection {
+	border: 1px solid var(--vscode-panel-border);
+	border-radius: 4px;
+	padding: 15px;
+	background-color: var(--vscode-input-background);
+}
+
+.formSection h4 {
+	margin-top: 0;
+	margin-bottom: 10px;
+	color: var(--vscode-foreground);
+	font-size: 14px;
+}
+
+.formGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	margin-bottom: 15px;
+}
+
+.formHelp {
+	font-size: 11px;
+	color: var(--vscode-descriptionForeground);
+	font-style: italic;
+	margin-bottom: 5px;
+}
+
+.formGroup label {
+	font-size: 12px;
+	font-weight: bold;
+	color: var(--vscode-foreground);
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="password"],
+.formGroup input[type="number"] {
+	padding: 8px;
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 3px;
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	font-size: 13px;
+}
+
+.formGroup input[type="checkbox"] {
+	width: auto;
+	margin-right: 8px;
+}
+
+.formButtons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 20px;
+	padding-top: 15px;
+	border-top: 1px solid var(--vscode-panel-border);
+}
+
+.cancelButton, .saveButton {
+	padding: 8px 16px;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.cancelButton {
+	background-color: var(--vscode-button-secondaryBackground);
+	color: var(--vscode-button-secondaryForeground);
+}
+
+.cancelButton:hover {
+	background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.saveButton {
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+}
+
+.saveButton:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+/* Model Selection Dialog Styles */
+.modelSelectionDialog {
+	max-width: 600px;
+}
+
+.modelSelectionList {
+	margin-bottom: 20px;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.modelOption {
+	padding: 15px;
+	border: 1px solid var(--vscode-panel-border);
+	border-radius: 6px;
+	margin-bottom: 10px;
+	cursor: pointer;
+	background-color: var(--vscode-input-background);
+	transition: background-color 0.2s;
+}
+
+.modelOption:hover {
+	background-color: var(--vscode-list-hoverBackground);
+}
+
+.modelOption .modelName {
+	font-weight: bold;
+	font-size: 16px;
+	color: var(--vscode-foreground);
+	margin-bottom: 5px;
+}
+
+.modelOption .modelDetails {
+	font-size: 12px;
+	color: var(--vscode-descriptionForeground);
+	margin-bottom: 5px;
+}
+
+.modelOption .modelProxy {
+	font-size: 11px;
+	color: var(--vscode-descriptionForeground);
+	font-style: italic;
+}

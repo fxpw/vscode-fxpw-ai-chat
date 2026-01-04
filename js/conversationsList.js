@@ -33,7 +33,15 @@ function createOpenConversationButton(chatData) {
 		openConversationButton.appendChild(document.createElement('br'));
 	
 		let openConversationButtonBottomText = document.createElement('span');
-		openConversationButtonBottomText.textContent = chatData.model;
+		// Get model name by modelId
+		let modelName = "Unknown Model";
+		if (window.modelsData) {
+			const model = window.modelsData.find(m => m.id === chatData.modelId);
+			if (model) {
+				modelName = model.name;
+			}
+		}
+		openConversationButtonBottomText.textContent = modelName;
 		openConversationButtonBottomText.className = 'openConversationButtonBottomText';
 		openConversationButton.appendChild(openConversationButtonBottomText);
 	

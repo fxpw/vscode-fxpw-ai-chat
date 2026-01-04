@@ -1,5 +1,6 @@
 
 
+
 function toHomeButtonOnClick() {
 	try {
 		vscode.postMessage({
@@ -8,6 +9,7 @@ function toHomeButtonOnClick() {
 		CURRENT_CHAT_ID=-1;
 		IN_CHAT = false;
 		IS_CHAT_BLOCKED=false;
+		IN_MODELS_MANAGER = false;
 	} catch (error) {
 		console.error(error);
 	}
@@ -24,6 +26,10 @@ function toHomeButtonOnClickResponse(message) {
 	try {
 		let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
 		updateConversationsList(sortedChatsDesc);
+		// Update models data if provided
+		if (message.modelsData) {
+			window.modelsData = message.modelsData;
+		}
 	} catch (error) {
 		console.error(error);
 	}
@@ -32,8 +38,91 @@ function toHomeButtonOnClickResponse(message) {
 
 function addChatButtonOnClick(){
 	try {
+		showModelSelectionDialog();
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+function showModelSelectionDialog() {
+	try {
+		if (!window.modelsData || window.modelsData.length === 0) {
+			alert('Нет доступных моделей. Сначала создайте модель в менеджере моделей.');
+			openModelsManager();
+			return;
+		}
+
+		let dialog = document.createElement('div');
+		dialog.className = 'modelDialog';
+
+		let overlay = document.createElement('div');
+		overlay.className = 'dialogOverlay';
+		overlay.addEventListener('click', () => {
+			document.body.removeChild(dialog);
+		});
+
+		let dialogContent = document.createElement('div');
+		dialogContent.className = 'dialogContent modelSelectionDialog';
+
+		let title = document.createElement('h3');
+		title.textContent = 'Выберите модель для нового чата';
+		dialogContent.appendChild(title);
+
+		let modelsList = document.createElement('div');
+		modelsList.className = 'modelSelectionList';
+
+		window.modelsData.forEach(model => {
+			let modelOption = document.createElement('div');
+			modelOption.className = 'modelOption';
+			modelOption.addEventListener('click', () => {
+				createChatWithModel(model.id);
+				document.body.removeChild(dialog);
+			});
+
+			let modelName = document.createElement('div');
+			modelName.className = 'modelName';
+			modelName.textContent = model.name;
+			modelOption.appendChild(modelName);
+
+			let modelDetails = document.createElement('div');
+			modelDetails.className = 'modelDetails';
+			let detailsText = `Модель: ${model.modelName}`;
+			if (model.baseUrl) {
+				detailsText += ` | URL: ${model.baseUrl}`;
+			}
+			modelDetails.textContent = detailsText;
+			modelOption.appendChild(modelDetails);
+
+			let modelProxy = document.createElement('div');
+			modelProxy.className = 'modelProxy';
+			modelProxy.textContent = model.useProxy ? `Прокси: ${model.proxyIP}:${model.proxyPortHttps}` : 'Без прокси';
+			modelOption.appendChild(modelProxy);
+
+			modelsList.appendChild(modelOption);
+		});
+
+		dialogContent.appendChild(modelsList);
+
+		let cancelButton = document.createElement('button');
+		cancelButton.className = 'cancelButton';
+		cancelButton.textContent = 'Отмена';
+		cancelButton.addEventListener('click', () => {
+			document.body.removeChild(dialog);
+		});
+		dialogContent.appendChild(cancelButton);
+
+		dialog.appendChild(dialogContent);
+		document.body.appendChild(dialog);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+function createChatWithModel(modelId) {
+	try {
 		vscode.postMessage({
-			command: 'addChatButtonOnClickRequest',
+			command: 'createChatWithModelRequest',
+			modelId: modelId
 		});
 	} catch (error) {
 		console.error(error);
@@ -122,6 +211,27 @@ function updateHeader(){
 			headerDiv.appendChild(spacer);
 			headerDiv.appendChild(deleteChatButton);
 
+		}else if (IN_MODELS_MANAGER){
+			let toHomeButton = document.createElement('button');
+			toHomeButton.id = 'toHomeButton';
+			toHomeButton.className = 'headerButton';
+			let svgElementHome = document.createElementNS(svgNS, "svg");
+			svgElementHome.setAttribute("width", "24");
+			svgElementHome.setAttribute("height", "24");
+			svgElementHome.setAttribute("viewBox", "0 0 24 24");
+			svgElementHome.setAttribute("fill", "none");
+			let pathElementHome = document.createElementNS(svgNS, "path");
+			pathElementHome.setAttribute("d", "M3 9.5V21H21V9.5L12 2L3 9.5ZM11 12V18H13V12H11Z");
+			pathElementHome.setAttribute("fill", "currentColor");
+			svgElementHome.appendChild(pathElementHome);
+			toHomeButton.appendChild(svgElementHome);
+
+			toHomeButton.addEventListener('click', () => {
+				toHomeButtonOnClick();
+			});
+
+			headerDiv.appendChild(toHomeButton);
+
 		}else{
 
 			// let testChatButton = document.createElement('button');
@@ -141,8 +251,29 @@ function updateHeader(){
 			// pathElementTest.appendChild(svgElementTest);
 			// testChatButton.appendChild(pathElementTest);
 
-			let spacer = document.createElement('div');
-			spacer.className = 'spacer';
+			let spacer1 = document.createElement('div');
+			spacer1.className = 'spacer';
+
+			let modelsButton = document.createElement('button');
+			modelsButton.id = 'modelsButton';
+			modelsButton.className = 'headerButton';
+			modelsButton.title = 'Управление моделями';
+			let svgElementModels = document.createElementNS(svgNS, "svg");
+			svgElementModels.setAttribute("width", "24");
+			svgElementModels.setAttribute("height", "24");
+			svgElementModels.setAttribute("viewBox", "0 0 24 24");
+			svgElementModels.setAttribute("fill", "none");
+			let pathElementModels = document.createElementNS(svgNS, "path");
+			pathElementModels.setAttribute("d", "M12 2L2 7L12 12L22 7L12 2Z M2 17L12 22L22 17V12L12 17L2 12V17Z");
+			pathElementModels.setAttribute("fill", "currentColor");
+			svgElementModels.appendChild(pathElementModels);
+			modelsButton.appendChild(svgElementModels);
+			modelsButton.addEventListener('click', () => {
+				openModelsManager();
+			});
+
+			let spacer2 = document.createElement('div');
+			spacer2.className = 'spacer';
 
 			let addChatButton = document.createElement('button');
 			addChatButton.id = 'addChatButton';
@@ -161,9 +292,11 @@ function updateHeader(){
 			svgElementPlus.appendChild(pathElementPlus);
 			addChatButton.appendChild(svgElementPlus);
 
-			
+
 			// headerDiv.appendChild(testChatButton);
-			headerDiv.appendChild(spacer);
+			headerDiv.appendChild(modelsButton);
+			headerDiv.appendChild(spacer1);
+			headerDiv.appendChild(spacer2);
 			headerDiv.appendChild(addChatButton);
 		}
 

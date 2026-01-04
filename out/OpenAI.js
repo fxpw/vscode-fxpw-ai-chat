@@ -15,21 +15,44 @@ class OpenAI {
                 "role": "user",
                 "content": messageData.text,
             };
+            // Get chat data and model configuration
+            const chatData = ExtensionData_1.ExtensionData.getChatDataByID(messageData.chatID);
+            if (!chatData) {
+                throw new Error('Chat data not found');
+            }
+            const modelConfig = ExtensionData_1.ExtensionData.getModelById(chatData.modelId);
+            if (!modelConfig) {
+                throw new Error('Model configuration not found');
+            }
             let agent = undefined;
-            if (ExtensionSettings_1.ExtensionSettings.USE_PROXY && ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
+            if (modelConfig.useProxy) {
                 try {
-                    let proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                    console.log(`Using configured proxy: ${proxyUrl.toString()}`);
-                    if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                        // For Windows, try different proxy agent options
-                        const agentOptions = {
-                            rejectUnauthorized: false, // Allow self-signed certificates
-                            timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : 30000
-                        };
-                        agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl, agentOptions);
+                    let proxyUrl;
+                    if (!modelConfig.useSOCKS5) {
+                        if (modelConfig.proxyLogin && modelConfig.proxyPassword && modelConfig.proxyIP && modelConfig.proxyPortHttps) {
+                            proxyUrl = `http://${modelConfig.proxyLogin}:${modelConfig.proxyPassword}@${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+                        }
+                        else if (modelConfig.proxyIP && modelConfig.proxyPortHttps) {
+                            proxyUrl = `http://${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+                        }
+                        else {
+                            throw new Error('Invalid proxy configuration');
+                        }
                     }
-                    else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                        agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+                    else {
+                        proxyUrl = `socks5h://${modelConfig.proxyLogin}:${modelConfig.proxyPassword}@${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
+                    }
+                    const parsedProxyUrl = new URL(proxyUrl);
+                    console.log(`Using model proxy: ${parsedProxyUrl.toString()}`);
+                    if (!modelConfig.useSOCKS5) {
+                        const agentOptions = {
+                            rejectUnauthorized: false,
+                            timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
+                        };
+                        agent = new https_proxy_agent_1.HttpsProxyAgent(parsedProxyUrl, agentOptions);
+                    }
+                    else {
+                        agent = new socks_proxy_agent_1.SocksProxyAgent(parsedProxyUrl);
                     }
                 }
                 catch (error) {
@@ -37,14 +60,14 @@ class OpenAI {
                 }
             }
             else {
-                // Try to use system proxy as fallback for Windows
+                // Try to use system proxy as fallback
                 const systemProxy = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
                 if (systemProxy) {
                     try {
                         console.log(`Using system proxy: ${systemProxy}`);
                         const agentOptions = {
                             rejectUnauthorized: false,
-                            timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : 30000
+                            timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
                         };
                         agent = new https_proxy_agent_1.HttpsProxyAgent(systemProxy, agentOptions);
                     }
@@ -59,21 +82,22 @@ class OpenAI {
             else {
                 console.log('No proxy agent configured');
             }
-            let finalBaseurl = ExtensionSettings_1.ExtensionSettings.BASE_URL || null;
+            let finalBaseurl = modelConfig.baseUrl || null;
+            // Auto-detect base URL if not provided
             if (!finalBaseurl) {
-                if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "deepseek-chat") {
+                if (modelConfig.modelName === "deepseek-chat") {
                     finalBaseurl = "https://api.deepseek.com";
                 }
-                else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b") {
+                else if (modelConfig.modelName === "alibaba/tongyi-deepresearch-30b-a3b") {
                     finalBaseurl = "https://openrouter.ai/api/v1";
                 }
-                else if (ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b" || ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M") {
+                else if (modelConfig.modelName === "llama3.1:8b" || modelConfig.modelName === "llama3.1:8b-instruct-q5_K_M") {
                     finalBaseurl = "http://localhost:11434/v1";
                 }
             }
             const openai = new openai_1.OpenAI({
                 baseURL: finalBaseurl,
-                apiKey: ExtensionSettings_1.ExtensionSettings.OPENAI_KEY || "ollama",
+                apiKey: modelConfig.apiKey || "ollama",
                 httpAgent: agent || undefined,
             });
             await ExtensionData_1.ExtensionData.addDataToChatById(conversationSendTextButtonOnClickData, messageData.chatID);
@@ -84,16 +108,16 @@ class OpenAI {
                     role: msg.role === 'user' ? 'user' : 'assistant',
                     content: msg.content,
                 }));
-                if (ExtensionSettings_1.ExtensionSettings.STREAMING) {
+                if (modelConfig.streaming) {
                     // Streaming mode
                     let fullContent = '';
                     const stream = await openai.chat.completions.create({
                         messages: messagesForAPI,
-                        model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+                        model: modelConfig.modelName,
                         stream: true,
                     }, {
                         httpAgent: agent || undefined,
-                        timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : undefined,
+                        timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : undefined,
                     });
                     for await (const chunk of stream) {
                         const content = chunk.choices[0]?.delta?.content || '';
@@ -127,13 +151,13 @@ class OpenAI {
                     return true; // Streaming was used
                 }
                 else {
-                    // Non-streaming mode (existing logic)
+                    // Non-streaming mode
                     const chatCompletion = await openai.chat.completions.create({
                         messages: messagesForAPI,
-                        model: ExtensionSettings_1.ExtensionSettings.OPENAI_MODEL,
+                        model: modelConfig.modelName,
                     }, {
                         httpAgent: agent || undefined,
-                        timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : undefined,
+                        timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : undefined,
                     });
                     if (chatCompletion.choices && chatCompletion.choices.length > 0 && chatCompletion.choices[0].message.content) {
                         const conversationAIData = {
@@ -218,9 +242,9 @@ class OpenAI {
             console.error(error);
         }
     }
-    static async createNewChat(model) {
+    static async createNewChat(modelId) {
         try {
-            return await ExtensionData_1.ExtensionData.createNewChat(model);
+            return await ExtensionData_1.ExtensionData.createNewChat(modelId);
         }
         catch (error) {
             console.error(error);
@@ -245,6 +269,22 @@ class OpenAI {
         catch (error) {
             console.error(error);
         }
+    }
+    // Model management methods
+    static async createModel(modelConfig) {
+        return await ExtensionData_1.ExtensionData.createModel(modelConfig);
+    }
+    static getModelById(modelId) {
+        return ExtensionData_1.ExtensionData.getModelById(modelId);
+    }
+    static getAllModels() {
+        return ExtensionData_1.ExtensionData.getAllModels();
+    }
+    static async updateModel(modelId, updates) {
+        return await ExtensionData_1.ExtensionData.updateModel(modelId, updates);
+    }
+    static async deleteModel(modelId) {
+        return await ExtensionData_1.ExtensionData.deleteModel(modelId);
     }
 }
 exports.OpenAI = OpenAI;

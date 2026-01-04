@@ -6,6 +6,10 @@ window.addEventListener('message', async event => {
 		switch (message.command) {
 			case 'toHomeButtonOnClickResponse':
 				toHomeButtonOnClickResponse(message);
+				// Update models data if provided
+				if (message.modelsData) {
+					window.modelsData = message.modelsData;
+				}
 				updateHeader();
 				break;
 			case 'conversationSendTextButtonOnClickResponse':
@@ -18,6 +22,10 @@ window.addEventListener('message', async event => {
 				addChatButtonOnClickResponse(message);
 				break;
 			case 'loadViewOnLoadResponse':
+				// Store models data globally
+				if (message.modelsData) {
+					window.modelsData = message.modelsData;
+				}
 				if (message.currentChatID == -1){
 					goToHome();
 					updateHeader();
@@ -35,6 +43,18 @@ window.addEventListener('message', async event => {
 				break;
 			case 'streamingComplete':
 				streamingComplete(message);
+				break;
+			case 'getModelsListResponse':
+				getModelsListResponse(message);
+				break;
+			case 'createModelResponse':
+				createModelResponse(message);
+				break;
+			case 'updateModelResponse':
+				updateModelResponse(message);
+				break;
+			case 'deleteModelResponse':
+				deleteModelResponse(message);
 				break;
 			default:
 				console.error(message);
