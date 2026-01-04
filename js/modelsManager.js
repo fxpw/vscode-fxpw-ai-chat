@@ -268,11 +268,6 @@ function createFormGroup(name, label, type, value, helpText = null) {
 	let group = document.createElement('div');
 	group.className = 'formGroup';
 
-	let labelElement = document.createElement('label');
-	labelElement.textContent = label;
-	labelElement.htmlFor = name;
-	group.appendChild(labelElement);
-
 	if (helpText) {
 		let helpElement = document.createElement('div');
 		helpElement.className = 'formHelp';
@@ -280,21 +275,46 @@ function createFormGroup(name, label, type, value, helpText = null) {
 		group.appendChild(helpElement);
 	}
 
-	let input;
 	if (type === 'checkbox') {
-		input = document.createElement('input');
+		// Custom checkbox structure
+		let checkboxContainer = document.createElement('label');
+		checkboxContainer.className = 'checkboxContainer';
+		checkboxContainer.htmlFor = name;
+
+		let input = document.createElement('input');
 		input.type = 'checkbox';
+		input.id = name;
+		input.name = name;
 		input.checked = value;
+
+		let checkmark = document.createElement('span');
+		checkmark.className = 'checkmark';
+
+		let labelSpan = document.createElement('span');
+		labelSpan.className = 'checkboxLabel';
+		labelSpan.textContent = label;
+
+		checkboxContainer.appendChild(input);
+		checkboxContainer.appendChild(checkmark);
+		checkboxContainer.appendChild(labelSpan);
+
+		group.appendChild(checkboxContainer);
 	} else {
-		input = document.createElement('input');
+		// Regular input fields
+		let labelElement = document.createElement('label');
+		labelElement.textContent = label;
+		labelElement.htmlFor = name;
+		group.appendChild(labelElement);
+
+		let input = document.createElement('input');
 		input.type = type;
+		input.id = name;
+		input.name = name;
 		input.value = value;
+
+		group.appendChild(input);
 	}
 
-	input.id = name;
-	input.name = name;
-
-	group.appendChild(input);
 	return group;
 }
 

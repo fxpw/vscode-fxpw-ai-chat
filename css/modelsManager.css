@@ -217,9 +217,70 @@
 	font-size: 13px;
 }
 
-.formGroup input[type="checkbox"] {
-	width: auto;
-	margin-right: 8px;
+/* Custom Checkbox Styles */
+.checkboxContainer {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+	margin-bottom: 5px;
+}
+
+.checkboxContainer input[type="checkbox"] {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+
+.checkboxContainer .checkmark {
+	height: 18px;
+	width: 18px;
+	background-color: var(--vscode-input-background);
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 3px;
+	margin-right: 10px;
+	position: relative;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.checkboxContainer:hover .checkmark {
+	border-color: var(--vscode-focusBorder);
+}
+
+.checkboxContainer input[type="checkbox"]:checked ~ .checkmark {
+	background-color: var(--vscode-button-background);
+	border-color: var(--vscode-button-background);
+}
+
+.checkboxContainer input[type="checkbox"]:focus ~ .checkmark {
+	border-color: var(--vscode-focusBorder);
+	box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}
+
+.checkboxContainer .checkmark::after {
+	content: "";
+	position: absolute;
+	display: none;
+	width: 4px;
+	height: 8px;
+	border: solid white;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+
+.checkboxContainer input[type="checkbox"]:checked ~ .checkmark::after {
+	display: block;
+}
+
+.checkboxContainer .checkboxLabel {
+	font-size: 13px;
+	color: var(--vscode-foreground);
+	cursor: pointer;
 }
 
 .formButtons {
