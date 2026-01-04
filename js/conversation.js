@@ -24,15 +24,21 @@ function scrollСhatHistoryContainerToBottom() {
 
 function intervalChangeSendQueryText() {
 	try {
-		let conversationSendTextButton = document.getElementById('conversationSendTextButton')
-		conversationSendTextButton.textContent = 'Process...';
-		conversationSendTextButton.disabled = true;
 		IS_CHAT_BLOCKED = true;
+		// Update EasyMDE toolbar send button if it exists
+		let sendButton = document.querySelector('.editor-toolbar .fa-paper-plane');
+		if (sendButton) {
+			sendButton.parentElement.style.opacity = '0.5';
+			sendButton.parentElement.style.pointerEvents = 'none';
+		}
 		let dots = 3;
 		const updateButtonText = () => {
 			let text = 'Process' + '.'.repeat(dots);
-			conversationSendTextButton.textContent = text;
-			dots = (dots + 1) % 4; // Циклично изменяем количество точек от 0 до 3
+			// Update button title instead of text content
+			if (sendButton) {
+				sendButton.parentElement.title = text;
+			}
+			dots = (dots + 1) % 4;
 		};
 		updateButtonText();
 		intervalIdForConversationSendTextButton = setInterval(updateButtonText, 900);
@@ -147,20 +153,8 @@ function createConversationBody(message) {
 		// 	}
 		// });
 
-		// send button
-		let conversationSendTextButton = document.createElement('button');
-		conversationSendTextButton.id = 'conversationSendTextButton';
-		conversationSendTextButton.className = "conversationSendTextButton";
-		conversationSendTextButton.textContent = 'Send';
-		IS_CHAT_BLOCKED = false;
-		conversationSendTextButton.addEventListener('click', function () {
-			conversationSendTextButtonOnClick();
-		});
-
-
 		conversationContainer.appendChild(chatHistoryContainer);
 		conversationContainer.appendChild(conversationTextToSendInput);
-		conversationContainer.appendChild(conversationSendTextButton);
 		bodyElement.appendChild(conversationContainer);
 
 
@@ -228,6 +222,16 @@ function createConversationBody(message) {
 				"unordered-list",
 				"ordered-list",
 				"fullscreen",
+				"|",
+				{
+					name: "send",
+					action: function() {
+						conversationSendTextButtonOnClick();
+					},
+					className: "fa fa-paper-plane",
+					text: "📤",
+					title: "Send Message (Ctrl+Enter)"
+				}
 			],
 			// autosave: {
 			// 	enabled: true,
@@ -268,6 +272,9 @@ function createConversationBody(message) {
 			placeholder: "Type here...",
 			status: false,
 			tabSize: 4,
+			shortcuts: {
+				"send": "Ctrl-Enter"
+			}
 		});
 
 
@@ -278,6 +285,44 @@ function createConversationBody(message) {
 }
 
 // eslint-disable-next-line no-unused-vars
+function streamingMessageUpdate(message) {
+	try {
+		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+		let assistantMessages = chatHistoryContainer.querySelectorAll('.nonuserMargin');
+		let lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
+
+		if (lastAssistantMessage) {
+			// Clear existing content and add new content
+			lastAssistantMessage.innerHTML = marked.parse(message.content);
+
+			// Re-apply syntax highlighting to code blocks
+			let codeBlocks = lastAssistantMessage.querySelectorAll('pre code');
+			if (codeBlocks) {
+				codeBlocks.forEach((block) => {
+					hljs.highlightElement(block);
+					// Add copy button if not already exists
+					if (!block.parentNode.querySelector('.copyButton')) {
+						let copyButton = document.createElement('button');
+						copyButton.textContent = 'copy';
+						copyButton.className = 'copyButton';
+						copyButton.type = 'button';
+						copyButton.addEventListener('click', () => {
+							navigator.clipboard.writeText(block.textContent).then(() => {
+								copyButton.textContent = 'done!';
+								setTimeout(() => copyButton.textContent = 'copy', 2000);
+							}).catch(err => console.error('js//conversation.js error: ', err));
+						});
+						block.parentNode.insertBefore(copyButton, block);
+					}
+				});
+			}
+		}
+		scrollСhatHistoryContainerToBottom();
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 function conversationSendTextButtonOnClickResponse(message) {
 	try {
 		let chatData = message.chatData;
@@ -310,9 +355,13 @@ function conversationSendTextButtonOnClickResponse(message) {
 			}
 			chatHistoryContainer.appendChild(chatHistoryElement);
 		});
-		const conversationSendTextButton = document.getElementById('conversationSendTextButton');
-		conversationSendTextButton.textContent = 'Send';
-		conversationSendTextButton.disabled = false;
+		// Reset EasyMDE toolbar send button
+		let sendButton = document.querySelector('.editor-toolbar .fa-paper-plane');
+		if (sendButton) {
+			sendButton.parentElement.style.opacity = '1';
+			sendButton.parentElement.style.pointerEvents = 'auto';
+			sendButton.parentElement.title = 'Send Message (Ctrl+Enter)';
+		}
 		IS_CHAT_BLOCKED = false;
 		clearInterval(intervalIdForConversationSendTextButton);
 		if (message.chatData.isBlocked) {

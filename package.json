@@ -149,29 +149,17 @@
 				"vscode-fxpw-ai-chat.openAIModel": {
 					"type": "string",
 					"default": "gpt-4o-mini",
-					"enum": [
-						"o1-2024-12-17",
-						"o1-preview",
-						"o1-mini",
-						"gpt-4o-mini",
-						"gpt-4o-mini-search-preview-2025-03-11",
-						"gpt-4o",
-						"gpt-4.1-nano-2025-04-14",
-						"gpt-4.1-mini-2025-04-14",
-						"gpt-4.1-2025-04-14",
-						"gpt-5-nano-2025-08-07",
-						"gpt-5-mini-2025-08-07",
-						"gpt-5-2025-08-07",
-						"alibaba/tongyi-deepresearch-30b-a3b",
-						"llama3.1:8b-instruct-q5_K_M",
-						"deepseek-chat"
-					],
-					"description": "Model"
+					"description": "OpenAI model name (can be any custom model name)"
 				},
 				"vscode-fxpw-ai-chat.baseUrl": {
 					"type": "string",
 					"default": "",
 					"description": "Custom base URL for OpenAI API (leave empty to use default URLs based on model)"
+				},
+				"vscode-fxpw-ai-chat.streaming": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable streaming responses for real-time message display"
 				}
 			}
 		}

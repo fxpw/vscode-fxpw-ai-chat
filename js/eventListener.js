@@ -30,6 +30,9 @@ window.addEventListener('message', async event => {
 				createConversationBody(message);
 				updateHeader();
 				break;
+			case 'streamingMessageUpdate':
+				streamingMessageUpdate(message);
+				break;
 			default:
 				console.error(message);
 				break;

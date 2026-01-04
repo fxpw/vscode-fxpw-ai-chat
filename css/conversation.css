@@ -148,6 +148,29 @@
 	color: var(--vscode-button-foreground)!important;
 }
 
+/* EasyMDE custom send button styles */
+.editor-toolbar .fa-paper-plane:before {
+	content: "📤";
+	font-size: 14px;
+}
+
+.editor-toolbar a[title*="Send Message"] {
+	background-color: var(--vscode-button-background) !important;
+	color: var(--vscode-button-foreground) !important;
+	border: 1px solid var(--vscode-button-border) !important;
+}
+
+.editor-toolbar a[title*="Send Message"]:hover {
+	background-color: var(--vscode-button-hoverBackground) !important;
+}
+
+.editor-toolbar a[title*="Process"] {
+	background-color: var(--vscode-button-secondaryBackground) !important;
+	color: var(--vscode-button-secondaryForeground) !important;
+	opacity: 0.5 !important;
+	pointer-events: none !important;
+}
+
 /* .note-btn {
 	background-color: var(--vscode-dropdown-background)!important;
 	color: var(--vscode-button-foreground)!important;

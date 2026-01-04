@@ -64,11 +64,14 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 				// console.log(message);
 				switch (message.command) {
 					case 'conversationSendTextButtonOnClickRequest':
-						await OpenAI.request(message);
-						if (OpenAI.getCurrentChat() > 0) {
-							webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: OpenAI.getCurrentChatData() });
-						} else {
-							webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData: OpenAI.getChatsListData() });
+						const wasStreaming = await OpenAI.request(message, webviewView.webview);
+						if (!wasStreaming) {
+							// Only send response if not streaming (streaming updates UI in real-time)
+							if (OpenAI.getCurrentChat() > 0) {
+								webviewView.webview.postMessage({ command: 'conversationSendTextButtonOnClickResponse', chatData: OpenAI.getCurrentChatData() });
+							} else {
+								webviewView.webview.postMessage({ command: 'toHomeButtonOnClickResponse', chatsListData: OpenAI.getChatsListData() });
+							}
 						}
 						break;
 					case 'addChatButtonOnClickRequest':
@@ -99,6 +102,14 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 						// await OpenAI.setCurrentChatID(message.chatID);
 						await OpenAI.changeInputText(message.inputText,message.chatID);
 						// webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+						break;
+					case 'streamingMessageUpdate':
+						// Forward streaming message to webview
+						webviewView.webview.postMessage({
+							command: 'streamingMessageUpdate',
+							chatID: message.chatID,
+							content: message.content
+						});
 						break;
 					default:
 						console.error(message);

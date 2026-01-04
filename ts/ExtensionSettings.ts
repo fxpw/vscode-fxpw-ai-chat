@@ -38,6 +38,10 @@ class ExtensionSettings {
 		return this.config.get<string>('baseUrl') ?? "";
 	}
 
+	static get STREAMING(): boolean {
+		return this.config.get<boolean>('streaming') ?? true;
+	}
+
 	static get USE_SOCKS5(): boolean {
 		return this.config.get<boolean>('useSOCKS5') ?? false;
 	}
