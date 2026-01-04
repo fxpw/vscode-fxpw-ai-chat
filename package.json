@@ -167,6 +167,11 @@
 						"deepseek-chat"
 					],
 					"description": "Model"
+				},
+				"vscode-fxpw-ai-chat.baseUrl": {
+					"type": "string",
+					"default": "",
+					"description": "Custom base URL for OpenAI API (leave empty to use default URLs based on model)"
 				}
 			}
 		}

@@ -34,6 +34,10 @@ class ExtensionSettings {
 		return this.config.get<string>('openAIModel') ?? "";
 	}
 
+	static get BASE_URL(): string {
+		return this.config.get<string>('baseUrl') ?? "";
+	}
+
 	static get USE_SOCKS5(): boolean {
 		return this.config.get<boolean>('useSOCKS5') ?? false;
 	}

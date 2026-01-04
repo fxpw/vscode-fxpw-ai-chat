@@ -27,16 +27,18 @@ class OpenAI {
 					agent = new SocksProxyAgent(proxyUrl);
 				}
 			}
-			let baseurl: string | null = null;
-			if (ExtensionSettings.OPENAI_MODEL == "deepseek-chat"){
-				baseurl = "https://api.deepseek.com";
-			}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
-				baseurl = "https://openrouter.ai/api/v1";
-			}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"){
-				baseurl = "http://localhost:11434/v1";
+			let finalBaseurl: string | null = ExtensionSettings.BASE_URL || null;
+			if (!finalBaseurl) {
+				if (ExtensionSettings.OPENAI_MODEL == "deepseek-chat"){
+					finalBaseurl = "https://api.deepseek.com";
+				}else if(ExtensionSettings.OPENAI_MODEL == "alibaba/tongyi-deepresearch-30b-a3b"){
+					finalBaseurl = "https://openrouter.ai/api/v1";
+				}else if(ExtensionSettings.OPENAI_MODEL == "llama3.1:8b-instruct-q5_K_M"){
+					finalBaseurl = "http://localhost:11434/v1";
+				}
 			}
 			const openai = new OpenAILib({
-				baseURL: baseurl,
+				baseURL: finalBaseurl,
 				apiKey: ExtensionSettings.OPENAI_KEY,
 				httpAgent: agent || undefined,
 			});
