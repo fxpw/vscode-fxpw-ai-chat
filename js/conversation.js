@@ -266,7 +266,7 @@ function createConversationBody(message) {
 			// link: ["[", "](https://)"],
 			// table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
 			// },
-			// lineWrapping: false,
+			lineWrapping: true,
 			minHeight: "100px",
 			maxHeight: "100px",
 			placeholder: "Type here...",
@@ -288,58 +288,28 @@ function createConversationBody(message) {
 function streamingMessageUpdate(message) {
 	try {
 		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
-		let assistantMessages = chatHistoryContainer.querySelectorAll('.nonuserMargin');
-		let lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
 
-		if (lastAssistantMessage) {
-			// Clear existing content and add new content
-			lastAssistantMessage.innerHTML = marked.parse(message.content);
+		// Find or create streaming message element
+		let streamingMessage = chatHistoryContainer.querySelector('.streaming-message');
 
-			// Re-apply syntax highlighting to code blocks
-			let codeBlocks = lastAssistantMessage.querySelectorAll('pre code');
-			if (codeBlocks) {
-				codeBlocks.forEach((block) => {
-					hljs.highlightElement(block);
-					// Add copy button if not already exists
-					if (!block.parentNode.querySelector('.copyButton')) {
-						let copyButton = document.createElement('button');
-						copyButton.textContent = 'copy';
-						copyButton.className = 'copyButton';
-						copyButton.type = 'button';
-						copyButton.addEventListener('click', () => {
-							navigator.clipboard.writeText(block.textContent).then(() => {
-								copyButton.textContent = 'done!';
-								setTimeout(() => copyButton.textContent = 'copy', 2000);
-							}).catch(err => console.error('js//conversation.js error: ', err));
-						});
-						block.parentNode.insertBefore(copyButton, block);
-					}
-				});
-			}
+		if (!streamingMessage) {
+			// Create new streaming message element if it doesn't exist
+			streamingMessage = document.createElement('div');
+			streamingMessage.className = 'chatHistoryElement nonuserMargin streaming-message';
+			streamingMessage.setAttribute('data-chat-id', message.chatID);
+			chatHistoryContainer.appendChild(streamingMessage);
 		}
-		scrollСhatHistoryContainerToBottom();
-	} catch (error) {
-		console.error(error);
-	}
-}
 
-function conversationSendTextButtonOnClickResponse(message) {
-	try {
-		let chatData = message.chatData;
-		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
-		chatHistoryContainer.innerHTML = "";
-		chatData.conversation.forEach(messageData => {
-			let chatHistoryElement = document.createElement('div');
-			if (messageData.role == "user") {
-				chatHistoryElement.className = "chatHistoryElement userMargin";
-			} else {
-				chatHistoryElement.className = "chatHistoryElement nonuserMargin";
-			}
-			chatHistoryElement.innerHTML = marked.parse(messageData.content);
-			let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
-			if (codeBlocks) {
-				codeBlocks.forEach((block) => {
-					hljs.highlightElement(block);
+		// Update content
+		streamingMessage.innerHTML = marked.parse(message.content || '');
+
+		// Re-apply syntax highlighting to code blocks
+		let codeBlocks = streamingMessage.querySelectorAll('pre code');
+		if (codeBlocks) {
+			codeBlocks.forEach((block) => {
+				hljs.highlightElement(block);
+				// Add copy button if not already exists
+				if (!block.parentNode.querySelector('.copyButton')) {
 					let copyButton = document.createElement('button');
 					copyButton.textContent = 'copy';
 					copyButton.className = 'copyButton';
@@ -351,10 +321,84 @@ function conversationSendTextButtonOnClickResponse(message) {
 						}).catch(err => console.error('js//conversation.js error: ', err));
 					});
 					block.parentNode.insertBefore(copyButton, block);
-				});
-			}
-			chatHistoryContainer.appendChild(chatHistoryElement);
-		});
+				}
+			});
+		}
+
+		scrollСhatHistoryContainerToBottom();
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+function streamingComplete(message) {
+	try {
+		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+		let streamingMessage = chatHistoryContainer.querySelector('.streaming-message');
+
+		if (streamingMessage) {
+			// Convert streaming message to regular message
+			streamingMessage.classList.remove('streaming-message');
+		}
+
+		// Reset EasyMDE toolbar send button
+		let sendButton = document.querySelector('.editor-toolbar .fa-paper-plane');
+		if (sendButton) {
+			sendButton.parentElement.style.opacity = '1';
+			sendButton.parentElement.style.pointerEvents = 'auto';
+			sendButton.parentElement.title = 'Send Message (Ctrl+Enter)';
+		}
+
+		IS_CHAT_BLOCKED = false;
+		clearInterval(intervalIdForConversationSendTextButton);
+
+		scrollСhatHistoryContainerToBottom();
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+function conversationSendTextButtonOnClickResponse(message) {
+	try {
+		let chatData = message.chatData;
+		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+
+		// Check if we have a streaming message that needs to be converted to regular message
+		let streamingMessage = chatHistoryContainer.querySelector('.streaming-message');
+		if (streamingMessage) {
+			// Convert streaming message to regular message
+			streamingMessage.classList.remove('streaming-message');
+		} else {
+			// No streaming was used, recreate all messages
+			chatHistoryContainer.innerHTML = "";
+			chatData.conversation.forEach(messageData => {
+				let chatHistoryElement = document.createElement('div');
+				if (messageData.role == "user") {
+					chatHistoryElement.className = "chatHistoryElement userMargin";
+				} else {
+					chatHistoryElement.className = "chatHistoryElement nonuserMargin";
+				}
+				chatHistoryElement.innerHTML = marked.parse(messageData.content);
+				let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
+				if (codeBlocks) {
+					codeBlocks.forEach((block) => {
+						hljs.highlightElement(block);
+						let copyButton = document.createElement('button');
+						copyButton.textContent = 'copy';
+						copyButton.className = 'copyButton';
+						copyButton.type = 'button';
+						copyButton.addEventListener('click', () => {
+							navigator.clipboard.writeText(block.textContent).then(() => {
+								copyButton.textContent = 'done!';
+								setTimeout(() => copyButton.textContent = 'copy', 2000);
+							}).catch(err => console.error('js//conversation.js error: ', err));
+						});
+						block.parentNode.insertBefore(copyButton, block);
+					});
+				}
+				chatHistoryContainer.appendChild(chatHistoryElement);
+			});
+		}
 		// Reset EasyMDE toolbar send button
 		let sendButton = document.querySelector('.editor-toolbar .fa-paper-plane');
 		if (sendButton) {
@@ -364,9 +408,6 @@ function conversationSendTextButtonOnClickResponse(message) {
 		}
 		IS_CHAT_BLOCKED = false;
 		clearInterval(intervalIdForConversationSendTextButton);
-		if (message.chatData.isBlocked) {
-			intervalChangeSendQueryText();
-		}
 	} catch (error) {
 		console.error(error);
 	}

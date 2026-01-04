@@ -111,6 +111,14 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 							content: message.content
 						});
 						break;
+					case 'streamingComplete':
+						// Handle streaming completion
+						webviewView.webview.postMessage({
+							command: 'streamingComplete',
+							chatID: message.chatID,
+							chatData: message.chatData
+						});
+						break;
 					default:
 						console.error(message);
 						break;

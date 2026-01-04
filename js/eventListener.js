@@ -33,6 +33,9 @@ window.addEventListener('message', async event => {
 			case 'streamingMessageUpdate':
 				streamingMessageUpdate(message);
 				break;
+			case 'streamingComplete':
+				streamingComplete(message);
+				break;
 			default:
 				console.error(message);
 				break;

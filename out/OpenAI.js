@@ -16,14 +16,48 @@ class OpenAI {
                 "content": messageData.text,
             };
             let agent = undefined;
-            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
-                let proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                    agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+            if (ExtensionSettings_1.ExtensionSettings.USE_PROXY && ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
+                try {
+                    let proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                    console.log(`Using configured proxy: ${proxyUrl.toString()}`);
+                    if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                        // For Windows, try different proxy agent options
+                        const agentOptions = {
+                            rejectUnauthorized: false, // Allow self-signed certificates
+                            timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : 30000
+                        };
+                        agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl, agentOptions);
+                    }
+                    else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
+                        agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+                    }
                 }
-                else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                    agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
+                catch (error) {
+                    console.error('Proxy URL parsing error:', error);
                 }
+            }
+            else {
+                // Try to use system proxy as fallback for Windows
+                const systemProxy = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
+                if (systemProxy) {
+                    try {
+                        console.log(`Using system proxy: ${systemProxy}`);
+                        const agentOptions = {
+                            rejectUnauthorized: false,
+                            timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : 30000
+                        };
+                        agent = new https_proxy_agent_1.HttpsProxyAgent(systemProxy, agentOptions);
+                    }
+                    catch (error) {
+                        console.error('System proxy error:', error);
+                    }
+                }
+            }
+            if (agent) {
+                console.log('Proxy agent configured successfully');
+            }
+            else {
+                console.log('No proxy agent configured');
             }
             let finalBaseurl = ExtensionSettings_1.ExtensionSettings.BASE_URL || null;
             if (!finalBaseurl) {
@@ -81,6 +115,14 @@ class OpenAI {
                             "content": fullContent,
                         };
                         await ExtensionData_1.ExtensionData.addDataToChatById(conversationAIData, messageData.chatID);
+                        // Send completion message to finalize streaming
+                        if (webview) {
+                            webview.postMessage({
+                                command: 'streamingComplete',
+                                chatID: messageData.chatID,
+                                chatData: ExtensionData_1.ExtensionData.getChatDataByID(messageData.chatID)
+                            });
+                        }
                     }
                     return true; // Streaming was used
                 }
@@ -119,17 +161,24 @@ class OpenAI {
         return false; // Fallback return
     }
     static async commitRequest(diffMessage) {
-        let agent = false;
-        if (ExtensionSettings_1.ExtensionSettings.USE_PROXY) {
-            if (ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
+        let agent = undefined;
+        if (ExtensionSettings_1.ExtensionSettings.USE_PROXY && ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
+            try {
+                const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
+                console.log(`Commit request using proxy: ${proxyUrl.toString()}`);
                 if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                    const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                    agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl);
+                    const agentOptions = {
+                        rejectUnauthorized: false,
+                        timeout: ExtensionSettings_1.ExtensionSettings.TIMEOUT ? ExtensionSettings_1.ExtensionSettings.TIMEOUT * 1000 : 30000
+                    };
+                    agent = new https_proxy_agent_1.HttpsProxyAgent(proxyUrl, agentOptions);
                 }
                 else if (ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
-                    const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
                     agent = new socks_proxy_agent_1.SocksProxyAgent(proxyUrl);
                 }
+            }
+            catch (error) {
+                console.error('Commit request proxy error:', error);
             }
         }
         const messageForAPI = {

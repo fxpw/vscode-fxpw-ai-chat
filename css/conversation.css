@@ -175,3 +175,19 @@
 	background-color: var(--vscode-dropdown-background)!important;
 	color: var(--vscode-button-foreground)!important;
 } */
+
+/* Streaming message styles */
+.streaming-message {
+	background-color: var(--vscode-input-background) !important;
+	border-left: 3px solid var(--vscode-progressBar-background) !important;
+	animation: streaming-pulse 2s ease-in-out infinite;
+}
+
+@keyframes streaming-pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.8;
+	}
+}
