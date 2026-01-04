@@ -212,10 +212,6 @@ function createConversationBody(message) {
 			element: $("#conversationTextToSendInput")[0],
 			autofocus: true,
 			toolbar: [
-				"bold",
-				"italic",
-				"heading",
-				"|",
 				"clean-block",
 				"|",
 				"quote",
@@ -233,39 +229,6 @@ function createConversationBody(message) {
 					title: "Send Message (Ctrl+Enter)"
 				}
 			],
-			// autosave: {
-			// 	enabled: true,
-			// 	// uniqueId: "MyUniqueID",
-			// 	delay: 1000,
-			// 	submit_delay: 5000,
-			// 	timeFormat: {
-			// 		locale: 'en-US',
-			// 		format: {
-			// 			year: 'numeric',
-			// 			month: 'long',
-			// 			day: '2-digit',
-			// 			hour: '2-digit',
-			// 			minute: '2-digit',
-			// 		},
-			// 	},
-			// 	text: "Autosaved: "
-			// },
-			// blockStyles: {
-			// 	bold: "__",
-			// 	italic: "_",
-			// },
-			// unorderedListStyle: "-",
-			// element: document.getElementById("MyID"),
-			// forceSync: true,
-			// hideIcons: ["guide", "heading"],
-			// indentWithTabs: false,
-			// initialValue: "Hello world!",
-			// insertTexts: {
-			// horizontalRule: ["", "\n\n-----\n\n"],
-			// image: ["![](http://", ")"],
-			// link: ["[", "](https://)"],
-			// table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
-			// },
 			lineWrapping: true,
 			minHeight: "100px",
 			maxHeight: "100px",

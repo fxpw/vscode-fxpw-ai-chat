@@ -191,3 +191,28 @@
 		opacity: 0.8;
 	}
 }
+
+/* Text selection styles for EasyMDE dark theme */
+.EasyMDEContainer .CodeMirror ::selection {
+	background-color: #264f78 !important;
+	color: #ffffff !important;
+}
+
+.EasyMDEContainer .CodeMirror ::-moz-selection {
+	background-color: #264f78 !important;
+	color: #ffffff !important;
+}
+
+.EasyMDEContainer .CodeMirror-selected {
+	background-color: #264f78 !important;
+}
+
+.EasyMDEContainer .CodeMirror-focused .CodeMirror-selected {
+	background-color: #264f78 !important;
+}
+
+/* Additional selection styles for better visibility */
+.EasyMDEContainer .CodeMirror .CodeMirror-selectedtext {
+	background-color: #264f78 !important;
+	color: #ffffff !important;
+}
