@@ -106,61 +106,6 @@
 		"configuration": {
 			"title": "vscode-fxpw-ai-chat-properties",
 			"properties": {
-				"vscode-fxpw-ai-chat.useProxy": {
-					"type": "boolean",
-					"default": true,
-					"description": "proxy enable"
-				},
-				"vscode-fxpw-ai-chat.useSOCKS5": {
-					"type": "boolean",
-					"default": false,
-					"description": "use socks5 (instead https)"
-				},
-				"vscode-fxpw-ai-chat.proxyIP": {
-					"type": "string",
-					"default": "",
-					"description": "Proxy IP Address"
-				},
-				"vscode-fxpw-ai-chat.proxyPortHttps": {
-					"type": "number",
-					"default": 50100,
-					"description": "Proxy Port"
-				},
-				"vscode-fxpw-ai-chat.timeout": {
-					"type": "number",
-					"default": 0,
-					"description": "timeout in seconds"
-				},
-				"vscode-fxpw-ai-chat.proxyLogin": {
-					"type": "string",
-					"default": "",
-					"description": "Proxy Login"
-				},
-				"vscode-fxpw-ai-chat.proxyPassword": {
-					"type": "string",
-					"default": "",
-					"description": "Proxy Password"
-				},
-				"vscode-fxpw-ai-chat.openAIKey": {
-					"type": "string",
-					"default": "",
-					"description": "API Key"
-				},
-				"vscode-fxpw-ai-chat.openAIModel": {
-					"type": "string",
-					"default": "gpt-4o-mini",
-					"markdownDescription": "AI model name (can be any custom model)\n\n**OpenAI:** `gpt-4.1-nano-2025-04-14`, `gpt-4o-mini`, `gpt-4-turbo`, `gpt-5-nano-2025-08-07`, `o1-preview`, `o1-mini`\n**DeepSeek:** `deepseek-chat`, `deepseek-coder`\n**Ollama:** `llama3.1:8b`, `llama3.2:3b`, `codellama:7b`, `mistral:7b`\n**OpenRouter:** `alibaba/tongyi-deepresearch-30b-a3b`\n**Custom:** enter any model name supported by your API provider"
-				},
-				"vscode-fxpw-ai-chat.baseUrl": {
-					"type": "string",
-					"default": "",
-					"markdownDescription": "Custom API base URL (leave empty for auto-detection)\n\n**Examples:**\n- OpenAI: `https://api.openai.com/v1`\n- DeepSeek: `https://api.deepseek.com`\n- Ollama: `http://localhost:11434/v1`\n- Custom: your API endpoint"
-				},
-				"vscode-fxpw-ai-chat.streaming": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enable streaming responses for real-time message display"
-				}
 			}
 		}
 	},
