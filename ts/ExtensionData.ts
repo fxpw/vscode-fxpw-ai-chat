@@ -1,4 +1,6 @@
 import { ExtensionContext } from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface ChatData {
 	conversation: Array<{ role: string, content: string }>; // Примерная структура, уточните согласно вашим нуждам.
@@ -15,6 +17,14 @@ interface ChatData {
 class ExtensionData {
 	public static chatsData: ChatData[] = [];
 	private static context: ExtensionContext | null = null;
+	private static chatsDataFilePath: string = '';
+
+	private static getChatsDataFilePath(): string {
+		if (!this.context) return '';
+		if (this.chatsDataFilePath) return this.chatsDataFilePath;
+		this.chatsDataFilePath = path.join(this.context.globalStorageUri.fsPath, 'chatsData.json');
+		return this.chatsDataFilePath;
+	}
 
 	static get currentChatID(): number {
 		return this.context?.globalState.get('currentChatID', -1) ?? -1;
@@ -48,11 +58,13 @@ class ExtensionData {
 
 	static async saveChatsData(): Promise<void> {
 		try {
-			if (this.context) {
-				await this.context.globalState.update('chatsData', this.chatsData);
+			const filePath = this.getChatsDataFilePath();
+			if (filePath) {
+				await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+				await fs.promises.writeFile(filePath, JSON.stringify(this.chatsData, null, 2), 'utf8');
 			}
 		} catch (error) {
-			console.error(error);
+			console.error('Error saving chats data:', error);
 		}
 	}
 
@@ -178,8 +190,18 @@ class ExtensionData {
 
 	static async Init(context: ExtensionContext): Promise<void> {
 		this.context = context;
-		const loadedChatsData = this.context.globalState.get<ChatData[]>('chatsData', []);
-		this.chatsData = loadedChatsData ?? [];
+		try {
+			const filePath = this.getChatsDataFilePath();
+			if (filePath && fs.existsSync(filePath)) {
+				const data = await fs.promises.readFile(filePath, 'utf8');
+				this.chatsData = JSON.parse(data) || [];
+			} else {
+				this.chatsData = [];
+			}
+		} catch (error) {
+			console.error('Error loading chats data:', error);
+			this.chatsData = [];
+		}
 	}
 }
 

@@ -1,7 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExtensionData = void 0;
+const fs = require("fs");
+const path = require("path");
 class ExtensionData {
+    static getChatsDataFilePath() {
+        if (!this.context)
+            return '';
+        if (this.chatsDataFilePath)
+            return this.chatsDataFilePath;
+        this.chatsDataFilePath = path.join(this.context.globalStorageUri.fsPath, 'chatsData.json');
+        return this.chatsDataFilePath;
+    }
     static get currentChatID() {
         return this.context?.globalState.get('currentChatID', -1) ?? -1;
     }
@@ -32,12 +42,14 @@ class ExtensionData {
     }
     static async saveChatsData() {
         try {
-            if (this.context) {
-                await this.context.globalState.update('chatsData', this.chatsData);
+            const filePath = this.getChatsDataFilePath();
+            if (filePath) {
+                await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+                await fs.promises.writeFile(filePath, JSON.stringify(this.chatsData, null, 2), 'utf8');
             }
         }
         catch (error) {
-            console.error(error);
+            console.error('Error saving chats data:', error);
         }
     }
     static async createNewChat(model) {
@@ -157,11 +169,24 @@ class ExtensionData {
     }
     static async Init(context) {
         this.context = context;
-        const loadedChatsData = this.context.globalState.get('chatsData', []);
-        this.chatsData = loadedChatsData ?? [];
+        try {
+            const filePath = this.getChatsDataFilePath();
+            if (filePath && fs.existsSync(filePath)) {
+                const data = await fs.promises.readFile(filePath, 'utf8');
+                this.chatsData = JSON.parse(data) || [];
+            }
+            else {
+                this.chatsData = [];
+            }
+        }
+        catch (error) {
+            console.error('Error loading chats data:', error);
+            this.chatsData = [];
+        }
     }
 }
 exports.ExtensionData = ExtensionData;
 ExtensionData.chatsData = [];
 ExtensionData.context = null;
+ExtensionData.chatsDataFilePath = '';
 //# sourceMappingURL=ExtensionData.js.map
