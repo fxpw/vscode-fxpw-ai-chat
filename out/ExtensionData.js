@@ -163,9 +163,7 @@ class ExtensionData {
         return this.chatsData.find(chat => chat.id === this.currentChatID);
     }
     static getChatDataByID(chatID) {
-        let data = this.chatsData.find(chat => chat.id === chatID);
-        if (data)
-            return this.chatsData.find(chat => chat.id === chatID);
+        return this.chatsData.find(chat => chat.id === chatID);
     }
     static async blockChatByID(chatID) {
         this.chatsData.forEach((element) => {
@@ -186,6 +184,55 @@ class ExtensionData {
     static async deleteAllChatsData() {
         this.chatsData = [];
         await this.saveChatsData();
+    }
+    // Migrate old chat data from 'model' field to 'modelId' field
+    static async migrateChatData() {
+        try {
+            let hasChanges = false;
+            for (const chat of this.chatsData) {
+                // Check if chat has old 'model' field and no 'modelId' field
+                if (chat.model && !chat.modelId) {
+                    const oldModelName = chat.model;
+                    // Try to find a model with matching name
+                    let matchingModel = this.modelsData.find(model => model.name === oldModelName);
+                    // If no exact name match, try to find by technical model name
+                    if (!matchingModel) {
+                        matchingModel = this.modelsData.find(model => model.modelName === oldModelName);
+                    }
+                    // If still no match, create a default model based on the old model name
+                    if (!matchingModel) {
+                        console.log(`Creating default model for legacy chat with model: ${oldModelName}`);
+                        matchingModel = await this.createModel({
+                            name: `Migrated: ${oldModelName}`,
+                            apiKey: "", // Will need to be filled by user
+                            baseUrl: "",
+                            modelName: oldModelName,
+                            useProxy: false,
+                            useSOCKS5: false,
+                            proxyIP: "",
+                            proxyPortHttps: 0,
+                            proxyLogin: "",
+                            proxyPassword: "",
+                            timeout: 30,
+                            streaming: true,
+                        });
+                    }
+                    // Update the chat to use modelId
+                    chat.modelId = matchingModel.id;
+                    delete chat.model;
+                    hasChanges = true;
+                    console.log(`Migrated chat ${chat.id} from model "${oldModelName}" to modelId "${matchingModel.id}"`);
+                }
+            }
+            // Save changes if any migrations were performed
+            if (hasChanges) {
+                await this.saveChatsData();
+                console.log('Chat data migration completed');
+            }
+        }
+        catch (error) {
+            console.error('Error during chat data migration:', error);
+        }
     }
     static async Init(context) {
         this.context = context;
@@ -218,6 +265,8 @@ class ExtensionData {
             console.error('Error loading models data:', error);
             this.modelsData = [];
         }
+        // Migrate old chat data to use modelId instead of model
+        await this.migrateChatData();
     }
     // Model management methods
     static async createModel(modelConfig) {
