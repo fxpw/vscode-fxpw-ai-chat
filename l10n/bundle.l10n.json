@@ -38,5 +38,7 @@
 	"Proxy: ": "Proxy: ",
 	"No proxy": "No proxy",
 	"Edit model": "Edit model",
-	"Add model": "Add model"
+	"Add model": "Add model",
+	"Search chats": "Search chats...",
+	"Search": "Search"
 }

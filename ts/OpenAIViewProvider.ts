@@ -137,7 +137,9 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 								proxyLabel: vscode.l10n.t('Proxy: '),
 								noProxy: vscode.l10n.t('No proxy'),
 								editModel: vscode.l10n.t('Edit model'),
-								addModelDialog: vscode.l10n.t('Add model')
+								addModelDialog: vscode.l10n.t('Add model'),
+								searchChats: vscode.l10n.t('Search chats'),
+								search: vscode.l10n.t('Search')
 							}
 						});
 						break;

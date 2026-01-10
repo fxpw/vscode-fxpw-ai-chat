@@ -99,16 +99,67 @@ function updateConversationsList(chatsListData) {
 		let bodyElement = document.getElementById('body');
 
 		bodyElement.innerHTML = '';
-	
+
 		let conversationsListContainer = document.createElement('div');
 		conversationsListContainer.id = 'conversationsListContainer';
 		conversationsListContainer.className = 'conversationsListContainer';
-	
+
+		// Создаем контейнер для поиска
+		let searchContainer = document.createElement('div');
+		searchContainer.className = 'searchContainer';
+
+		// Создаем поле поиска
+		let searchInput = document.createElement('input');
+		searchInput.type = 'text';
+		searchInput.className = 'searchInput';
+		searchInput.placeholder = window.localization.t('searchChats');
+		searchInput.id = 'searchInput';
+
+		// Создаем кнопку поиска
+		let searchButton = document.createElement('button');
+		searchButton.className = 'searchButton';
+		searchButton.title = window.localization.t('search');
+		searchButton.id = 'searchButton';
+
+		let svgNS = "http://www.w3.org/2000/svg";
+		let svgElement = document.createElementNS(svgNS, "svg");
+		svgElement.setAttribute("width", "16");
+		svgElement.setAttribute("height", "16");
+		svgElement.setAttribute("viewBox", "0 0 24 24");
+		svgElement.setAttribute("fill", "none");
+		let pathElement = document.createElementNS(svgNS, "path");
+		pathElement.setAttribute("d", "M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z");
+		pathElement.setAttribute("stroke", "currentColor");
+		pathElement.setAttribute("stroke-width", "2");
+		pathElement.setAttribute("stroke-linecap", "round");
+		pathElement.setAttribute("stroke-linejoin", "round");
+		svgElement.appendChild(pathElement);
+		searchButton.appendChild(svgElement);
+
+		// Обработчик клика по кнопке поиска
+		searchButton.addEventListener('click', () => {
+			performSearch(searchInput.value, chatsListData);
+		});
+
+		// Обработчик нажатия Enter в поле поиска
+		searchInput.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter') {
+				performSearch(searchInput.value, chatsListData);
+			}
+		});
+
+		searchContainer.appendChild(searchInput);
+		searchContainer.appendChild(searchButton);
+		conversationsListContainer.appendChild(searchContainer);
+
+		// Сохраняем оригинальный список чатов для поиска
+		window.originalChatsList = chatsListData;
+
 		chatsListData.forEach(function (chat) {
 			let button = createOpenConversationButton(chat);
 			conversationsListContainer.appendChild(button);
 		});
-	
+
 		bodyElement.appendChild(conversationsListContainer);
 	} catch (error) {
 		console.error(error);
@@ -116,6 +167,43 @@ function updateConversationsList(chatsListData) {
 
 }
 
+
+// eslint-disable-next-line no-unused-vars
+function performSearch(searchQuery, chatsListData) {
+	try {
+		if (!searchQuery.trim()) {
+			// Если поисковый запрос пустой, показываем все чаты
+			updateConversationsList(window.originalChatsList || chatsListData);
+			return;
+		}
+
+		let filteredChats = chatsListData.filter(chat => {
+			// Поиск в сообщениях чата
+			let hasMatchInMessages = chat.conversation.some(message =>
+				message.content.toLowerCase().includes(searchQuery.toLowerCase())
+			);
+
+			return hasMatchInMessages;
+		});
+
+		// Обновляем список чатов с отфильтрованными данными
+		let conversationsListContainer = document.getElementById('conversationsListContainer');
+		if (conversationsListContainer) {
+			// Удаляем все чаты, кроме контейнера поиска
+			let searchContainer = conversationsListContainer.querySelector('.searchContainer');
+			conversationsListContainer.innerHTML = '';
+			conversationsListContainer.appendChild(searchContainer);
+
+			// Добавляем отфильтрованные чаты
+			filteredChats.forEach(function (chat) {
+				let button = createOpenConversationButton(chat);
+				conversationsListContainer.appendChild(button);
+			});
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
 
 // eslint-disable-next-line no-unused-vars
 function loadViewOnLoadRequest(){

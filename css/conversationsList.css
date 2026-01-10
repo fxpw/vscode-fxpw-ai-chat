@@ -2,6 +2,59 @@
 	margin-top: 10px;
 }
 
+.searchContainer {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px;
+	margin-bottom: 10px;
+	background-color: var(--vscode-input-background);
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 4px;
+}
+
+.searchInput {
+	flex: 1;
+	padding: 8px 12px;
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 4px;
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	font-size: 14px;
+	outline: none;
+}
+
+.searchInput:focus {
+	border-color: var(--vscode-focusBorder);
+	box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}
+
+.searchInput::placeholder {
+	color: var(--vscode-input-placeholderForeground);
+}
+
+.searchButton {
+	padding: 8px 12px;
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border: 1px solid var(--vscode-button-border);
+	border-radius: 4px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+}
+
+.searchButton:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.searchButton svg {
+	width: 16px;
+	height: 16px;
+}
+
 .chatContainer {
 	display: flex;
 	margin-bottom: 10px;
