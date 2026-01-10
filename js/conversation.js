@@ -12,12 +12,32 @@ let intervalIdForConversationSendTextButton = 0;
 // }
 
 // Функция для обработки тегов мыслей модели <think> и </think>
-function processThinkingTags(text) {
+function processThinkingTags(text, isStreaming = false) {
 	try {
-		// Заменяем <think> на специальный HTML элемент
-		let processed = text.replace(/<think>/gi, '<div class="thinking-block"><div class="thinking-header">🤔 Мысли модели</div><div class="thinking-content">');
-		// Заменяем </think> на закрывающий элемент
-		processed = processed.replace(/<\/think>/gi, '</div></div>');
+		let processed = text;
+
+		// Для потокового режима обрабатываем каждый <think> как отдельный блок
+		if (isStreaming) {
+			// Считаем количество открытых и закрытых тегов
+			const openTags = (text.match(/<think>/gi) || []).length;
+			const closeTags = (text.match(/<\/think>/gi) || []).length;
+
+			// Заменяем <think> на открывающий блок
+			processed = processed.replace(/<think>/gi, '<div class="thinking-block"><div class="thinking-header">🤔 Think</div><div class="thinking-content">');
+
+			// Заменяем </think> на закрывающий блок
+			processed = processed.replace(/<\/think>/gi, '</div></div>');
+
+			// Если есть незакрытые теги (больше открытых чем закрытых), добавляем временный закрывающий блок
+			if (openTags > closeTags) {
+				processed += '</div></div>';
+			}
+		} else {
+			// Для обычного режима (не потокового) обрабатываем как раньше
+			processed = processed.replace(/<think>/gi, '<div class="thinking-block"><div class="thinking-header">🤔 Think</div><div class="thinking-content">');
+			processed = processed.replace(/<\/think>/gi, '</div></div>');
+		}
+
 		return processed;
 	} catch (error) {
 		console.error('Ошибка обработки тегов мыслей:', error);
@@ -64,7 +84,7 @@ function intervalChangeSendQueryText() {
 function conversationSendTextButtonOnClick() {
 	try {
 		intervalChangeSendQueryText();
-		let conversationTextToSendInput = document.getElementById('conversationTextToSendInput');
+		// let conversationTextToSendInput = document.getElementById('conversationTextToSendInput');
 		// let query = conversationTextToSendInput.value;
 		let query = editor.value();
 		editor.value("");
@@ -278,7 +298,7 @@ function streamingMessageUpdate(message) {
 		}
 
 		// Update content
-		streamingMessage.innerHTML = marked.parse(processThinkingTags(message.content || ''));
+		streamingMessage.innerHTML = marked.parse(processThinkingTags(message.content || '', true));
 
 		// Re-apply syntax highlighting to code blocks
 		let codeBlocks = streamingMessage.querySelectorAll('pre code');
