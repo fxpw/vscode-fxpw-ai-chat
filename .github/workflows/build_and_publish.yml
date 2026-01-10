@@ -43,10 +43,10 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Package Extension
-        run: vsce package --no-dependencies
+        run: vsce package
 
       - name: Publish Extension
-        run: vsce publish --no-dependencies
+        run: vsce publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
