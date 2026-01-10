@@ -11,6 +11,20 @@ let intervalIdForConversationSendTextButton = 0;
 // 	return textArea.value;
 // }
 
+// Функция для обработки тегов мыслей модели <think> и </think>
+function processThinkingTags(text) {
+	try {
+		// Заменяем <think> на специальный HTML элемент
+		let processed = text.replace(/<think>/gi, '<div class="thinking-block"><div class="thinking-header">🤔 Мысли модели</div><div class="thinking-content">');
+		// Заменяем </think> на закрывающий элемент
+		processed = processed.replace(/<\/think>/gi, '</div></div>');
+		return processed;
+	} catch (error) {
+		console.error('Ошибка обработки тегов мыслей:', error);
+		return text;
+	}
+}
+
 let editor = null;
 function scrollСhatHistoryContainerToBottom() {
 	try {
@@ -57,7 +71,7 @@ function conversationSendTextButtonOnClick() {
 		// $('#conversationTextToSendInput').summernote('reset');
 		let chatHistoryElement = document.createElement('div');
 		chatHistoryElement.className = "chatHistoryElement userMargin";
-		chatHistoryElement.innerHTML = marked.parse(query);
+		chatHistoryElement.innerHTML = marked.parse(processThinkingTags(query));
 		let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
 		if (codeBlocks) {
 			codeBlocks.forEach((block) => {
@@ -114,7 +128,7 @@ function createConversationBody(message) {
 				chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 			}
 			// chatHistoryElement.textContent = messageData.message;
-			chatHistoryElement.innerHTML = marked.parse(messageData.content);
+			chatHistoryElement.innerHTML = marked.parse(processThinkingTags(messageData.content));
 			let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
 			if (codeBlocks) {
 				codeBlocks.forEach((block) => {
@@ -264,7 +278,7 @@ function streamingMessageUpdate(message) {
 		}
 
 		// Update content
-		streamingMessage.innerHTML = marked.parse(message.content || '');
+		streamingMessage.innerHTML = marked.parse(processThinkingTags(message.content || ''));
 
 		// Re-apply syntax highlighting to code blocks
 		let codeBlocks = streamingMessage.querySelectorAll('pre code');
@@ -341,7 +355,7 @@ function conversationSendTextButtonOnClickResponse(message) {
 				} else {
 					chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 				}
-				chatHistoryElement.innerHTML = marked.parse(messageData.content);
+				chatHistoryElement.innerHTML = marked.parse(processThinkingTags(messageData.content));
 				let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
 				if (codeBlocks) {
 					codeBlocks.forEach((block) => {

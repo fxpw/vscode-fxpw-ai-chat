@@ -216,3 +216,59 @@
 	background-color: #264f78 !important;
 	color: #ffffff !important;
 }
+
+/* Стили для блока мыслей модели */
+.thinking-block {
+	margin: 10px 0;
+	border: 2px solid var(--vscode-textLink-foreground);
+	border-radius: 8px;
+	background-color: var(--vscode-input-background);
+	overflow: hidden;
+}
+
+.thinking-header {
+	background-color: var(--vscode-textLink-foreground);
+	color: var(--vscode-button-background);
+	padding: 8px 12px;
+	font-weight: bold;
+	font-size: 0.9em;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.thinking-content {
+	padding: 12px;
+	color: var(--vscode-input-foreground);
+	font-style: italic;
+	opacity: 0.9;
+	border-top: 1px solid var(--vscode-textLink-foreground);
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Темная тема для блока мыслей */
+[data-vscode-theme-kind="vscode-dark"] .thinking-content,
+[data-vscode-theme-kind="vscode-high-contrast"] .thinking-content {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Светлая тема для блока мыслей */
+[data-vscode-theme-kind="vscode-light"] .thinking-content {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Анимация появления блока мыслей */
+.thinking-block {
+	animation: thinking-fade-in 0.5s ease-in-out;
+}
+
+@keyframes thinking-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
