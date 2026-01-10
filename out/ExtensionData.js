@@ -149,6 +149,24 @@ class ExtensionData {
             console.error(error);
         }
     }
+    static async deleteMessageFromChat(chatID, messageIndex) {
+        try {
+            let chatData = this.getChatDataByID(chatID);
+            if (!chatData || !chatData.conversation || messageIndex < 0 || messageIndex >= chatData.conversation.length) {
+                return false;
+            }
+            chatData.conversation.splice(messageIndex, 1);
+            let currentDate = new Date();
+            let timestamp = currentDate.getTime();
+            chatData.lastUpdate = timestamp;
+            await this.saveChatsData();
+            return true;
+        }
+        catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
     static async deleteChatDataByID(chatID) {
         try {
             this.chatsData = this.chatsData.filter(chat => chat.id !== chatID || chat.isBlocked);

@@ -2,30 +2,66 @@
 	margin-top: 10px;
 }
 
+.chatContainer {
+	display: flex;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	overflow: hidden;
+	transition: box-shadow 0.4s;
+}
+
+.chatContainer:hover {
+	box-shadow: 0 0 2em 0.2em var(--vscode-button-hoverBackground);
+}
+
 .openConversationButton {
 	display: block;
 	padding: 10px;
-	margin-bottom: 10px;
 	width: 100%;
 	background-color: var(--vscode-dropdown-background);
-	transition: background-color 0.2s;
+	transition: background-color 0.2s, width 0.3s ease;
 	color: var(--vscode-button-foreground);
 	border: none;
-	border-radius: 5px;
+	border-radius: 0;
 	cursor: pointer;
 	box-shadow: 0 0 0 0 none;
-	transition: background-color 0.4s, box-shadow 0.4s, padding 0.2s, height 0.4s, max-height 0.4s;
+}
+
+.deleteChatButton {
+	display: none;
+	width: 0%;
+	background-color: var(--vscode-errorForeground);
+	color: var(--vscode-button-background);
+	border: none;
+	border-radius: 0;
+	cursor: pointer;
+	transition: width 0.3s ease, background-color 0.2s;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+	overflow: hidden;
+}
+
+.chatContainer:hover .openConversationButton {
+	width: 75%;
+}
+
+.chatContainer:hover .deleteChatButton {
+	display: flex;
+	width: 25%;
+}
+
+.deleteChatButton:hover {
+	background-color: #ff6b6b;
 }
 
 .openConversationButton:hover {
 	background-color: var(--vscode-button-hoverBackground);
-	box-shadow: 0 0 2em 0.2em var(--vscode-button-hoverBackground);
 	padding: 15px;
-	max-height: 20vh;
 }
 
-.openConversationButton:hover .openConversationButtonTopText,
-.openConversationButton:hover .openConversationButtonBottomText {
+.chatContainer:hover .openConversationButtonTopText,
+.chatContainer:hover .openConversationButtonBottomText {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;

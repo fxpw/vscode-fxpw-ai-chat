@@ -177,10 +177,28 @@ class ExtensionData {
 			if (currentChatData){
 				currentChatData.inputText=text;
 			}
-			
+
 			await this.saveChatsData();
 		} catch (error) {
 			console.error(error);
+		}
+	}
+
+	static async deleteMessageFromChat(chatID: number, messageIndex: number): Promise<boolean> {
+		try {
+			let chatData = this.getChatDataByID(chatID);
+			if (!chatData || !chatData.conversation || messageIndex < 0 || messageIndex >= chatData.conversation.length) {
+				return false;
+			}
+			chatData.conversation.splice(messageIndex, 1);
+			let currentDate = new Date();
+			let timestamp = currentDate.getTime();
+			chatData.lastUpdate = timestamp;
+			await this.saveChatsData();
+			return true;
+		} catch (error) {
+			console.error(error);
+			return false;
 		}
 	}
 

@@ -72,8 +72,10 @@ class OpenAIViewProvider {
                         webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData(), newChatID: newChatID });
                         break;
                     case 'deleteChatButtonOnClickRequest':
-                        await OpenAI_1.OpenAI.deleteChatDataByID(message);
+                        console.log('Received delete chat request for chat ID:', message.chatID);
+                        await OpenAI_1.OpenAI.deleteChatDataByID(message.chatID);
                         await OpenAI_1.OpenAI.setCurrentChatID(-1);
+                        console.log('Chat deleted, sending response');
                         webviewView.webview.postMessage({ command: 'deleteChatButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData() });
                         break;
                     case 'toHomeButtonOnClickRequest':
@@ -104,6 +106,15 @@ class OpenAIViewProvider {
                         // await OpenAI.setCurrentChatID(message.chatID);
                         await OpenAI_1.OpenAI.changeInputText(message.inputText, message.chatID);
                         // webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+                        break;
+                    case 'deleteMessageRequest':
+                        const deleteSuccess = await OpenAI_1.OpenAI.deleteMessageFromChat(message.chatID, message.messageIndex);
+                        webviewView.webview.postMessage({
+                            command: 'deleteMessageResponse',
+                            chatID: message.chatID,
+                            messageIndex: message.messageIndex,
+                            success: deleteSuccess
+                        });
                         break;
                     case 'streamingMessageUpdate':
                         // Forward streaming message to webview

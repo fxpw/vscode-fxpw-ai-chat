@@ -56,6 +56,9 @@ window.addEventListener('message', async event => {
 			case 'deleteModelResponse':
 				deleteModelResponse(message);
 				break;
+			case 'deleteMessageResponse':
+				deleteMessageResponse(message);
+				break;
 			default:
 				console.error(message);
 				break;

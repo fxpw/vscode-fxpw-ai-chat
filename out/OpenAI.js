@@ -234,9 +234,11 @@ class OpenAI {
     static getCurrentChat() {
         return ExtensionData_1.ExtensionData.currentChatID;
     }
-    static async deleteChatDataByID(messageData) {
+    static async deleteChatDataByID(chatID) {
         try {
-            return await ExtensionData_1.ExtensionData.deleteChatDataByID(messageData.chatID);
+            const id = typeof chatID === 'number' ? chatID : chatID.chatID;
+            console.log('OpenAI.deleteChatDataByID called with chatID:', id);
+            return await ExtensionData_1.ExtensionData.deleteChatDataByID(id);
         }
         catch (error) {
             console.error(error);
@@ -261,6 +263,15 @@ class OpenAI {
     }
     static async changeInputText(text, chatID) {
         await ExtensionData_1.ExtensionData.changeInputText(text, chatID);
+    }
+    static async deleteMessageFromChat(chatID, messageIndex) {
+        try {
+            return await ExtensionData_1.ExtensionData.deleteMessageFromChat(chatID, messageIndex);
+        }
+        catch (error) {
+            console.error(error);
+            return false;
+        }
     }
     static async setCurrentChatID(id) {
         try {
