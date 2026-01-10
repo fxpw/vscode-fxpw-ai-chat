@@ -2,7 +2,7 @@
 	"Select model for new chat": "Выберите модель для нового чата",
 	"Cancel": "Отмена",
 	"Model Management": "Управление моделями",
-	"Add model": "Добавить модель",
+	"+ Add model": "+ Добавить модель",
 	"No models created yet. Add your first model.": "Нет созданных моделей. Добавьте первую модель.",
 	"Edit": "Изменить",
 	"Delete": "Удалить",
