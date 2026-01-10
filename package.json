@@ -104,8 +104,7 @@
 		},
 		"configuration": {
 			"title": "vscode-fxpw-ai-chat-properties",
-			"properties": {
-			}
+			"properties": {}
 		}
 	},
 	"repository": {

@@ -24,6 +24,12 @@ jobs:
           sed -i "s/@VERSION_FROM_RUNNER@/$VERSION/g" package.json
           echo "Updated version to $VERSION"
 
+      - name: Update version in package-lock.json
+        run: |
+          VERSION="${{ github.run_number }}"
+          sed -i "s/@VERSION_FROM_RUNNER@/$VERSION/g" package-lock.json
+          echo "Updated version to $VERSION"
+
       - name: Install Dependencies
         run: npm ci
 
