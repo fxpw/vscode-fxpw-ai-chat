@@ -16,7 +16,6 @@
 		"onStartupFinished"
 	],
 	"main": "./out/initExtension.js",
-	"browser": "./out/web/extension.js",
 	"icon": "images/icon.jpg",
 	"extensionDependencies": [
 		"vscode.git"
