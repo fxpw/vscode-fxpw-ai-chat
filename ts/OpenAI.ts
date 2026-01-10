@@ -47,7 +47,6 @@ class OpenAI {
 					}
 
 					const parsedProxyUrl = new URL(proxyUrl);
-					console.log(`Using model proxy: ${parsedProxyUrl.toString()}`);
 
 					if (!modelConfig.useSOCKS5) {
 						const agentOptions = {
@@ -66,7 +65,6 @@ class OpenAI {
 				const systemProxy = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
 				if (systemProxy) {
 					try {
-						console.log(`Using system proxy: ${systemProxy}`);
 						const agentOptions = {
 							rejectUnauthorized: false,
 							timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
@@ -76,12 +74,6 @@ class OpenAI {
 						console.error('System proxy error:', error);
 					}
 				}
-			}
-
-			if (agent) {
-				console.log('Proxy agent configured successfully');
-			} else {
-				console.log('No proxy agent configured');
 			}
 
 			let finalBaseurl: string | null = modelConfig.baseUrl || null;
@@ -177,7 +169,7 @@ class OpenAI {
 				}
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			const conversationAIData = {
 				"role": "assistant",
 				"content": error instanceof Error ? error.message : "Unknown error",
@@ -194,7 +186,6 @@ class OpenAI {
 		if (ExtensionSettings.USE_PROXY && ExtensionSettings.PROXY_URL !== "") {
 			try {
 				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
-				console.log(`Commit request using proxy: ${proxyUrl.toString()}`);
 
 				if (!ExtensionSettings.USE_SOCKS5) {
 					const agentOptions = {
@@ -241,7 +232,6 @@ class OpenAI {
 	static async deleteChatDataByID(chatID: number | MessageData) {
 		try {
 			const id = typeof chatID === 'number' ? chatID : chatID.chatID;
-			console.log('OpenAI.deleteChatDataByID called with chatID:', id);
 			return await ExtensionData.deleteChatDataByID(id);
 		} catch (error) {
 			console.error(error);
@@ -265,9 +255,9 @@ class OpenAI {
 	static async changeInputText(text: string, chatID: number) {
 		await ExtensionData.changeInputText(text, chatID);
 	}
-	static async deleteMessageFromChat(chatID: number, messageIndex: number): Promise<boolean> {
+	static async deleteMessageFromChat(chatID: number, messageId: string): Promise<boolean> {
 		try {
-			return await ExtensionData.deleteMessageFromChat(chatID, messageIndex);
+			return await ExtensionData.deleteMessageFromChat(chatID, messageId);
 		} catch (error) {
 			console.error(error);
 			return false;

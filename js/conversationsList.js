@@ -76,7 +76,6 @@ function createOpenConversationButton(chatData) {
 
 		deleteChatButton.addEventListener('click', function (event) {
 			event.stopPropagation(); // Предотвращаем клик по контейнеру
-			console.log('Delete chat button clicked for chat ID:', chatData.id);
 			vscode.postMessage({
 				command: 'deleteChatButtonOnClickRequest',
 				chatID: chatData.id,

@@ -2,7 +2,6 @@
 window.addEventListener('message', async event => {
 	try {
 		let message = event.data;
-		// console.log(message);
 		switch (message.command) {
 			case 'toHomeButtonOnClickResponse':
 				toHomeButtonOnClickResponse(message);

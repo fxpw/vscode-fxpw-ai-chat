@@ -104,7 +104,12 @@ class ExtensionData {
                 currentChatData.needRenameOnRequest = false;
                 currentChatData.name = data.content;
             }
-            currentChatData?.conversation.push(data);
+            // Add unique ID to the message
+            const messageWithId = {
+                ...data,
+                id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+            };
+            currentChatData?.conversation.push(messageWithId);
             let currentDate = new Date();
             let timestamp = currentDate.getTime();
             if (currentChatData) {
@@ -124,7 +129,12 @@ class ExtensionData {
                 currentChatData.needRenameOnRequest = false;
                 currentChatData.name = data.content;
             }
-            currentChatData?.conversation.push(data);
+            // Add unique ID to the message
+            const messageWithId = {
+                ...data,
+                id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+            };
+            currentChatData?.conversation.push(messageWithId);
             let currentDate = new Date();
             let timestamp = currentDate.getTime();
             if (currentChatData) {
@@ -149,10 +159,14 @@ class ExtensionData {
             console.error(error);
         }
     }
-    static async deleteMessageFromChat(chatID, messageIndex) {
+    static async deleteMessageFromChat(chatID, messageId) {
         try {
             let chatData = this.getChatDataByID(chatID);
-            if (!chatData || !chatData.conversation || messageIndex < 0 || messageIndex >= chatData.conversation.length) {
+            if (!chatData || !chatData.conversation) {
+                return false;
+            }
+            const messageIndex = chatData.conversation.findIndex(msg => msg.id === messageId);
+            if (messageIndex === -1) {
                 return false;
             }
             chatData.conversation.splice(messageIndex, 1);
@@ -165,6 +179,29 @@ class ExtensionData {
         catch (error) {
             console.error(error);
             return false;
+        }
+    }
+    // Migrate existing messages to add IDs
+    static async migrateMessagesToAddIds() {
+        try {
+            let hasChanges = false;
+            for (const chat of this.chatsData) {
+                if (chat.conversation) {
+                    for (const message of chat.conversation) {
+                        // Check if message doesn't have an id (old format)
+                        if (!message.id) {
+                            message.id = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                            hasChanges = true;
+                        }
+                    }
+                }
+            }
+            if (hasChanges) {
+                await this.saveChatsData();
+            }
+        }
+        catch (error) {
+            console.error('Error during message migration:', error);
         }
     }
     static async deleteChatDataByID(chatID) {
@@ -219,7 +256,6 @@ class ExtensionData {
                     }
                     // If still no match, create a default model based on the old model name
                     if (!matchingModel) {
-                        console.log(`Creating default model for legacy chat with model: ${oldModelName}`);
                         matchingModel = await this.createModel({
                             name: `Migrated: ${oldModelName}`,
                             apiKey: "", // Will need to be filled by user
@@ -239,13 +275,11 @@ class ExtensionData {
                     chat.modelId = matchingModel.id;
                     delete chat.model;
                     hasChanges = true;
-                    console.log(`Migrated chat ${chat.id} from model "${oldModelName}" to modelId "${matchingModel.id}"`);
                 }
             }
             // Save changes if any migrations were performed
             if (hasChanges) {
                 await this.saveChatsData();
-                console.log('Chat data migration completed');
             }
         }
         catch (error) {
@@ -285,6 +319,8 @@ class ExtensionData {
         }
         // Migrate old chat data to use modelId instead of model
         await this.migrateChatData();
+        // Migrate messages to add IDs
+        await this.migrateMessagesToAddIds();
     }
     // Model management methods
     static async createModel(modelConfig) {

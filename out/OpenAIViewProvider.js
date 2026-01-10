@@ -72,10 +72,8 @@ class OpenAIViewProvider {
                         webviewView.webview.postMessage({ command: 'addChatButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData(), newChatID: newChatID });
                         break;
                     case 'deleteChatButtonOnClickRequest':
-                        console.log('Received delete chat request for chat ID:', message.chatID);
                         await OpenAI_1.OpenAI.deleteChatDataByID(message.chatID);
                         await OpenAI_1.OpenAI.setCurrentChatID(-1);
-                        console.log('Chat deleted, sending response');
                         webviewView.webview.postMessage({ command: 'deleteChatButtonOnClickResponse', chatsListData: OpenAI_1.OpenAI.getChatsListData() });
                         break;
                     case 'toHomeButtonOnClickRequest':
@@ -108,11 +106,11 @@ class OpenAIViewProvider {
                         // webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
                         break;
                     case 'deleteMessageRequest':
-                        const deleteSuccess = await OpenAI_1.OpenAI.deleteMessageFromChat(message.chatID, message.messageIndex);
+                        const deleteSuccess = await OpenAI_1.OpenAI.deleteMessageFromChat(message.chatID, message.messageId);
                         webviewView.webview.postMessage({
                             command: 'deleteMessageResponse',
                             chatID: message.chatID,
-                            messageIndex: message.messageIndex,
+                            messageId: message.messageId,
                             success: deleteSuccess
                         });
                         break;

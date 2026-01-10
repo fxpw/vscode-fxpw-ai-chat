@@ -43,7 +43,6 @@ class OpenAI {
                         proxyUrl = `socks5h://${modelConfig.proxyLogin}:${modelConfig.proxyPassword}@${modelConfig.proxyIP}:${modelConfig.proxyPortHttps}`;
                     }
                     const parsedProxyUrl = new URL(proxyUrl);
-                    console.log(`Using model proxy: ${parsedProxyUrl.toString()}`);
                     if (!modelConfig.useSOCKS5) {
                         const agentOptions = {
                             rejectUnauthorized: false,
@@ -64,7 +63,6 @@ class OpenAI {
                 const systemProxy = process.env.HTTP_PROXY || process.env.http_proxy || process.env.HTTPS_PROXY || process.env.https_proxy;
                 if (systemProxy) {
                     try {
-                        console.log(`Using system proxy: ${systemProxy}`);
                         const agentOptions = {
                             rejectUnauthorized: false,
                             timeout: modelConfig.timeout ? modelConfig.timeout * 1000 : 30000
@@ -75,12 +73,6 @@ class OpenAI {
                         console.error('System proxy error:', error);
                     }
                 }
-            }
-            if (agent) {
-                console.log('Proxy agent configured successfully');
-            }
-            else {
-                console.log('No proxy agent configured');
             }
             let finalBaseurl = modelConfig.baseUrl || null;
             // Auto-detect base URL if not provided
@@ -171,7 +163,7 @@ class OpenAI {
             }
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
             const conversationAIData = {
                 "role": "assistant",
                 "content": error instanceof Error ? error.message : "Unknown error",
@@ -189,7 +181,6 @@ class OpenAI {
         if (ExtensionSettings_1.ExtensionSettings.USE_PROXY && ExtensionSettings_1.ExtensionSettings.PROXY_URL !== "") {
             try {
                 const proxyUrl = new URL(ExtensionSettings_1.ExtensionSettings.PROXY_URL);
-                console.log(`Commit request using proxy: ${proxyUrl.toString()}`);
                 if (!ExtensionSettings_1.ExtensionSettings.USE_SOCKS5) {
                     const agentOptions = {
                         rejectUnauthorized: false,
@@ -237,7 +228,6 @@ class OpenAI {
     static async deleteChatDataByID(chatID) {
         try {
             const id = typeof chatID === 'number' ? chatID : chatID.chatID;
-            console.log('OpenAI.deleteChatDataByID called with chatID:', id);
             return await ExtensionData_1.ExtensionData.deleteChatDataByID(id);
         }
         catch (error) {
@@ -264,9 +254,9 @@ class OpenAI {
     static async changeInputText(text, chatID) {
         await ExtensionData_1.ExtensionData.changeInputText(text, chatID);
     }
-    static async deleteMessageFromChat(chatID, messageIndex) {
+    static async deleteMessageFromChat(chatID, messageId) {
         try {
-            return await ExtensionData_1.ExtensionData.deleteMessageFromChat(chatID, messageIndex);
+            return await ExtensionData_1.ExtensionData.deleteMessageFromChat(chatID, messageId);
         }
         catch (error) {
             console.error(error);

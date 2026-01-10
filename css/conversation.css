@@ -24,8 +24,7 @@
 
 /* Общие стили для элементов истории чата */
 .chatHistoryElement {
-	padding: 0px 15px;
-	margin: 5px;
+	padding: 10px 15px;
 	border-radius: 8px;
 	/* color: #333; */
 	max-width: 90% !important;
@@ -34,11 +33,11 @@
 	/* Переносит длинные слова на новую строку */
 	overflow-wrap: break-word;
 	/* Дополнительное свойство для обеспечения переноса */
+	flex: 1;
 }
 
 /* Стили для сообщений, отправленных пользователем */
 .userMargin {
-	margin-left: auto !important;
 	background-color: var(--vscode-dropdown-background);
 	color: var(--vscode-button-foreground);
 	border-right: 2px solid var(--vscode-focusBorder) !important;
@@ -46,7 +45,6 @@
 
 /* Стили для сообщений, полученных от других */
 .nonuserMargin {
-	margin-right: auto !important;
 	background-color: var(--vscode-dropdown-background);
 	color: var(--vscode-button-foreground);
 	border-left: 2px solid var(--vscode-focusBorder) !important;
@@ -257,19 +255,34 @@
 	background-color: rgba(0, 0, 0, 0.05);
 }
 
+/* Стили для контейнера сообщений */
+.messageContainer {
+	display: flex;
+	margin: 5px;
+	align-items: flex-start;
+	transition: all 0.3s ease;
+}
+
 /* Стили для кнопки удаления сообщения */
 .deleteMessageButton {
-	display: block;
-	margin: 5px 0 0 auto;
-	padding: 4px 8px;
+	display: none;
+	padding: 8px;
 	background-color: var(--vscode-errorForeground);
 	color: var(--vscode-button-background);
 	border: 1px solid var(--vscode-errorForeground);
 	border-radius: 3px;
 	cursor: pointer;
 	font-size: 11px;
-	transition: background-color 0.2s;
-	align-self: flex-end;
+	transition: all 0.3s ease;
+	justify-content: center;
+	align-items: center;
+	margin: 0 5px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.messageContainer:hover .deleteMessageButton {
+	display: flex;
 }
 
 .deleteMessageButton:hover {
@@ -280,4 +293,13 @@
 .deleteMessageButton svg {
 	display: block;
 	margin: 0 auto;
+}
+
+/* Специфические стили для кнопок пользователя и AI */
+.deleteMessageButtonUser {
+	/* Для пользователя кнопка справа - уже правильно по умолчанию */
+}
+
+.deleteMessageButtonAI {
+	/* Для AI кнопка слева - уже правильно по порядку в DOM */
 }

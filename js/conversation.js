@@ -4,11 +4,12 @@ let intervalIdForConversationSendTextButton = 0;
 // 	return html.replace(/(<p>)+|(<\/p>)+/g, '<p>').replace(/(<p>\s*<\/p>)+/g, ''); // Убираем лишние <p>
 // }
 
-function createDeleteMessageButton(messageIndex) {
+function createDeleteMessageButton(messageId) {
 	try {
 		let deleteButton = document.createElement('button');
 		deleteButton.className = 'deleteMessageButton';
 		deleteButton.title = 'Delete message';
+		deleteButton.setAttribute('data-message-id', messageId);
 
 		let svgNS = "http://www.w3.org/2000/svg";
 		let svgElement = document.createElementNS(svgNS, "svg");
@@ -29,7 +30,7 @@ function createDeleteMessageButton(messageIndex) {
 			vscode.postMessage({
 				command: 'deleteMessageRequest',
 				chatID: CURRENT_CHAT_ID,
-				messageIndex: messageIndex
+				messageId: messageId
 			});
 		});
 
@@ -125,6 +126,10 @@ function conversationSendTextButtonOnClick() {
 		let query = editor.value();
 		editor.value("");
 		// $('#conversationTextToSendInput').summernote('reset');
+		// Создаем контейнер для нового сообщения пользователя
+		let messageContainer = document.createElement('div');
+		messageContainer.className = 'messageContainer';
+
 		let chatHistoryElement = document.createElement('div');
 		chatHistoryElement.className = "chatHistoryElement userMargin";
 		chatHistoryElement.innerHTML = marked.parse(processThinkingTags(query));
@@ -145,9 +150,12 @@ function conversationSendTextButtonOnClick() {
 				block.parentNode.insertBefore(copyButton, block);
 			});
 		}
-		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
 
-		chatHistoryContainer.appendChild(chatHistoryElement);
+		// Для пользователя: сообщение слева (в новой структуре кнопка будет добавлена при следующем рендере)
+		messageContainer.appendChild(chatHistoryElement);
+
+		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
+		chatHistoryContainer.appendChild(messageContainer);
 		vscode.postMessage({
 			command: 'conversationSendTextButtonOnClickRequest',
 			text: query,
@@ -177,6 +185,22 @@ function createConversationBody(message) {
 		chatHistoryContainer.className = "chatHistoryContainer";
 		// chat history container elements
 		message.chatData.conversation.forEach((messageData, index) => {
+			// Создаем контейнер для сообщения и кнопки удаления
+			let messageContainer = document.createElement('div');
+			messageContainer.className = 'messageContainer';
+			messageContainer.setAttribute('data-message-id', messageData.id);
+
+			// Создаем кнопку удаления
+			let deleteButton = createDeleteMessageButton(messageData.id);
+			if (deleteButton) {
+				if (messageData.role == "user") {
+					deleteButton.className += ' deleteMessageButtonUser';
+				} else {
+					deleteButton.className += ' deleteMessageButtonAI';
+				}
+			}
+
+			// Создаем элемент сообщения
 			let chatHistoryElement = document.createElement('div');
 			if (messageData.role == "user") {
 				chatHistoryElement.className = "chatHistoryElement userMargin";
@@ -203,13 +227,18 @@ function createConversationBody(message) {
 				});
 			}
 
-			// Add delete message button
-			let deleteButton = createDeleteMessageButton(index);
-			if (deleteButton) {
-				chatHistoryElement.appendChild(deleteButton);
+			// Добавляем элементы в контейнер в правильном порядке
+			if (messageData.role == "user") {
+				// Для пользователя: сообщение слева, кнопка справа
+				messageContainer.appendChild(chatHistoryElement);
+				if (deleteButton) messageContainer.appendChild(deleteButton);
+			} else {
+				// Для AI: кнопка слева, сообщение справа
+				if (deleteButton) messageContainer.appendChild(deleteButton);
+				messageContainer.appendChild(chatHistoryElement);
 			}
 
-			chatHistoryContainer.appendChild(chatHistoryElement);
+			chatHistoryContainer.appendChild(messageContainer);
 		});
 		// input text area
 		let conversationTextToSendInput = document.createElement('textarea');
@@ -260,7 +289,6 @@ function createConversationBody(message) {
 		// 			// fontsize: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '26', '28', '36', '48', '64', '82', '150'],
 		// 			callbacks: {
 		// 				onKeyup: function (event) {
-		// 					// console.log('Key is released:', event.keyCode);
 		// 					let conversationSendTextButton = document.getElementById('conversationSendTextButton');
 		// 					if (event.key === 'Enter' && !event.shiftKey && conversationSendTextButton && !conversationSendTextButton.disabled) {
 		// 						event.preventDefault();
@@ -269,7 +297,6 @@ function createConversationBody(message) {
 		// 				},
 		// 				onChange: function (contents, $editable) {
 		// 					let text = $editable.text();
-		// 					// console.log(text);
 		// 					let chatID = CURRENT_CHAT_ID;
 		// 					vscode.postMessage({
 		// 						command: 'changeInputTextRequest',
@@ -298,7 +325,7 @@ function createConversationBody(message) {
 				"|",
 				{
 					name: "send",
-					action: function() {
+					action: function () {
 						conversationSendTextButtonOnClick();
 					},
 					className: "fa fa-paper-plane",
@@ -329,16 +356,24 @@ function streamingMessageUpdate(message) {
 	try {
 		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
 
-		// Find or create streaming message element
-		let streamingMessage = chatHistoryContainer.querySelector('.streaming-message');
+		// Find or create streaming message container
+		let streamingContainer = chatHistoryContainer.querySelector('.streaming-container');
 
-		if (!streamingMessage) {
-			// Create new streaming message element if it doesn't exist
-			streamingMessage = document.createElement('div');
+		if (!streamingContainer) {
+			// Create new streaming message container if it doesn't exist
+			streamingContainer = document.createElement('div');
+			streamingContainer.className = 'messageContainer streaming-container';
+
+			let streamingMessage = document.createElement('div');
 			streamingMessage.className = 'chatHistoryElement nonuserMargin streaming-message';
 			streamingMessage.setAttribute('data-chat-id', message.chatID);
-			chatHistoryContainer.appendChild(streamingMessage);
+
+			// Для AI: кнопка слева, сообщение справа (но для streaming кнопка не нужна)
+			streamingContainer.appendChild(streamingMessage);
+			chatHistoryContainer.appendChild(streamingContainer);
 		}
+
+		let streamingMessage = streamingContainer.querySelector('.streaming-message');
 
 		// Update content
 		streamingMessage.innerHTML = marked.parse(processThinkingTags(message.content || '', true));
@@ -374,11 +409,16 @@ function streamingMessageUpdate(message) {
 function streamingComplete(message) {
 	try {
 		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
-		let streamingMessage = chatHistoryContainer.querySelector('.streaming-message');
+		let streamingContainer = chatHistoryContainer.querySelector('.streaming-container');
+		let streamingMessage = streamingContainer ? streamingContainer.querySelector('.streaming-message') : null;
 
 		if (streamingMessage) {
 			// Convert streaming message to regular message
 			streamingMessage.classList.remove('streaming-message');
+			// Remove streaming container class
+			if (streamingContainer) {
+				streamingContainer.classList.remove('streaming-container');
+			}
 		}
 
 		// Reset EasyMDE toolbar send button
@@ -412,6 +452,22 @@ function conversationSendTextButtonOnClickResponse(message) {
 			// No streaming was used, recreate all messages
 			chatHistoryContainer.innerHTML = "";
 			chatData.conversation.forEach((messageData, index) => {
+				// Создаем контейнер для сообщения и кнопки удаления
+				let messageContainer = document.createElement('div');
+				messageContainer.className = 'messageContainer';
+				messageContainer.setAttribute('data-message-id', messageData.id);
+
+				// Создаем кнопку удаления
+				let deleteButton = createDeleteMessageButton(messageData.id);
+				if (deleteButton) {
+					if (messageData.role == "user") {
+						deleteButton.className += ' deleteMessageButtonUser';
+					} else {
+						deleteButton.className += ' deleteMessageButtonAI';
+					}
+				}
+
+				// Создаем элемент сообщения
 				let chatHistoryElement = document.createElement('div');
 				if (messageData.role == "user") {
 					chatHistoryElement.className = "chatHistoryElement userMargin";
@@ -437,13 +493,18 @@ function conversationSendTextButtonOnClickResponse(message) {
 					});
 				}
 
-				// Add delete message button
-				let deleteButton = createDeleteMessageButton(index);
-				if (deleteButton) {
-					chatHistoryElement.appendChild(deleteButton);
+				// Добавляем элементы в контейнер в правильном порядке
+				if (messageData.role == "user") {
+					// Для пользователя: сообщение слева, кнопка справа
+					messageContainer.appendChild(chatHistoryElement);
+					if (deleteButton) messageContainer.appendChild(deleteButton);
+				} else {
+					// Для AI: кнопка слева, сообщение справа
+					if (deleteButton) messageContainer.appendChild(deleteButton);
+					messageContainer.appendChild(chatHistoryElement);
 				}
 
-				chatHistoryContainer.appendChild(chatHistoryElement);
+				chatHistoryContainer.appendChild(messageContainer);
 			});
 		}
 		// Reset EasyMDE toolbar send button
@@ -466,12 +527,11 @@ function deleteMessageResponse(message) {
 	try {
 		if (message.success) {
 			let chatHistoryContainer = document.getElementById('chatHistoryContainer');
-			let chatHistoryElements = chatHistoryContainer.querySelectorAll('.chatHistoryElement');
 
-			// Найти элемент по индексу и удалить его вместе с кнопкой удаления
-			if (message.messageIndex >= 0 && message.messageIndex < chatHistoryElements.length) {
-				let elementToRemove = chatHistoryElements[message.messageIndex];
-				elementToRemove.remove();
+			// Найти контейнер по messageId и удалить его
+			let containerToRemove = chatHistoryContainer.querySelector(`.messageContainer[data-message-id="${message.messageId}"]`);
+			if (containerToRemove) {
+				containerToRemove.remove();
 			}
 		}
 	} catch (error) {

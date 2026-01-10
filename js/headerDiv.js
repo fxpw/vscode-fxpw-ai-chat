@@ -159,7 +159,6 @@ function deleteChatButtonOnClick(){
 // eslint-disable-next-line no-unused-vars
 function deleteChatButtonOnClickResponse(message){
 	try {
-		console.log('Received delete chat response, chats count:', message.chatsListData.length);
 		let sortedChatsDesc = message.chatsListData.sort((a, b) => b.lastUpdate - a.lastUpdate);
 		updateConversationsList(sortedChatsDesc);
 		goToHome();
