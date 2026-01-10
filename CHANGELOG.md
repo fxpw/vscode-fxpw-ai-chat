@@ -4,6 +4,7 @@
 
 add model settings
 add delete messages and chats buttons
+add search by messages
 add localization
 
 ### 1.0.16-1.1.47

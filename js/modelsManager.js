@@ -89,51 +89,62 @@ function updateModelsList(models) {
 		}
 
 		models.forEach(model => {
-			let modelItem = document.createElement('div');
-			modelItem.className = 'modelItem';
+			// Создаем контейнер для модели и кнопки удаления
+			let modelContainer = document.createElement('div');
+			modelContainer.className = 'modelContainer';
 
-			let modelInfo = document.createElement('div');
-			modelInfo.className = 'modelInfo';
+			// Создаем кнопку модели
+			let modelButton = document.createElement('button');
+			modelButton.className = 'modelButton';
 
-			let modelName = document.createElement('div');
+			let modelName = document.createElement('span');
 			modelName.className = 'modelName';
 			modelName.textContent = model.name;
-			modelInfo.appendChild(modelName);
+			modelButton.appendChild(modelName);
 
-			let modelDetails = document.createElement('div');
+			modelButton.appendChild(document.createElement('br'));
+
+			let modelDetails = document.createElement('span');
 			modelDetails.className = 'modelDetails';
 			let detailsText = `${window.localization.t('modelLabel')}${model.modelName}`;
 			if (model.baseUrl) {
 				detailsText += ` | ${window.localization.t('urlLabel')}${model.baseUrl}`;
 			}
 			modelDetails.textContent = detailsText;
-			modelInfo.appendChild(modelDetails);
+			modelButton.appendChild(modelDetails);
 
-			modelItem.appendChild(modelInfo);
-
-			let modelActions = document.createElement('div');
-			modelActions.className = 'modelActions';
-
-			let editButton = document.createElement('button');
-			editButton.className = 'editButton';
-			editButton.textContent = window.localization.t('edit');
-			editButton.addEventListener('click', () => {
+			modelButton.addEventListener('click', () => {
 				showEditModelDialog(model);
 			});
-			modelActions.appendChild(editButton);
 
-			let deleteButton = document.createElement('button');
-			deleteButton.className = 'deleteButton';
-			deleteButton.textContent = window.localization.t('delete');
-			deleteButton.addEventListener('click', () => {
-				// if (confirm(`Удалить модель "${model.name}"?`)) {
-					deleteModel(model.id);
-				// }
+			// Создаем кнопку удаления
+			let deleteModelButton = document.createElement('button');
+			deleteModelButton.className = 'deleteModelButton';
+			deleteModelButton.title = window.localization.t('delete');
+
+			let svgNS = "http://www.w3.org/2000/svg";
+			let svgElement = document.createElementNS(svgNS, "svg");
+			svgElement.setAttribute("width", "16");
+			svgElement.setAttribute("height", "16");
+			svgElement.setAttribute("viewBox", "0 0 24 24");
+			svgElement.setAttribute("fill", "none");
+			let pathElement = document.createElementNS(svgNS, "path");
+			pathElement.setAttribute("d", "M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20");
+			pathElement.setAttribute("stroke", "currentColor");
+			pathElement.setAttribute("stroke-width", "2");
+			pathElement.setAttribute("stroke-linecap", "round");
+			pathElement.setAttribute("stroke-linejoin", "round");
+			svgElement.appendChild(pathElement);
+			deleteModelButton.appendChild(svgElement);
+
+			deleteModelButton.addEventListener('click', (event) => {
+				event.stopPropagation(); // Предотвращаем клик по контейнеру
+				deleteModel(model.id);
 			});
-			modelActions.appendChild(deleteButton);
 
-			modelItem.appendChild(modelActions);
-			modelsList.appendChild(modelItem);
+			modelContainer.appendChild(modelButton);
+			modelContainer.appendChild(deleteModelButton);
+			modelsList.appendChild(modelContainer);
 		});
 	} catch (error) {
 		console.error(error);

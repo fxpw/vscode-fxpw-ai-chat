@@ -2,10 +2,6 @@
 
 > Openai text requests chats whit proxy support
 
-> Proxy setting on extension settings or click on button(see screen)
-
-![1737930904526](image/README/1737930904526.png)
-
 > If you have troubles whit cloudflare disable vscode proxy
 
 ## Ollama Setup
@@ -33,6 +29,13 @@ Default Ollama API URL: `http://localhost:11434/v1`
 More things whit openai
 
 # Release Notes
+
+### 1.2.47-1.2.86
+
+add model settings
+add delete messages and chats buttons
+add search by messages
+add localization
 
 ### 1.0.40-1.1.47
 
