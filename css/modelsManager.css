@@ -45,17 +45,18 @@
 
 .modelItem {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	padding: 15px;
 	border: 1px solid var(--vscode-panel-border);
 	border-radius: 6px;
 	margin-bottom: 10px;
 	background-color: var(--vscode-input-background);
+	gap: 15px;
 }
 
 .modelInfo {
 	flex: 1;
+	min-width: 0;
 }
 
 .modelName {
@@ -72,7 +73,47 @@
 
 .modelActions {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 10px;
+	flex-shrink: 0;
+	align-self: flex-start;
+	margin-top: 5px;
+}
+
+/* Адаптивность для маленьких экранов */
+@media (max-width: 600px) {
+	.modelItem {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 12px;
+	}
+
+	.modelActions {
+		align-self: stretch;
+		margin-top: 0;
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+
+	.modelInfo {
+		width: 100%;
+	}
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 400px) {
+	.modelActions {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 5px;
+	}
+
+	.editButton, .deleteButton {
+		width: 100%;
+		text-align: center;
+		padding: 8px 12px;
+	}
 }
 
 .editButton, .deleteButton {
@@ -81,6 +122,10 @@
 	border-radius: 3px;
 	cursor: pointer;
 	font-size: 12px;
+	white-space: nowrap;
+	flex-shrink: 0;
+	min-width: auto;
+	max-width: 120px;
 }
 
 .editButton {
