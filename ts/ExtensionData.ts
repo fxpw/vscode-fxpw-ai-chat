@@ -138,7 +138,7 @@ class ExtensionData {
 			return -1; // При возвращении ошибки, может быть необходимо обработать это по-другому
 		}
 	}
-	static async addDataToCurrentChat(data: { role: string; content: string }): Promise<void> {
+	static async addDataToCurrentChat(data: { role: string; content: string; id?: string }): Promise<void> {
 		try {
 			let currentChatData = this.getCurrentChatData();
 			if (currentChatData && currentChatData.needRenameOnRequest && data.role === 'user' && data.content) {
@@ -148,7 +148,7 @@ class ExtensionData {
 			// Add unique ID to the message
 			const messageWithId: MessageData = {
 				...data,
-				id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+				id: data.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 			};
 			currentChatData?.conversation.push(messageWithId);
 			let currentDate = new Date();
@@ -162,7 +162,7 @@ class ExtensionData {
 		}
 	}
 
-	static async addDataToChatById(data: { role: string; content: string }, chatID: number): Promise<void> {
+	static async addDataToChatById(data: { role: string; content: string; id?: string }, chatID: number): Promise<void> {
 		try {
 			//   assert(chatID >= 0, 'chatID<0');
 			let currentChatData = this.getChatDataByID(chatID);
@@ -173,7 +173,7 @@ class ExtensionData {
 			// Add unique ID to the message
 			const messageWithId: MessageData = {
 				...data,
-				id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+				id: data.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 			};
 			currentChatData?.conversation.push(messageWithId);
 			let currentDate = new Date();

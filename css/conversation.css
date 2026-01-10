@@ -27,7 +27,6 @@
 	padding: 10px 15px;
 	border-radius: 8px;
 	/* color: #333; */
-	max-width: 90% !important;
 	box-sizing: border-box;
 	word-wrap: break-word;
 	/* Переносит длинные слова на новую строку */
@@ -257,49 +256,59 @@
 
 /* Стили для контейнера сообщений */
 .messageContainer {
-	display: flex;
 	margin: 5px;
-	align-items: flex-start;
 	transition: all 0.3s ease;
+}
+
+.messageContainer.user {
+	width: 75%;
+	margin-left: auto;
+	margin-right: 0;
+}
+
+.messageContainer.ai {
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+/* Стили для внутреннего контейнера сообщения */
+.messageContent {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
 }
 
 /* Стили для кнопки удаления сообщения */
 .deleteMessageButton {
-	display: none;
-	padding: 8px;
-	background-color: var(--vscode-errorForeground);
-	color: var(--vscode-button-background);
-	border: 1px solid var(--vscode-errorForeground);
-	border-radius: 3px;
+	display: flex;
+	padding: 4px;
+	background: none;
+	border: none;
+	color: var(--vscode-foreground);
 	cursor: pointer;
-	font-size: 11px;
-	transition: all 0.3s ease;
+	font-size: 12px;
+	transition: color 0.2s ease;
 	justify-content: center;
 	align-items: center;
-	margin: 0 5px;
-	overflow: hidden;
-	flex-shrink: 0;
+	margin-top: 5px;
+	opacity: 0.7;
 }
 
-.messageContainer:hover .deleteMessageButton {
-	display: flex;
+.messageContainer.user .deleteMessageButton {
+	align-self: flex-end;
+}
+
+.messageContainer.ai .deleteMessageButton {
+	align-self: flex-start;
 }
 
 .deleteMessageButton:hover {
-	background-color: #ff6b6b;
-	border-color: #ff6b6b;
+	color: var(--vscode-errorForeground);
+	opacity: 1;
 }
 
 .deleteMessageButton svg {
 	display: block;
 	margin: 0 auto;
-}
-
-/* Специфические стили для кнопок пользователя и AI */
-.deleteMessageButtonUser {
-	/* Для пользователя кнопка справа - уже правильно по умолчанию */
-}
-
-.deleteMessageButtonAI {
-	/* Для AI кнопка слева - уже правильно по порядку в DOM */
 }

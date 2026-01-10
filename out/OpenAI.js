@@ -14,6 +14,7 @@ class OpenAI {
             const conversationSendTextButtonOnClickData = {
                 "role": "user",
                 "content": messageData.text,
+                "id": messageData.messageId,
             };
             // Get chat data and model configuration
             const chatData = ExtensionData_1.ExtensionData.getChatDataByID(messageData.chatID);

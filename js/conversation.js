@@ -128,7 +128,11 @@ function conversationSendTextButtonOnClick() {
 		// $('#conversationTextToSendInput').summernote('reset');
 		// Создаем контейнер для нового сообщения пользователя
 		let messageContainer = document.createElement('div');
-		messageContainer.className = 'messageContainer';
+		messageContainer.className = 'messageContainer user';
+
+		// Создаем внутренний контейнер для сообщения и кнопки
+		let messageContent = document.createElement('div');
+		messageContent.className = 'messageContent';
 
 		let chatHistoryElement = document.createElement('div');
 		chatHistoryElement.className = "chatHistoryElement userMargin";
@@ -151,8 +155,14 @@ function conversationSendTextButtonOnClick() {
 			});
 		}
 
-		// Для пользователя: сообщение слева (в новой структуре кнопка будет добавлена при следующем рендере)
-		messageContainer.appendChild(chatHistoryElement);
+		// Генерируем постоянный ID для сообщения
+		let messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		messageContainer.setAttribute('data-message-id', messageId);
+
+		let deleteButton = createDeleteMessageButton(messageId);
+		messageContent.appendChild(chatHistoryElement);
+		if (deleteButton) messageContent.appendChild(deleteButton);
+		messageContainer.appendChild(messageContent);
 
 		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
 		chatHistoryContainer.appendChild(messageContainer);
@@ -160,6 +170,7 @@ function conversationSendTextButtonOnClick() {
 			command: 'conversationSendTextButtonOnClickRequest',
 			text: query,
 			chatID: CURRENT_CHAT_ID,
+			messageId: messageId,
 		});
 	} catch (error) {
 		console.error(error);
@@ -185,20 +196,14 @@ function createConversationBody(message) {
 		chatHistoryContainer.className = "chatHistoryContainer";
 		// chat history container elements
 		message.chatData.conversation.forEach((messageData, index) => {
-			// Создаем контейнер для сообщения и кнопки удаления
+			// Создаем контейнер для сообщения
 			let messageContainer = document.createElement('div');
-			messageContainer.className = 'messageContainer';
+			messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : 'ai');
 			messageContainer.setAttribute('data-message-id', messageData.id);
 
-			// Создаем кнопку удаления
-			let deleteButton = createDeleteMessageButton(messageData.id);
-			if (deleteButton) {
-				if (messageData.role == "user") {
-					deleteButton.className += ' deleteMessageButtonUser';
-				} else {
-					deleteButton.className += ' deleteMessageButtonAI';
-				}
-			}
+			// Создаем внутренний контейнер для сообщения и кнопки
+			let messageContent = document.createElement('div');
+			messageContent.className = 'messageContent';
 
 			// Создаем элемент сообщения
 			let chatHistoryElement = document.createElement('div');
@@ -227,17 +232,14 @@ function createConversationBody(message) {
 				});
 			}
 
-			// Добавляем элементы в контейнер в правильном порядке
-			if (messageData.role == "user") {
-				// Для пользователя: сообщение слева, кнопка справа
-				messageContainer.appendChild(chatHistoryElement);
-				if (deleteButton) messageContainer.appendChild(deleteButton);
-			} else {
-				// Для AI: кнопка слева, сообщение справа
-				if (deleteButton) messageContainer.appendChild(deleteButton);
-				messageContainer.appendChild(chatHistoryElement);
-			}
+			// Создаем кнопку удаления
+			let deleteButton = createDeleteMessageButton(messageData.id);
 
+			// Добавляем элементы: сначала сообщение, потом кнопка удаления снизу
+			messageContent.appendChild(chatHistoryElement);
+			if (deleteButton) messageContent.appendChild(deleteButton);
+
+			messageContainer.appendChild(messageContent);
 			chatHistoryContainer.appendChild(messageContainer);
 		});
 		// input text area
@@ -362,14 +364,17 @@ function streamingMessageUpdate(message) {
 		if (!streamingContainer) {
 			// Create new streaming message container if it doesn't exist
 			streamingContainer = document.createElement('div');
-			streamingContainer.className = 'messageContainer streaming-container';
+			streamingContainer.className = 'messageContainer ai streaming-container';
+
+			let messageContent = document.createElement('div');
+			messageContent.className = 'messageContent';
 
 			let streamingMessage = document.createElement('div');
 			streamingMessage.className = 'chatHistoryElement nonuserMargin streaming-message';
 			streamingMessage.setAttribute('data-chat-id', message.chatID);
 
-			// Для AI: кнопка слева, сообщение справа (но для streaming кнопка не нужна)
-			streamingContainer.appendChild(streamingMessage);
+			messageContent.appendChild(streamingMessage);
+			streamingContainer.appendChild(messageContent);
 			chatHistoryContainer.appendChild(streamingContainer);
 		}
 
@@ -452,20 +457,14 @@ function conversationSendTextButtonOnClickResponse(message) {
 			// No streaming was used, recreate all messages
 			chatHistoryContainer.innerHTML = "";
 			chatData.conversation.forEach((messageData, index) => {
-				// Создаем контейнер для сообщения и кнопки удаления
+				// Создаем контейнер для сообщения
 				let messageContainer = document.createElement('div');
-				messageContainer.className = 'messageContainer';
+				messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : 'ai');
 				messageContainer.setAttribute('data-message-id', messageData.id);
 
-				// Создаем кнопку удаления
-				let deleteButton = createDeleteMessageButton(messageData.id);
-				if (deleteButton) {
-					if (messageData.role == "user") {
-						deleteButton.className += ' deleteMessageButtonUser';
-					} else {
-						deleteButton.className += ' deleteMessageButtonAI';
-					}
-				}
+				// Создаем внутренний контейнер для сообщения и кнопки
+				let messageContent = document.createElement('div');
+				messageContent.className = 'messageContent';
 
 				// Создаем элемент сообщения
 				let chatHistoryElement = document.createElement('div');
@@ -493,17 +492,14 @@ function conversationSendTextButtonOnClickResponse(message) {
 					});
 				}
 
-				// Добавляем элементы в контейнер в правильном порядке
-				if (messageData.role == "user") {
-					// Для пользователя: сообщение слева, кнопка справа
-					messageContainer.appendChild(chatHistoryElement);
-					if (deleteButton) messageContainer.appendChild(deleteButton);
-				} else {
-					// Для AI: кнопка слева, сообщение справа
-					if (deleteButton) messageContainer.appendChild(deleteButton);
-					messageContainer.appendChild(chatHistoryElement);
-				}
+				// Создаем кнопку удаления
+				let deleteButton = createDeleteMessageButton(messageData.id);
 
+				// Добавляем элементы: сначала сообщение, потом кнопка удаления снизу
+				messageContent.appendChild(chatHistoryElement);
+				if (deleteButton) messageContent.appendChild(deleteButton);
+
+				messageContainer.appendChild(messageContent);
 				chatHistoryContainer.appendChild(messageContainer);
 			});
 		}

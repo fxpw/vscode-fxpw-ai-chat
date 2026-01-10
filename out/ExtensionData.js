@@ -107,7 +107,7 @@ class ExtensionData {
             // Add unique ID to the message
             const messageWithId = {
                 ...data,
-                id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+                id: data.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
             };
             currentChatData?.conversation.push(messageWithId);
             let currentDate = new Date();
@@ -132,7 +132,7 @@ class ExtensionData {
             // Add unique ID to the message
             const messageWithId = {
                 ...data,
-                id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+                id: data.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
             };
             currentChatData?.conversation.push(messageWithId);
             let currentDate = new Date();

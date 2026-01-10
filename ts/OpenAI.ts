@@ -8,6 +8,7 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 interface MessageData {
 	chatID: number;
 	text: string;
+	messageId?: string;
 }
 
 class OpenAI {
@@ -17,6 +18,7 @@ class OpenAI {
 			const conversationSendTextButtonOnClickData = {
 				"role": "user",
 				"content": messageData.text,
+				"id": messageData.messageId,
 			};
 
 			// Get chat data and model configuration
