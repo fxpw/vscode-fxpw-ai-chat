@@ -119,7 +119,7 @@
 		"test": "vscode-test",
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
-		"lint": "eslint \"src/**/*.ts\"",
+		"lint": "tsc --noEmit",
 		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {

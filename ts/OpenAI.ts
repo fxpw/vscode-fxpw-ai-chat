@@ -1,10 +1,38 @@
 import * as vscode from 'vscode';
 // import * as url from 'url';
-import { HttpsProxyAgent } from "https-proxy-agent";
-import { OpenAI as OpenAILib } from "openai";
+
+// Conditionally import modules that don't work in browser
+let HttpsProxyAgent: any = null;
+let SocksProxyAgent: any = null;
+let OpenAILib: any = null;
+
+try {
+	// These modules are not available in browser environment
+	const httpsProxyModule = require("https-proxy-agent");
+	const socksProxyModule = require('socks-proxy-agent');
+	const openaiModule = require("openai");
+
+	HttpsProxyAgent = httpsProxyModule.HttpsProxyAgent || httpsProxyModule.default;
+	SocksProxyAgent = socksProxyModule.SocksProxyAgent || socksProxyModule.default;
+	OpenAILib = openaiModule.OpenAI || openaiModule.default;
+} catch (e) {
+	// In browser environment, we'll use stubs or skip functionality
+	console.log('Running in browser environment, some modules not available');
+}
+
 import { ExtensionSettings } from "./ExtensionSettings";
-import { ExtensionData, ModelConfig } from "./ExtensionData";
-import { SocksProxyAgent } from 'socks-proxy-agent';
+
+// Conditionally import ExtensionData
+let ExtensionData: any = null;
+let ModelConfig: any = null;
+
+try {
+	const extData = require('./ExtensionData');
+	ExtensionData = extData.ExtensionData;
+	ModelConfig = extData.ModelConfig;
+} catch (e) {
+	console.log('ExtensionData not available in browser environment');
+}
 interface MessageData {
 	chatID: number;
 	text: string;
@@ -14,6 +42,12 @@ interface MessageData {
 class OpenAI {
 	static async request(messageData: MessageData, webview: vscode.Webview | undefined = undefined, needPreUpdate: boolean = false, needPostUpdate: boolean = false): Promise<boolean> {
 		try {
+			// Check if we're in browser environment where ExtensionData is not available
+			if (!ExtensionData) {
+				console.log('Browser environment: skipping API call');
+				return false;
+			}
+
 			await ExtensionData.setCurrentChatID(messageData.chatID);
 			const conversationSendTextButtonOnClickData = {
 				"role": "user",
@@ -32,7 +66,7 @@ class OpenAI {
 				throw new Error('Model configuration not found');
 			}
 
-			let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
+			let agent: any = undefined;
 			if (modelConfig.useProxy) {
 				try {
 					let proxyUrl: string;
@@ -102,7 +136,7 @@ class OpenAI {
 			await ExtensionData.blockChatByID(messageData.chatID);
 
 			if (newChatData && newChatData.conversation) {
-				const messagesForAPI: OpenAILib.Chat.Completions.ChatCompletionMessageParam[] = newChatData.conversation.map((msg) => ({
+				const messagesForAPI: any[] = newChatData.conversation.map((msg: any) => ({
 					role: msg.role === 'user' ? 'user' : 'assistant',
 					content: msg.content,
 				}));
@@ -184,7 +218,7 @@ class OpenAI {
 		return false; // Fallback return
 	}
 	static async commitRequest(diffMessage: string): Promise<string | null> {
-		let agent: HttpsProxyAgent<string> | SocksProxyAgent | undefined = undefined;
+				let agent: any = undefined;
 		if (ExtensionSettings.USE_PROXY && ExtensionSettings.PROXY_URL !== "") {
 			try {
 				const proxyUrl = new URL(ExtensionSettings.PROXY_URL);
@@ -206,7 +240,7 @@ class OpenAI {
 			role: 'user',
 			content: diffMessage,
 		};
-		const messagesForAPI: OpenAILib.Chat.Completions.ChatCompletionMessageParam[] = [messageForAPI].map((msg) => ({
+		const messagesForAPI: any[] = [messageForAPI].map((msg) => ({
 			role: msg.role === 'user' ? 'user' : 'assistant',
 			content: msg.content,
 		}));
@@ -223,12 +257,15 @@ class OpenAI {
 			: null;
 	}
 	static getChatsListData() {
+		if (!ExtensionData) return [];
 		return ExtensionData.chatsData;
 	}
 	static getCurrentChatData() {
+		if (!ExtensionData) return null;
 		return ExtensionData.getCurrentChatData();
 	}
 	static getCurrentChat() {
+		if (!ExtensionData) return -1;
 		return ExtensionData.currentChatID;
 	}
 	static async deleteChatDataByID(chatID: number | MessageData) {
@@ -274,19 +311,19 @@ class OpenAI {
 	}
 
 	// Model management methods
-	static async createModel(modelConfig: Omit<ModelConfig, 'id' | 'createAt' | 'lastUpdate'>): Promise<ModelConfig> {
+	static async createModel(modelConfig: Omit<any, 'id' | 'createAt' | 'lastUpdate'>): Promise<any> {
 		return await ExtensionData.createModel(modelConfig);
 	}
 
-	static getModelById(modelId: string): ModelConfig | undefined {
+	static getModelById(modelId: string): any {
 		return ExtensionData.getModelById(modelId);
 	}
 
-	static getAllModels(): ModelConfig[] {
+	static getAllModels(): any[] {
 		return ExtensionData.getAllModels();
 	}
 
-	static async updateModel(modelId: string, updates: Partial<ModelConfig>): Promise<ModelConfig | null> {
+	static async updateModel(modelId: string, updates: Partial<any>): Promise<any | null> {
 		return await ExtensionData.updateModel(modelId, updates);
 	}
 

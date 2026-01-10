@@ -71,7 +71,13 @@ const webExtensionConfig = {
     })
   ],
   externals: {
-    vscode: 'commonjs vscode' // ignored because it doesn't exist
+    vscode: 'commonjs vscode', // ignored because it doesn't exist
+    // Exclude Node.js specific modules that don't work in browser
+    fs: 'commonjs fs',
+    dns: 'commonjs dns',
+    // Exclude problematic proxy agent
+    'socks-proxy-agent': 'commonjs socks-proxy-agent',
+    'https-proxy-agent': 'commonjs https-proxy-agent'
   },
   performance: {
     hints: false

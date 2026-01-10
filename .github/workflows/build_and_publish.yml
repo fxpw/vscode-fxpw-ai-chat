@@ -1,4 +1,4 @@
-name: build-and-deploy
+name: build-and-publish
 concurrency: publish
 on:
   push:
@@ -6,81 +6,56 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Set release number to package
-        run: sed -i 's|@VERSION_FROM_RUNNER@|${{ github.run_number}}|' package.json
+      - name: Update version in package.json
+        run: |
+          VERSION="1.2.${{ github.run_number }}"
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$VERSION\"/" package.json
+          echo "Updated version to $VERSION"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Compile Web Extension
+        run: npm run compile-web
 
       - name: Install VSCE
-        run: npm install -g vsce
-    
+        run: npm install -g @vscode/vsce
+
       - name: Package Extension
-        run: vsce package
-    
+        run: vsce package --no-dependencies
+
       - name: Publish Extension
-        run: vsce publish
+        run: vsce publish --no-dependencies
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          steps:
 
-      - name: Generate release notes
-        uses: actions/github-script@v7
-        id: release_notes
-        with:
-          result-encoding: string
-          script: |
-            
-            const { owner, repo } = context.repo;
-            const tagName = context.payload.ref.replace('refs/tags/', '');
-            
-            const listReleases = await github.rest.repos.listReleases({ owner, repo });
-            
-            const thisRelease = listReleases.data.find(release => release.tag_name === tagName);
-            let previousRelease = listReleases.data[0];
-            if (thisRelease) {
-              const thisIndex = listReleases.data.findIndex(release => release.id === thisRelease.id);
-              previousRelease = listReleases.data[thisIndex + 1];
-            }
-            
-            const comparison = await github.rest.repos.compareCommits({
-              owner,
-              repo,
-              base: previousRelease.tag_name,
-              head: tagName,
-            });
-            
-            const pullRequests = comparison.data.commits
-              .map(commit => {
-                const match = commit.commit.message.match(/Merge pull request #(\d+)/);
-                return match ? match[1] : null;
-              })
-              .filter(Boolean);
-            
-            const releaseNotes = pullRequests.map(prNumber => `- PR #${prNumber}`).join('\n');
-            core.setOutput('release_notes', releaseNotes);
-            return releaseNotes;
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-    
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.1.4
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release 1.1.${{ github.run_number }}
-          body: ${{ steps.release_notes.outputs.result }}
+          tag_name: v${{ github.run_number }}
+          release_name: Release 1.2.${{ github.run_number }}
+          body: |
+            Automated release 1.2.${{ github.run_number }}
+
+            Changes in this release:
+            - Automatic build and publish from main branch
+            - Commit: ${{ github.sha }}
           draft: false
           prerelease: false
