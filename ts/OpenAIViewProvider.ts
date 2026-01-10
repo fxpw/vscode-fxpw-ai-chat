@@ -120,6 +120,13 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 							messageId: message.messageId,
 							success: deleteSuccess
 						});
+						// Отправляем обновленные данные чата для перерисовки
+						if (deleteSuccess && OpenAI.getCurrentChat() > 0) {
+							webviewView.webview.postMessage({
+								command: 'conversationSendTextButtonOnClickResponse',
+								chatData: OpenAI.getCurrentChatData()
+							});
+						}
 						break;
 					case 'streamingMessageUpdate':
 						// Forward streaming message to webview

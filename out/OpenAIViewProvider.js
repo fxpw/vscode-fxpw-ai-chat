@@ -113,6 +113,13 @@ class OpenAIViewProvider {
                             messageId: message.messageId,
                             success: deleteSuccess
                         });
+                        // Отправляем обновленные данные чата для перерисовки
+                        if (deleteSuccess && OpenAI_1.OpenAI.getCurrentChat() > 0) {
+                            webviewView.webview.postMessage({
+                                command: 'conversationSendTextButtonOnClickResponse',
+                                chatData: OpenAI_1.OpenAI.getCurrentChatData()
+                            });
+                        }
                         break;
                     case 'streamingMessageUpdate':
                         // Forward streaming message to webview

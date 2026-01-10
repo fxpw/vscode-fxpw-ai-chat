@@ -420,6 +420,30 @@ function streamingComplete(message) {
 		if (streamingMessage) {
 			// Convert streaming message to regular message
 			streamingMessage.classList.remove('streaming-message');
+
+			// Find the AI message ID from chatData
+			let aiMessageId = null;
+			if (message.chatData && message.chatData.conversation) {
+				// Find the last assistant message
+				for (let i = message.chatData.conversation.length - 1; i >= 0; i--) {
+					if (message.chatData.conversation[i].role === 'assistant') {
+						aiMessageId = message.chatData.conversation[i].id;
+						break;
+					}
+				}
+			}
+
+			// Add delete button to the message content
+			if (aiMessageId && streamingContainer) {
+				let messageContent = streamingContainer.querySelector('.messageContent');
+				if (messageContent && !messageContent.querySelector('.deleteMessageButton')) {
+					let deleteButton = createDeleteMessageButton(aiMessageId);
+					if (deleteButton) {
+						messageContent.appendChild(deleteButton);
+					}
+				}
+			}
+
 			// Remove streaming container class
 			if (streamingContainer) {
 				streamingContainer.classList.remove('streaming-container');
@@ -521,15 +545,8 @@ function conversationSendTextButtonOnClickResponse(message) {
 // eslint-disable-next-line no-unused-vars
 function deleteMessageResponse(message) {
 	try {
-		if (message.success) {
-			let chatHistoryContainer = document.getElementById('chatHistoryContainer');
-
-			// Найти контейнер по messageId и удалить его
-			let containerToRemove = chatHistoryContainer.querySelector(`.messageContainer[data-message-id="${message.messageId}"]`);
-			if (containerToRemove) {
-				containerToRemove.remove();
-			}
-		}
+		// Удаление обрабатывается через conversationSendTextButtonOnClickResponse
+		// который перерисовывает все сообщения с обновленными данными
 	} catch (error) {
 		console.error(error);
 	}

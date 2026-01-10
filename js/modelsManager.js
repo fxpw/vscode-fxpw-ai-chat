@@ -116,7 +116,7 @@ function updateModelsList(models) {
 
 			let editButton = document.createElement('button');
 			editButton.className = 'editButton';
-			editButton.textContent = 'Редактировать';
+			editButton.textContent = 'Edit';
 			editButton.addEventListener('click', () => {
 				showEditModelDialog(model);
 			});
@@ -124,11 +124,11 @@ function updateModelsList(models) {
 
 			let deleteButton = document.createElement('button');
 			deleteButton.className = 'deleteButton';
-			deleteButton.textContent = 'Удалить';
+			deleteButton.textContent = 'Delete';
 			deleteButton.addEventListener('click', () => {
-				if (confirm(`Удалить модель "${model.name}"?`)) {
+				// if (confirm(`Удалить модель "${model.name}"?`)) {
 					deleteModel(model.id);
-				}
+				// }
 			});
 			modelActions.appendChild(deleteButton);
 
@@ -163,14 +163,14 @@ function showModelDialog(model) {
 		dialogContent.className = 'dialogContent';
 
 		let title = document.createElement('h3');
-		title.textContent = model ? 'Редактировать модель' : 'Добавить модель';
+		title.textContent = model ? 'Edit model' : 'Add model';
 		dialogContent.appendChild(title);
 
 		let form = document.createElement('form');
 		form.className = 'modelForm';
 
 		// Display Name field
-		let nameGroup = createFormGroupWithHelp('name', 'Отображаемое имя', 'text', model?.name || '', 'Человекочитаемое название модели для показа в списке чатов');
+		let nameGroup = createFormGroupWithHelp('name', 'Name', 'text', model?.name || '', 'Человекочитаемое название модели для показа в списке чатов');
 		form.appendChild(nameGroup);
 
 		// API Key field
@@ -182,7 +182,7 @@ function showModelDialog(model) {
 		form.appendChild(baseUrlGroup);
 
 		// Model Name field
-		let modelNameGroup = createFormGroupWithHelp('modelName', 'Техническое название модели', 'text', model?.modelName || 'gpt-4o-mini', 'Название модели в API (gpt-4o-mini, deepseek-chat, llama3.1:8b и т.д.)');
+		let modelNameGroup = createFormGroupWithHelp('modelName', 'Name for request', 'text', model?.modelName || 'gpt-4o-mini', 'Название модели в API (gpt-4o-mini, deepseek-chat, llama3.1:8b и т.д.)');
 		form.appendChild(modelNameGroup);
 
 		// Proxy settings
