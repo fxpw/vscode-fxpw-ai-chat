@@ -21,7 +21,7 @@ jobs:
       - name: Update version in package.json
         run: |
           VERSION="1.2.${{ github.run_number }}"
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$VERSION\"/" package.json
+          sed -i "s/@VERSION_FROM_RUNNER@/$VERSION/g" package.json
           echo "Updated version to $VERSION"
 
       - name: Install Dependencies
