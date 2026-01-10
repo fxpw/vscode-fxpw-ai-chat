@@ -24,7 +24,7 @@ function showModelsManagerDialog() {
 		header.className = 'modelsManagerHeader';
 
 		let title = document.createElement('h2');
-		title.textContent = 'Управление моделями';
+		title.textContent = window.localization.t('modelManagement');
 		// header.appendChild(title);
 
 		let closeButton = document.createElement('button');
@@ -49,7 +49,7 @@ function showModelsManagerDialog() {
 		// Add model button
 		let addModelButton = document.createElement('button');
 		addModelButton.className = 'addModelButton';
-		addModelButton.textContent = '+ Добавить модель';
+		addModelButton.textContent = window.localization.t('addModel');
 		addModelButton.addEventListener('click', () => {
 			showAddModelDialog();
 		});
@@ -82,7 +82,7 @@ function updateModelsList(models) {
 
 		if (models.length === 0) {
 			let emptyMessage = document.createElement('p');
-			emptyMessage.textContent = 'Нет созданных моделей. Добавьте первую модель.';
+			emptyMessage.textContent = window.localization.t('noModelsCreated');
 			emptyMessage.className = 'emptyMessage';
 			modelsList.appendChild(emptyMessage);
 			return;
@@ -102,9 +102,9 @@ function updateModelsList(models) {
 
 			let modelDetails = document.createElement('div');
 			modelDetails.className = 'modelDetails';
-			let detailsText = `Модель: ${model.modelName}`;
+			let detailsText = `${window.localization.t('modelLabel')}${model.modelName}`;
 			if (model.baseUrl) {
-				detailsText += ` | URL: ${model.baseUrl}`;
+				detailsText += ` | ${window.localization.t('urlLabel')}${model.baseUrl}`;
 			}
 			modelDetails.textContent = detailsText;
 			modelInfo.appendChild(modelDetails);
@@ -116,7 +116,7 @@ function updateModelsList(models) {
 
 			let editButton = document.createElement('button');
 			editButton.className = 'editButton';
-			editButton.textContent = 'Edit';
+			editButton.textContent = window.localization.t('edit');
 			editButton.addEventListener('click', () => {
 				showEditModelDialog(model);
 			});
@@ -124,7 +124,7 @@ function updateModelsList(models) {
 
 			let deleteButton = document.createElement('button');
 			deleteButton.className = 'deleteButton';
-			deleteButton.textContent = 'Delete';
+			deleteButton.textContent = window.localization.t('delete');
 			deleteButton.addEventListener('click', () => {
 				// if (confirm(`Удалить модель "${model.name}"?`)) {
 					deleteModel(model.id);
@@ -163,26 +163,26 @@ function showModelDialog(model) {
 		dialogContent.className = 'dialogContent';
 
 		let title = document.createElement('h3');
-		title.textContent = model ? 'Edit model' : 'Add model';
+		title.textContent = model ? window.localization.t('editModel') : window.localization.t('addModelDialog');
 		dialogContent.appendChild(title);
 
 		let form = document.createElement('form');
 		form.className = 'modelForm';
 
 		// Display Name field
-		let nameGroup = createFormGroupWithHelp('name', 'Name', 'text', model?.name || '', 'Человекочитаемое название модели для показа в списке чатов');
+		let nameGroup = createFormGroupWithHelp('name', window.localization.t('name'), 'text', model?.name || '', window.localization.t('nameHelp'));
 		form.appendChild(nameGroup);
 
 		// API Key field
-		let apiKeyGroup = createFormGroupWithHelp('apiKey', 'API Key', 'password', model?.apiKey || '', 'Ключ для доступа к API провайдера');
+		let apiKeyGroup = createFormGroupWithHelp('apiKey', window.localization.t('apiKey'), 'password', model?.apiKey || '', window.localization.t('apiKeyHelp'));
 		form.appendChild(apiKeyGroup);
 
 		// Base URL field
-		let baseUrlGroup = createFormGroupWithHelp('baseUrl', 'Base URL', 'text', model?.baseUrl || '', 'Адрес API сервера (оставьте пустым для автоопределения)');
+		let baseUrlGroup = createFormGroupWithHelp('baseUrl', window.localization.t('baseURL'), 'text', model?.baseUrl || '', window.localization.t('baseURLHelp'));
 		form.appendChild(baseUrlGroup);
 
 		// Model Name field
-		let modelNameGroup = createFormGroupWithHelp('modelName', 'Name for request', 'text', model?.modelName || 'gpt-4o-mini', 'Название модели в API (gpt-4o-mini, deepseek-chat, llama3.1:8b и т.д.)');
+		let modelNameGroup = createFormGroupWithHelp('modelName', window.localization.t('nameForRequest'), 'text', model?.modelName || 'gpt-4o-mini', window.localization.t('modelNameHelp'));
 		form.appendChild(modelNameGroup);
 
 		// Proxy settings
@@ -190,25 +190,25 @@ function showModelDialog(model) {
 		proxySection.className = 'formSection';
 
 		let proxyTitle = document.createElement('h4');
-		proxyTitle.textContent = 'Настройки прокси';
+		proxyTitle.textContent = window.localization.t('proxySettings');
 		proxySection.appendChild(proxyTitle);
 
-		let useProxyGroup = createFormGroup('useProxy', 'Использовать прокси', 'checkbox', model?.useProxy || false);
+		let useProxyGroup = createFormGroup('useProxy', window.localization.t('useProxy'), 'checkbox', model?.useProxy || false);
 		proxySection.appendChild(useProxyGroup);
 
-		let useSOCKS5Group = createFormGroup('useSOCKS5', 'SOCKS5 прокси', 'checkbox', model?.useSOCKS5 || false);
+		let useSOCKS5Group = createFormGroup('useSOCKS5', window.localization.t('socks5Proxy'), 'checkbox', model?.useSOCKS5 || false);
 		proxySection.appendChild(useSOCKS5Group);
 
-		let proxyIPGroup = createFormGroup('proxyIP', 'IP адрес прокси', 'text', model?.proxyIP || '');
+		let proxyIPGroup = createFormGroup('proxyIP', window.localization.t('proxyIPAddress'), 'text', model?.proxyIP || '');
 		proxySection.appendChild(proxyIPGroup);
 
-		let proxyPortGroup = createFormGroup('proxyPortHttps', 'Порт прокси', 'number', model?.proxyPortHttps || 0);
+		let proxyPortGroup = createFormGroup('proxyPortHttps', window.localization.t('proxyPort'), 'number', model?.proxyPortHttps || 0);
 		proxySection.appendChild(proxyPortGroup);
 
-		let proxyLoginGroup = createFormGroup('proxyLogin', 'Логин прокси', 'text', model?.proxyLogin || '');
+		let proxyLoginGroup = createFormGroup('proxyLogin', window.localization.t('proxyLogin'), 'text', model?.proxyLogin || '');
 		proxySection.appendChild(proxyLoginGroup);
 
-		let proxyPasswordGroup = createFormGroup('proxyPassword', 'Пароль прокси', 'password', model?.proxyPassword || '');
+		let proxyPasswordGroup = createFormGroup('proxyPassword', window.localization.t('proxyPassword'), 'password', model?.proxyPassword || '');
 		proxySection.appendChild(proxyPasswordGroup);
 
 		form.appendChild(proxySection);
@@ -218,13 +218,13 @@ function showModelDialog(model) {
 		settingsSection.className = 'formSection';
 
 		let settingsTitle = document.createElement('h4');
-		settingsTitle.textContent = 'Другие настройки';
+		settingsTitle.textContent = window.localization.t('otherSettings');
 		settingsSection.appendChild(settingsTitle);
 
-		let timeoutGroup = createFormGroup('timeout', 'Таймаут (сек)', 'number', model?.timeout || 30);
+		let timeoutGroup = createFormGroup('timeout', window.localization.t('timeout'), 'number', model?.timeout || 30);
 		settingsSection.appendChild(timeoutGroup);
 
-		let streamingGroup = createFormGroup('streaming', 'Потоковый режим', 'checkbox', model?.streaming !== false);
+		let streamingGroup = createFormGroup('streaming', window.localization.t('streamingMode'), 'checkbox', model?.streaming !== false);
 		settingsSection.appendChild(streamingGroup);
 
 		form.appendChild(settingsSection);
@@ -236,7 +236,7 @@ function showModelDialog(model) {
 		let cancelButton = document.createElement('button');
 		cancelButton.type = 'button';
 		cancelButton.className = 'cancelButton';
-		cancelButton.textContent = 'Отмена';
+		cancelButton.textContent = window.localization.t('cancel');
 		cancelButton.addEventListener('click', () => {
 			document.body.removeChild(dialog);
 		});
@@ -245,7 +245,7 @@ function showModelDialog(model) {
 		let saveButton = document.createElement('button');
 		saveButton.type = 'submit';
 		saveButton.className = 'saveButton';
-		saveButton.textContent = model ? 'Сохранить' : 'Добавить';
+		saveButton.textContent = model ? window.localization.t('save') : window.localization.t('add');
 		buttonsGroup.appendChild(saveButton);
 
 		form.appendChild(buttonsGroup);

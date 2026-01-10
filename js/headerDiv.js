@@ -65,7 +65,7 @@ function showModelSelectionDialog() {
 		dialogContent.className = 'dialogContent modelSelectionDialog';
 
 		let title = document.createElement('h3');
-		title.textContent = 'Выберите модель для нового чата';
+		title.textContent = window.localization.t('selectModelForNewChat');
 		dialogContent.appendChild(title);
 
 		let modelsList = document.createElement('div');
@@ -95,7 +95,7 @@ function showModelSelectionDialog() {
 
 			let modelProxy = document.createElement('div');
 			modelProxy.className = 'modelProxy';
-			modelProxy.textContent = model.useProxy ? `Прокси: ${model.proxyIP}:${model.proxyPortHttps}` : 'Без прокси';
+			modelProxy.textContent = model.useProxy ? `${window.localization.t('proxyLabel')}${model.proxyIP}:${model.proxyPortHttps}` : window.localization.t('noProxy');
 			modelOption.appendChild(modelProxy);
 
 			modelsList.appendChild(modelOption);
@@ -105,7 +105,7 @@ function showModelSelectionDialog() {
 
 		let cancelButton = document.createElement('button');
 		cancelButton.className = 'cancelButton';
-		cancelButton.textContent = 'Отмена';
+		cancelButton.textContent = window.localization.t('cancel');
 		cancelButton.addEventListener('click', () => {
 			document.body.removeChild(dialog);
 		});

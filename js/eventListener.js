@@ -21,6 +21,10 @@ window.addEventListener('message', async event => {
 				addChatButtonOnClickResponse(message);
 				break;
 			case 'loadViewOnLoadResponse':
+				// Initialize localization
+				if (message.localization) {
+					window.localization.init(message.localization);
+				}
 				// Store models data globally
 				if (message.modelsData) {
 					window.modelsData = message.modelsData;

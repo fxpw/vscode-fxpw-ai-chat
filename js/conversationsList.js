@@ -30,7 +30,7 @@ function createOpenConversationButton(chatData) {
 		if (chatData.conversation.length > 0) {
 			openConversationButtonTopText.textContent = chatData.conversation[chatData.conversation.length - 1].content;
 		} else {
-			openConversationButtonTopText.textContent = "Empty chat";
+			openConversationButtonTopText.textContent = window.localization.t('emptyChat');
 		}
 		openConversationButtonTopText.className = 'openConversationButtonTopText';
 		openConversationButton.appendChild(openConversationButtonTopText);

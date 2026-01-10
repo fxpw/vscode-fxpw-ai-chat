@@ -12,6 +12,7 @@
 		"AI",
 		"Chat"
 	],
+	"l10n": "./l10n",
 	"activationEvents": [
 		"onStartupFinished"
 	],

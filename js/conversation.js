@@ -142,12 +142,12 @@ function conversationSendTextButtonOnClick() {
 			codeBlocks.forEach((block) => {
 				hljs.highlightElement(block);
 				let copyButton = document.createElement('button');
-				copyButton.textContent = 'copy';
+				copyButton.textContent = window.localization.t('copy');
 				copyButton.className = 'copyButton';
 				copyButton.type = 'button';
 				copyButton.addEventListener('click', () => {
 					navigator.clipboard.writeText(block.textContent).then(() => {
-						copyButton.textContent = 'done!';
+						copyButton.textContent = window.localization.t('done');
 						setTimeout(() => copyButton.textContent = 'copy', 2000);
 					}).catch(err => console.error('js//conversation.js error: ', err));
 				});
@@ -219,12 +219,12 @@ function createConversationBody(message) {
 				codeBlocks.forEach((block) => {
 					hljs.highlightElement(block);
 					let copyButton = document.createElement('button');
-					copyButton.textContent = 'copy';
+					copyButton.textContent = window.localization.t('copy');
 					copyButton.className = 'copyButton';
 					copyButton.type = 'button';
 					copyButton.addEventListener('click', () => {
 						navigator.clipboard.writeText(block.textContent).then(() => {
-							copyButton.textContent = 'done!';
+							copyButton.textContent = window.localization.t('done');
 							setTimeout(() => copyButton.textContent = 'copy', 2000);
 						}).catch(err => console.error('js//conversation.js error: ', err));
 					});
@@ -391,12 +391,12 @@ function streamingMessageUpdate(message) {
 				// Add copy button if not already exists
 				if (!block.parentNode.querySelector('.copyButton')) {
 					let copyButton = document.createElement('button');
-					copyButton.textContent = 'copy';
+					copyButton.textContent = window.localization.t('copy');
 					copyButton.className = 'copyButton';
 					copyButton.type = 'button';
 					copyButton.addEventListener('click', () => {
 						navigator.clipboard.writeText(block.textContent).then(() => {
-							copyButton.textContent = 'done!';
+							copyButton.textContent = window.localization.t('done');
 							setTimeout(() => copyButton.textContent = 'copy', 2000);
 						}).catch(err => console.error('js//conversation.js error: ', err));
 					});
@@ -503,12 +503,12 @@ function conversationSendTextButtonOnClickResponse(message) {
 					codeBlocks.forEach((block) => {
 						hljs.highlightElement(block);
 						let copyButton = document.createElement('button');
-						copyButton.textContent = 'copy';
+						copyButton.textContent = window.localization.t('copy');
 						copyButton.className = 'copyButton';
 						copyButton.type = 'button';
 						copyButton.addEventListener('click', () => {
 							navigator.clipboard.writeText(block.textContent).then(() => {
-								copyButton.textContent = 'done!';
+								copyButton.textContent = window.localization.t('done');
 								setTimeout(() => copyButton.textContent = 'copy', 2000);
 							}).catch(err => console.error('js//conversation.js error: ', err));
 						});

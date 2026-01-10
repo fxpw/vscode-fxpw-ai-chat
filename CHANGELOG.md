@@ -1,5 +1,11 @@
 # Change Log
 
+### 1.2.47-1.2.86
+
+add model settings
+add delete messages and chats buttons
+add localization
+
 ### 1.0.16-1.1.47
 
 add auto create commit feature whit api vscode.git

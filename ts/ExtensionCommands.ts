@@ -13,7 +13,7 @@ class ExtensionCommands {
 			vscode.commands.executeCommand('workbench.action.openSettings', 'vscode-fxpw-ai-chat').then(() => {
 				// console.log('vscode-fxpw-ai-chat config open');
 			}, (err) => {
-				vscode.window.showErrorMessage('error: ' + err);
+				vscode.window.showErrorMessage(vscode.l10n.t('error: ') + err);
 			});
 		});
 		context.subscriptions.push(openSettingsCommand);
@@ -29,7 +29,7 @@ class ExtensionCommands {
 						let diffMessage = `create git commit message whit that diff where @@@start of diff@@@@ = start diff message and @@@end of diff@@@ = end of diff message, look at each file and write changes via ->\\n- change 1\\n- change 2<- , carefull look of diff, its may contain spaces, give me answer in json in that example {"answer":"@your_answer@"}:@@@start of diff@@@@${changes}@@@end of diff`
 						let answerJSON = await OpenAI.commitRequest(diffMessage);
 						if(answerJSON==null){
-							api.repositories[0].inputBox.value = "cant get answer from openai";
+							api.repositories[0].inputBox.value = vscode.l10n.t('cant get answer from openai');
 							return;
 						}
 						const jsonRegex = /```json\s*(.+?)\s*```/;
@@ -65,7 +65,7 @@ class ExtensionCommands {
 			try {
 				const editor = vscode.window.activeTextEditor;
 				if (!editor) {
-					vscode.window.showInformationMessage('Нет активного редактора');
+					vscode.window.showInformationMessage(vscode.l10n.t('No active editor'));
 					return;
 				}
 
@@ -79,7 +79,7 @@ class ExtensionCommands {
 					chatID: newChatID,
 				};
 				await OpenAI.request(messageData, OpenAIViewProvider._webviewView.webview, true, true);
-				vscode.window.showInformationMessage(`Запрос обработан:${prompt}`);
+				vscode.window.showInformationMessage(vscode.l10n.t('Request processed:') + prompt);
 
 			} catch (error) {
 				console.error(error);
@@ -90,7 +90,7 @@ class ExtensionCommands {
 			try {
 				const editor = vscode.window.activeTextEditor;
 				if (!editor) {
-					vscode.window.showInformationMessage('Нет активного редактора');
+					vscode.window.showInformationMessage(vscode.l10n.t('No active editor'));
 					return;
 				}
 
@@ -104,7 +104,7 @@ class ExtensionCommands {
 					chatID: newChatID,
 				};
 				await OpenAI.request(messageData, OpenAIViewProvider._webviewView.webview, true, true);
-				vscode.window.showInformationMessage(`Запрос обработан:${prompt}`);
+				vscode.window.showInformationMessage(vscode.l10n.t('Request processed:') + prompt);
 
 			} catch (error) {
 				console.error(error);
@@ -115,7 +115,7 @@ class ExtensionCommands {
 			try {
 				const editor = vscode.window.activeTextEditor;
 				if (!editor) {
-					vscode.window.showInformationMessage('Нет активного редактора');
+					vscode.window.showInformationMessage(vscode.l10n.t('No active editor'));
 					return;
 				}
 
@@ -129,7 +129,7 @@ class ExtensionCommands {
 					chatID: newChatID,
 				};
 				await OpenAI.request(messageData, OpenAIViewProvider._webviewView.webview, true, true);
-				vscode.window.showInformationMessage(`Запрос обработан:${prompt}`);
+				vscode.window.showInformationMessage(vscode.l10n.t('Request processed:') + prompt);
 
 			} catch (error) {
 				console.error(error);
