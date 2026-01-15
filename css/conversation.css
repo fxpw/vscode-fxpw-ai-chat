@@ -49,6 +49,13 @@
 	border-left: 2px solid var(--vscode-focusBorder) !important;
 }
 
+.systemMargin {
+	background-color: var(--vscode-dropdown-background);
+	color: var(--vscode-button-foreground);
+	border-top: 2px solid var(--vscode-focusBorder) !important;
+}
+
+
 .conversationTextareaToSendInput {
 	font-family: inherit;
 	font-size: var(--vscode-editor-font-size);
@@ -272,6 +279,13 @@
 	margin-right: 0;
 }
 
+.messageContainer.system {
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+
 /* Стили для внутреннего контейнера сообщения */
 .messageContent {
 	display: flex;
@@ -299,8 +313,21 @@
 	align-self: flex-end;
 }
 
-.messageContainer.ai .deleteMessageButton {
+.messageContainer.ai .deleteMessageButton,
+.messageContainer.system .deleteMessageButton {
 	align-self: flex-start;
+}
+
+/* Стили для контейнера кнопок действий */
+.messageActionButtons {
+	display: flex;
+	gap: 4px;
+	margin-top: 5px;
+	justify-content: flex-start;
+}
+
+.messageContainer.user .messageActionButtons {
+	justify-content: flex-end;
 }
 
 .deleteMessageButton:hover {
@@ -311,4 +338,93 @@
 .deleteMessageButton svg {
 	display: block;
 	margin: 0 auto;
+}
+
+.editMessageButton {
+	display: flex;
+	padding: 4px;
+	background: none;
+	border: none;
+	color: var(--vscode-foreground);
+	cursor: pointer;
+	font-size: 12px;
+	transition: color 0.2s ease;
+	justify-content: center;
+	align-items: center;
+	margin-top: 5px;
+	opacity: 0.7;
+}
+
+.messageContainer.user .editMessageButton {
+	align-self: flex-end;
+}
+
+.messageContainer.ai .editMessageButton,
+.messageContainer.system .editMessageButton {
+	align-self: flex-start;
+}
+
+.editMessageButton:hover {
+	color: var(--vscode-textLink-foreground);
+	opacity: 1;
+}
+
+.editMessageButton svg {
+	display: block;
+	margin: 0 auto;
+}
+
+/* Стили для режима редактирования сообщений */
+.messageEditContainer {
+	width: 100%;
+	margin-top: 10px;
+}
+
+.messageEditTextarea {
+	width: 100%;
+	min-height: 80px;
+	padding: 8px;
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 4px;
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	font-family: inherit;
+	font-size: var(--vscode-editor-font-size);
+	resize: vertical;
+	box-sizing: border-box;
+}
+
+.messageEditButtons {
+	display: flex;
+	gap: 8px;
+	margin-top: 8px;
+	justify-content: flex-start;
+}
+
+.messageEditSave,
+.messageEditCancel {
+	padding: 6px 12px;
+	border: 1px solid var(--vscode-button-border);
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.9em;
+	transition: all 0.2s ease;
+}
+
+.messageEditSave {
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+}
+
+.messageEditSave:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.messageEditCancel {
+	background-color: var(--vscode-button-secondaryBackground);
+	color: var(--vscode-button-secondaryForeground);
+}
+
+.messageEditCancel:hover {
+	background-color: var(--vscode-button-secondaryHoverBackground);
 }

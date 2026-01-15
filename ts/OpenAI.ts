@@ -103,7 +103,7 @@ class OpenAI {
 
 			if (newChatData && newChatData.conversation) {
 				const messagesForAPI: OpenAILib.Chat.Completions.ChatCompletionMessageParam[] = newChatData.conversation.map((msg) => ({
-					role: msg.role === 'user' ? 'user' : 'assistant',
+					role: msg.role === 'user' ? 'user' : (msg.role === 'system' ? 'system' : 'assistant'),
 					content: msg.content,
 				}));
 
@@ -257,6 +257,15 @@ class OpenAI {
 	static async changeInputText(text: string, chatID: number) {
 		await ExtensionData.changeInputText(text, chatID);
 	}
+	static async updateMessageInChat(chatID: number, messageId: string, newContent: string): Promise<boolean> {
+		try {
+			return await ExtensionData.updateMessageInChat(chatID, messageId, newContent);
+		} catch (error) {
+			console.error(error);
+			return false;
+		}
+	}
+
 	static async deleteMessageFromChat(chatID: number, messageId: string): Promise<boolean> {
 		try {
 			return await ExtensionData.deleteMessageFromChat(chatID, messageId);

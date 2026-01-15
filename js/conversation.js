@@ -4,6 +4,142 @@ let intervalIdForConversationSendTextButton = 0;
 // 	return html.replace(/(<p>)+|(<\/p>)+/g, '<p>').replace(/(<p>\s*<\/p>)+/g, ''); // Убираем лишние <p>
 // }
 
+function createEditMessageButton(messageId) {
+	try {
+		let editButton = document.createElement('button');
+		editButton.className = 'editMessageButton';
+		editButton.title = 'Edit message';
+		editButton.setAttribute('data-message-id', messageId);
+
+		let svgNS = "http://www.w3.org/2000/svg";
+		let svgElement = document.createElementNS(svgNS, "svg");
+		svgElement.setAttribute("width", "14");
+		svgElement.setAttribute("height", "14");
+		svgElement.setAttribute("viewBox", "0 0 24 24");
+		svgElement.setAttribute("fill", "none");
+		let pathElement = document.createElementNS(svgNS, "path");
+		pathElement.setAttribute("d", "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7");
+		pathElement.setAttribute("stroke", "currentColor");
+		pathElement.setAttribute("stroke-width", "2");
+		pathElement.setAttribute("stroke-linecap", "round");
+		pathElement.setAttribute("stroke-linejoin", "round");
+		svgElement.appendChild(pathElement);
+
+		let pathElement2 = document.createElementNS(svgNS, "path");
+		pathElement2.setAttribute("d", "M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z");
+		pathElement2.setAttribute("stroke", "currentColor");
+		pathElement2.setAttribute("stroke-width", "2");
+		pathElement2.setAttribute("stroke-linecap", "round");
+		pathElement2.setAttribute("stroke-linejoin", "round");
+		svgElement.appendChild(pathElement2);
+
+		editButton.appendChild(svgElement);
+
+		editButton.addEventListener('click', () => {
+			startMessageEdit(messageId);
+		});
+
+		return editButton;
+	} catch (error) {
+		console.error(error);
+		return null;
+	}
+}
+
+function startMessageEdit(messageId) {
+	try {
+		// Find the message container
+		let messageContainer = document.querySelector(`[data-message-id="${messageId}"]`);
+		if (!messageContainer) return;
+
+		let messageContent = messageContainer.querySelector('.messageContent');
+		let chatHistoryElement = messageContent.querySelector('.chatHistoryElement');
+
+		// Get original content (plain text from markdown)
+		let originalContent = chatHistoryElement.textContent || chatHistoryElement.innerText || '';
+
+		// Hide the original message content
+		chatHistoryElement.style.display = 'none';
+
+		// Hide action buttons during editing
+		let actionButtons = messageContent.querySelector('.messageActionButtons');
+		if (actionButtons) actionButtons.style.display = 'none';
+
+		// Create edit container
+		let editContainer = document.createElement('div');
+		editContainer.className = 'messageEditContainer';
+
+		// Create textarea for editing
+		let editTextarea = document.createElement('textarea');
+		editTextarea.className = 'messageEditTextarea';
+		editTextarea.value = originalContent;
+		editTextarea.rows = 4;
+		editContainer.appendChild(editTextarea);
+
+		// Create buttons container
+		let buttonsContainer = document.createElement('div');
+		buttonsContainer.className = 'messageEditButtons';
+
+		// Save button
+		let saveButton = document.createElement('button');
+		saveButton.className = 'messageEditSave';
+		saveButton.textContent = window.localization.t('save');
+		saveButton.addEventListener('click', () => {
+			let newContent = editTextarea.value.trim();
+			if (newContent) {
+				vscode.postMessage({
+					command: 'updateMessageRequest',
+					chatID: CURRENT_CHAT_ID,
+					messageId: messageId,
+					newContent: newContent
+				});
+			}
+			cancelMessageEdit(messageId);
+		});
+		buttonsContainer.appendChild(saveButton);
+
+		// Cancel button
+		let cancelButton = document.createElement('button');
+		cancelButton.className = 'messageEditCancel';
+		cancelButton.textContent = window.localization.t('cancel');
+		cancelButton.addEventListener('click', () => {
+			cancelMessageEdit(messageId);
+		});
+		buttonsContainer.appendChild(cancelButton);
+
+		editContainer.appendChild(buttonsContainer);
+
+		// Add edit container to message content
+		messageContent.appendChild(editContainer);
+
+		// Focus on textarea
+		setTimeout(() => editTextarea.focus(), 100);
+
+	} catch (error) {
+		console.error('Error starting message edit:', error);
+	}
+}
+
+function cancelMessageEdit(messageId) {
+	try {
+		let messageContainer = document.querySelector(`[data-message-id="${messageId}"]`);
+		if (!messageContainer) return;
+
+		let messageContent = messageContainer.querySelector('.messageContent');
+		let chatHistoryElement = messageContent.querySelector('.chatHistoryElement');
+		let editContainer = messageContent.querySelector('.messageEditContainer');
+		let actionButtons = messageContent.querySelector('.messageActionButtons');
+
+		// Show original content and buttons, remove edit container
+		if (chatHistoryElement) chatHistoryElement.style.display = '';
+		if (actionButtons) actionButtons.style.display = '';
+		if (editContainer) editContainer.remove();
+
+	} catch (error) {
+		console.error('Error canceling message edit:', error);
+	}
+}
+
 function createDeleteMessageButton(messageId) {
 	try {
 		let deleteButton = document.createElement('button');
@@ -159,9 +295,20 @@ function conversationSendTextButtonOnClick() {
 		let messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 		messageContainer.setAttribute('data-message-id', messageId);
 
+		// Создаем контейнер для кнопок действий
+		let actionButtonsContainer = document.createElement('div');
+		actionButtonsContainer.className = 'messageActionButtons';
+
+		// Создаем кнопку редактирования
+		let editButton = createEditMessageButton(messageId);
+		if (editButton) actionButtonsContainer.appendChild(editButton);
+
+		// Создаем кнопку удаления
 		let deleteButton = createDeleteMessageButton(messageId);
+		if (deleteButton) actionButtonsContainer.appendChild(deleteButton);
+
 		messageContent.appendChild(chatHistoryElement);
-		if (deleteButton) messageContent.appendChild(deleteButton);
+		messageContent.appendChild(actionButtonsContainer);
 		messageContainer.appendChild(messageContent);
 
 		let chatHistoryContainer = document.getElementById('chatHistoryContainer');
@@ -198,7 +345,7 @@ function createConversationBody(message) {
 		message.chatData.conversation.forEach((messageData, index) => {
 			// Создаем контейнер для сообщения
 			let messageContainer = document.createElement('div');
-			messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : 'ai');
+			messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : (messageData.role == "system" ? 'system' : 'ai'));
 			messageContainer.setAttribute('data-message-id', messageData.id);
 
 			// Создаем внутренний контейнер для сообщения и кнопки
@@ -209,6 +356,8 @@ function createConversationBody(message) {
 			let chatHistoryElement = document.createElement('div');
 			if (messageData.role == "user") {
 				chatHistoryElement.className = "chatHistoryElement userMargin";
+			} else if (messageData.role == "system") {
+				chatHistoryElement.className = "chatHistoryElement systemMargin";
 			} else {
 				chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 			}
@@ -232,12 +381,21 @@ function createConversationBody(message) {
 				});
 			}
 
-			// Создаем кнопку удаления
-			let deleteButton = createDeleteMessageButton(messageData.id);
+			// Создаем контейнер для кнопок действий
+			let actionButtonsContainer = document.createElement('div');
+			actionButtonsContainer.className = 'messageActionButtons';
 
-			// Добавляем элементы: сначала сообщение, потом кнопка удаления снизу
+			// Создаем кнопку редактирования для всех сообщений
+			let editButton = createEditMessageButton(messageData.id);
+			if (editButton) actionButtonsContainer.appendChild(editButton);
+
+			// Создаем кнопку удаления для всех сообщений
+			let deleteButton = createDeleteMessageButton(messageData.id);
+			if (deleteButton) actionButtonsContainer.appendChild(deleteButton);
+
+			// Добавляем элементы: сначала сообщение, потом кнопки действий снизу
 			messageContent.appendChild(chatHistoryElement);
-			if (deleteButton) messageContent.appendChild(deleteButton);
+			messageContent.appendChild(actionButtonsContainer);
 
 			messageContainer.appendChild(messageContent);
 			chatHistoryContainer.appendChild(messageContainer);
@@ -433,14 +591,23 @@ function streamingComplete(message) {
 				}
 			}
 
-			// Add delete button to the message content
+			// Add action buttons to the message content
 			if (aiMessageId && streamingContainer) {
 				let messageContent = streamingContainer.querySelector('.messageContent');
-				if (messageContent && !messageContent.querySelector('.deleteMessageButton')) {
+				if (messageContent && !messageContent.querySelector('.messageActionButtons')) {
+					// Создаем контейнер для кнопок действий
+					let actionButtonsContainer = document.createElement('div');
+					actionButtonsContainer.className = 'messageActionButtons';
+
+					// Создаем кнопку редактирования
+					let editButton = createEditMessageButton(aiMessageId);
+					if (editButton) actionButtonsContainer.appendChild(editButton);
+
+					// Создаем кнопку удаления
 					let deleteButton = createDeleteMessageButton(aiMessageId);
-					if (deleteButton) {
-						messageContent.appendChild(deleteButton);
-					}
+					if (deleteButton) actionButtonsContainer.appendChild(deleteButton);
+
+					messageContent.appendChild(actionButtonsContainer);
 				}
 			}
 
@@ -483,7 +650,7 @@ function conversationSendTextButtonOnClickResponse(message) {
 			chatData.conversation.forEach((messageData, index) => {
 				// Создаем контейнер для сообщения
 				let messageContainer = document.createElement('div');
-				messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : 'ai');
+				messageContainer.className = 'messageContainer ' + (messageData.role == "user" ? 'user' : (messageData.role == "system" ? 'system' : 'ai'));
 				messageContainer.setAttribute('data-message-id', messageData.id);
 
 				// Создаем внутренний контейнер для сообщения и кнопки
@@ -494,6 +661,8 @@ function conversationSendTextButtonOnClickResponse(message) {
 				let chatHistoryElement = document.createElement('div');
 				if (messageData.role == "user") {
 					chatHistoryElement.className = "chatHistoryElement userMargin";
+				} else if (messageData.role == "system") {
+					chatHistoryElement.className = "chatHistoryElement systemMargin";
 				} else {
 					chatHistoryElement.className = "chatHistoryElement nonuserMargin";
 				}
@@ -516,12 +685,21 @@ function conversationSendTextButtonOnClickResponse(message) {
 					});
 				}
 
-				// Создаем кнопку удаления
-				let deleteButton = createDeleteMessageButton(messageData.id);
+				// Создаем контейнер для кнопок действий
+				let actionButtonsContainer = document.createElement('div');
+				actionButtonsContainer.className = 'messageActionButtons';
 
-				// Добавляем элементы: сначала сообщение, потом кнопка удаления снизу
+				// Создаем кнопку редактирования для всех сообщений
+				let editButton = createEditMessageButton(messageData.id);
+				if (editButton) actionButtonsContainer.appendChild(editButton);
+
+				// Создаем кнопку удаления для всех сообщений
+				let deleteButton = createDeleteMessageButton(messageData.id);
+				if (deleteButton) actionButtonsContainer.appendChild(deleteButton);
+
+				// Добавляем элементы: сначала сообщение, потом кнопки действий снизу
 				messageContent.appendChild(chatHistoryElement);
-				if (deleteButton) messageContent.appendChild(deleteButton);
+				messageContent.appendChild(actionButtonsContainer);
 
 				messageContainer.appendChild(messageContent);
 				chatHistoryContainer.appendChild(messageContainer);
@@ -545,8 +723,48 @@ function conversationSendTextButtonOnClickResponse(message) {
 // eslint-disable-next-line no-unused-vars
 function deleteMessageResponse(message) {
 	try {
-		// Удаление обрабатывается через conversationSendTextButtonOnClickResponse
-		// который перерисовывает все сообщения с обновленными данными
+	// Удаление обрабатывается через conversationSendTextButtonOnClickResponse
+	// который перерисовывает все сообщения с обновленными данными
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+// eslint-disable-next-line no-unused-vars
+function updateMessageContentResponse(message) {
+	try {
+		// Find the message container
+		let messageContainer = document.querySelector(`[data-message-id="${message.messageId}"]`);
+		if (!messageContainer) return;
+
+		let messageContent = messageContainer.querySelector('.messageContent');
+		let chatHistoryElement = messageContent.querySelector('.chatHistoryElement');
+
+		// Update message content
+		if (chatHistoryElement) {
+			chatHistoryElement.innerHTML = marked.parse(processThinkingTags(message.newContent));
+			let codeBlocks = chatHistoryElement.querySelectorAll('pre code');
+			if (codeBlocks) {
+				codeBlocks.forEach((block) => {
+					hljs.highlightElement(block);
+					let copyButton = document.createElement('button');
+					copyButton.textContent = window.localization.t('copy');
+					copyButton.className = 'copyButton';
+					copyButton.type = 'button';
+					copyButton.addEventListener('click', () => {
+						navigator.clipboard.writeText(block.textContent).then(() => {
+							copyButton.textContent = window.localization.t('done');
+							setTimeout(() => copyButton.textContent = 'copy', 2000);
+						}).catch(err => console.error('js//conversation.js error: ', err));
+					});
+					block.parentNode.insertBefore(copyButton, block);
+				});
+			}
+		}
+
+		// Exit edit mode and restore buttons
+		cancelMessageEdit(message.messageId);
+
 	} catch (error) {
 		console.error(error);
 	}

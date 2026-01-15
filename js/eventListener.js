@@ -62,6 +62,9 @@ window.addEventListener('message', async event => {
 			case 'deleteMessageResponse':
 				deleteMessageResponse(message);
 				break;
+			case 'updateMessageContentResponse':
+				updateMessageContentResponse(message);
+				break;
 			default:
 				console.error(message);
 				break;

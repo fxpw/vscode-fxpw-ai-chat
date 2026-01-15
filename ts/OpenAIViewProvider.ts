@@ -139,7 +139,9 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 								editModel: vscode.l10n.t('Edit model'),
 								addModelDialog: vscode.l10n.t('Add model'),
 								searchChats: vscode.l10n.t('Search chats'),
-								search: vscode.l10n.t('Search')
+								search: vscode.l10n.t('Search'),
+								systemPrompt: vscode.l10n.t('System Prompt'),
+								editSystemPrompt: vscode.l10n.t('Edit system prompt')
 							}
 						});
 						break;
@@ -151,6 +153,16 @@ class OpenAIViewProvider implements vscode.WebviewViewProvider {
 						// await OpenAI.setCurrentChatID(message.chatID);
 						await OpenAI.changeInputText(message.inputText,message.chatID);
 						// webviewView.webview.postMessage({ command: 'doWTFCodeNewChatResponseOpenConversationButtonResponse', chatsListData: OpenAI.getChatsListData(), currentChatID: OpenAI.getCurrentChat() });
+						break;
+					case 'updateMessageRequest':
+						const updateSuccess = await OpenAI.updateMessageInChat(message.chatID, message.messageId, message.newContent);
+						if (updateSuccess && OpenAI.getCurrentChat() > 0) {
+							webviewView.webview.postMessage({
+								command: 'updateMessageContentResponse',
+								messageId: message.messageId,
+								newContent: message.newContent
+							});
+						}
 						break;
 					case 'deleteMessageRequest':
 						const deleteSuccess = await OpenAI.deleteMessageFromChat(message.chatID, message.messageId);

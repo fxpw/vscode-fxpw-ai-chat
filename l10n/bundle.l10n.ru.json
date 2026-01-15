@@ -40,5 +40,9 @@
 	"Edit model": "Изменить модель",
 	"Add model": "Добавить модель",
 	"Search chats": "Поиск по чатам...",
-	"Search": "Поиск"
+	"Search": "Поиск",
+	"System Prompt": "Системный промпт",
+	"Edit system prompt": "Изменить системный промпт",
+	"Save": "Сохранить",
+	"Cancel": "Отмена"
 }

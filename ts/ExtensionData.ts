@@ -129,6 +129,14 @@ class ExtensionData {
 				inputText:"",
 			};
 
+			// Add system prompt as the first message
+			const systemMessage: MessageData = {
+				role: "system",
+				content: "You are a helpful assistant",
+				id: `msg_system_${timestamp}_${Math.random().toString(36).substr(2, 9)}`
+			};
+			new_chat.conversation.push(systemMessage);
+
 			this.chatsData.push(new_chat);
 			await this.addIteratorForChatID();
 			await this.saveChatsData();
@@ -197,6 +205,28 @@ class ExtensionData {
 			await this.saveChatsData();
 		} catch (error) {
 			console.error(error);
+		}
+	}
+
+	static async updateMessageInChat(chatID: number, messageId: string, newContent: string): Promise<boolean> {
+		try {
+			let chatData = this.getChatDataByID(chatID);
+			if (!chatData || !chatData.conversation) {
+				return false;
+			}
+			const messageIndex = chatData.conversation.findIndex(msg => msg.id === messageId);
+			if (messageIndex === -1) {
+				return false;
+			}
+			chatData.conversation[messageIndex].content = newContent;
+			let currentDate = new Date();
+			let timestamp = currentDate.getTime();
+			chatData.lastUpdate = timestamp;
+			await this.saveChatsData();
+			return true;
+		} catch (error) {
+			console.error(error);
+			return false;
 		}
 	}
 

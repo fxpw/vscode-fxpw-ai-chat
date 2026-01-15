@@ -40,5 +40,9 @@
 	"Edit model": "Edit model",
 	"Add model": "Add model",
 	"Search chats": "Search chats...",
-	"Search": "Search"
+	"Search": "Search",
+	"System Prompt": "System Prompt",
+	"Edit system prompt": "Edit system prompt",
+	"Save": "Save",
+	"Cancel": "Cancel"
 }
